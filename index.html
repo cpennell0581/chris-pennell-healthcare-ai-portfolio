@@ -686,6 +686,14 @@
       text-transform: uppercase;
       color: #1A1A1A;
       transition: gap 0.3s;
+      position: relative;
+      z-index: 1;
+    }
+    .project-link::before {
+      content: '';
+      position: absolute;
+      inset: -9999px;
+      z-index: 0;
     }
     .project-link:hover { gap: 22px; }
     .project-link::after {
@@ -694,6 +702,8 @@
       width: 28px;
       height: 1px;
       background: #1A1A1A;
+      position: relative;
+      z-index: 1;
     }
 
     /* ─── Testimonials ─────────────────────────────────────── */
