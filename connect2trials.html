@@ -1,0 +1,1748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="How Chris Pennell defined the MVP strategy for Connect2Trials - clarifying patient language, prescreening, sponsor workflows, and the business case before engineering investment.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connect2Trials Patient Matching, Chris Pennell</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html.jm-drawer-open,
+    body.jm-drawer-open { overflow: hidden; }
+    html { overscroll-behavior-x: none; }
+    body { background: #fff; color: #1A1A1A; font-family: 'DM Sans', sans-serif; font-weight: 300; -webkit-font-smoothing: antialiased; overflow-x: hidden; cursor: auto; }
+    body.jm-drawer-open {
+      position: fixed;
+      left: 0;
+      right: 0;
+      width: 100%;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    /* Cursor */
+    #cursor { display: none; position: fixed; width: 8px; height: 8px; background: #1A1A1A; border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); mix-blend-mode: multiply; transition: width .3s, height .3s; }
+    #cursor-ring { display: none; position: fixed; width: 36px; height: 36px; border: 1px solid rgba(26,26,26,.2); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); }
+    .has-custom-cursor { cursor: none; }
+    .has-custom-cursor #cursor, .has-custom-cursor #cursor-ring { display: block; }
+
+    /* Nav */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 28px 64px; background: rgba(255,255,255,.95); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(26,26,26,.06); }
+    .nav-mark { font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; }
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #6B6560; transition: color .2s; }
+    .nav-links a:hover { color: #1A1A1A; }
+
+    /* Hero */
+    #hero { height: 92vh; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; }
+    .hero-img-wrap { position: absolute; inset: 0; overflow: hidden; background: #1a1a1a; }
+    .hero-img { width: 100%; height: 120%; object-fit: cover; object-position: center 40%; will-change: transform; }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, rgba(10,10,10,.15) 20%, rgba(10,10,10,.55) 65%, rgba(10,10,10,.88) 100%);
+    }
+    .hero-content { position: relative; z-index: 2; padding: 0 64px 64px; color: #fff; }
+    .hero-meta { display: flex; align-items: center; gap: 24px; margin-bottom: 28px; flex-wrap: wrap; }
+    .hero-tag { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.55); border: 1px solid rgba(255,255,255,.2); padding: 5px 14px; border-radius: 100px; }
+    .hero-lead { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.4); }
+    .hero-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(52px, 7.5vw, 108px); font-weight: 300; line-height: 1.02; letter-spacing: -.025em; overflow-wrap: anywhere; }
+    .hero-title em { font-style: italic; color: rgba(255,255,255,.6); }
+
+    /* Stats bar */
+    .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid rgba(26,26,26,.1); background: #fff; }
+    .stat { padding: 36px 48px; border-right: 1px solid rgba(26,26,26,.08); }
+    .stat:last-child { border-right: none; }
+    .stat-num { font-family: 'Cormorant Garamond', serif; font-size: clamp(40px, 4.5vw, 64px); font-weight: 300; line-height: 1; letter-spacing: -.02em; margin-bottom: 8px; }
+    .stat-label { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #6B6560; }
+
+    /* Photo triptych */
+    .photo-triptych { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; height: 480px; overflow: hidden; }
+    .triptych-cell { overflow: hidden; position: relative; }
+    .triptych-cell img { width: 100%; height: 130%; object-fit: cover; will-change: transform; display: block; }
+    .triptych-caption { position: absolute; bottom: 20px; left: 20px; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.7); background: rgba(0,0,0,.3); padding: 4px 10px; border-radius: 100px; backdrop-filter: blur(4px); }
+
+    /* Screen mosaic */
+    .screen-mosaic-section {
+      padding: 0;
+      background: #F4F1EE;
+      border-bottom: 1px solid rgba(26,26,26,.08);
+      overflow: hidden;
+    }
+    .screen-mosaic-header {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0;
+    }
+    .screen-mosaic-kicker {
+      font-size: 10px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: #6B6560;
+      margin-bottom: 10px;
+    }
+    .screen-mosaic-h {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(30px, 3.6vw, 50px);
+      font-weight: 300;
+      line-height: 1.08;
+      letter-spacing: -.02em;
+      color: #1A1A1A;
+      margin-bottom: 12px;
+    }
+    .screen-mosaic-copy {
+      max-width: 760px;
+      font-size: 14px;
+      line-height: 1.8;
+      color: #6B6560;
+    }
+    .screen-mosaic {
+      position: relative;
+      height: clamp(380px, 44vw, 560px);
+      overflow: hidden;
+      background: #0B0810;
+    }
+    @keyframes mosaic-scroll-left {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    .mosaic-track {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 20px;
+      padding: 24px 0;
+    }
+    .mosaic-row {
+      display: flex;
+      flex-shrink: 0;
+      gap: 20px;
+      will-change: transform;
+      animation: mosaic-scroll-left 55s linear infinite;
+    }
+    .mosaic-row:nth-child(2) { animation-duration: 70s; animation-delay: -35s; }
+    .mosaic-row:nth-child(3) { animation-duration: 45s; animation-delay: -18s; }
+    .mosaic-screen {
+      flex: 0 0 auto;
+      width: clamp(170px, 14vw, 230px);
+      aspect-ratio: 384 / 714;
+      border-radius: 0;
+      overflow: hidden;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+    }
+    .mosaic-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 50% 50%;
+      transform: scale(1.55);
+      transform-origin: 50% 50%;
+      display: block;
+    }
+    .mosaic-fade {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(to right, #0B0810 0%, rgba(11,8,16,0) 12%, rgba(11,8,16,0) 88%, #0B0810 100%),
+        linear-gradient(to bottom, rgba(11,8,16,0) 72%, #0B0810 100%);
+    }
+
+    /* Overview */
+    #overview { display: grid; grid-template-columns: 1fr 340px; gap: 80px; padding: 100px 64px; border-bottom: 1px solid rgba(26,26,26,.08); align-items: start; }
+    .overview-problem { font-family: 'Cormorant Garamond', serif; font-size: clamp(28px, 3vw, 40px); font-weight: 300; font-style: italic; line-height: 1.4; letter-spacing: -.01em; overflow-wrap: anywhere; }
+    .project-details { display: flex; flex-direction: column; gap: 28px; padding-top: 6px; }
+    .detail-label { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: #6B6560; margin-bottom: 6px; }
+    .detail-value { font-size: 14px; line-height: 1.55; color: #4A4542; overflow-wrap: anywhere; }
+
+    /* Challenge */
+    #challenge { padding: 100px 64px; display: grid; grid-template-columns: 200px 1fr 1fr; gap: 64px; align-items: start; border-bottom: 1px solid rgba(26,26,26,.08); background: #FAFAF9; }
+    .section-eyebrow { font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: #6B6560; padding-top: 6px; }
+    .challenge-body { font-size: 17px; line-height: 1.85; color: #4A4542; overflow-wrap: anywhere; }
+    .challenge-body p + p { margin-top: 20px; }
+    .challenge-body strong { color: #1A1A1A; font-weight: 400; }
+    .challenge-pullquote { font-family: 'Cormorant Garamond', serif; font-size: clamp(22px, 2.2vw, 28px); font-weight: 300; font-style: italic; line-height: 1.5; border-left: 1px solid rgba(26,26,26,.15); padding-left: 32px; }
+    .challenge-pullquote-attr { display: block; margin-top: 20px; font-family: 'DM Sans', sans-serif; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #6B6560; font-style: normal; }
+
+    /* Pipeline strip */
+    #pipeline {
+      padding: 80px 64px;
+      border-bottom: 1px solid rgba(26,26,26,.08);
+      background: #1A1A1A;
+    }
+    .pipeline-label { font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: rgba(255,255,255,.3); margin-bottom: 48px; }
+    .pipeline-stages {
+      display: grid;
+      grid-template-columns: repeat(9, 1fr);
+      gap: 2px;
+    }
+    .pipeline-stage {
+      background: rgba(255,255,255,.04);
+      padding: 28px 20px;
+      position: relative;
+    }
+    .pipeline-stage::after {
+      content: '→';
+      position: absolute;
+      right: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
+      color: rgba(255,255,255,.15);
+      z-index: 1;
+    }
+    .pipeline-stage:last-child::after { display: none; }
+    .pipeline-stage-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 11px;
+      color: rgba(255,255,255,.2);
+      margin-bottom: 10px;
+      letter-spacing: .1em;
+    }
+    .pipeline-stage-name {
+      font-size: 11px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.6);
+      line-height: 1.45;
+    }
+    .pipeline-stage.highlight { background: rgba(255,255,255,.1); }
+    .pipeline-stage.highlight .pipeline-stage-name { color: rgba(255,255,255,.9); }
+    .pipeline-footnote { margin-top: 32px; font-size: 11px; color: rgba(255,255,255,.2); letter-spacing: .06em; }
+
+    /* Research Scale Strip */
+    #research-scale { padding: 72px 64px; border-bottom: 1px solid rgba(26,26,26,.08); display: grid; grid-template-columns: 200px 1fr; gap: 64px; align-items: start; }
+    .rs-label { font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: #6B6560; padding-top: 6px; }
+    .rs-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
+    .rs-cell { background: #FAFAF9; padding: 40px 36px; }
+    .rs-num { display: block; font-family: 'Cormorant Garamond', serif; font-size: clamp(36px, 4vw, 56px); font-weight: 300; line-height: 1; letter-spacing: -.02em; margin-bottom: 10px; }
+    .rs-desc { display: block; font-size: 13px; font-weight: 300; color: #6B6560; line-height: 1.6; }
+
+    /* Process */
+    #process { padding: 100px 64px; border-bottom: 1px solid rgba(26,26,26,.08); }
+    .process-header { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 64px; }
+    .process-h { font-family: 'Cormorant Garamond', serif; font-size: clamp(36px, 4vw, 56px); font-weight: 300; letter-spacing: -.018em; }
+    .process-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+    .step { background: #FAFAF9; padding: 56px 48px; position: relative; overflow: hidden; }
+    .step:nth-child(2) { background: #F4F1EE; }
+    .step:nth-child(3) { background: #EDE9E5; }
+    .step-num { font-family: 'Cormorant Garamond', serif; font-size: 80px; font-weight: 300; line-height: 1; color: rgba(26,26,26,.06); position: absolute; top: 24px; right: 28px; letter-spacing: -.04em; }
+    .step-title { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 400; margin-bottom: 20px; line-height: 1.2; }
+    .step-body { font-size: 14px; line-height: 1.8; color: #6B6560; }
+    .step-body li { margin-left: 16px; margin-bottom: 8px; }
+    .step-tag { display: inline-block; margin-top: 24px; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #6B6560; border: 1px solid rgba(26,26,26,.12); padding: 4px 12px; border-radius: 100px; }
+    .process-intro, .dw-intro { max-width: 680px; margin: 28px 0 64px; font-size: 17px; line-height: 1.85; color: #4A4542; }
+    .process-img-wrap { margin-top: 64px; }
+    .process-img-full { width: 100%; display: block; border: 1px solid rgba(26,26,26,.06); }
+    .process-img-caption { margin-top: 16px; font-size: 12px; color: #6B6560; letter-spacing: .04em; }
+    .dw-artifact { margin-bottom: 2px; }
+    .dw-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 2px; }
+    .dw-cell { background: #fff; }
+    .dw-cell img { width: 100%; display: block; border: 1px solid rgba(26,26,26,.06); }
+    .dw-cell-caption { padding: 14px 0; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: #6B6560; }
+
+    /* Atmospheric divider */
+    .atmo-divider { height: 520px; overflow: hidden; position: relative; }
+    .atmo-divider img { width: 100%; height: 130%; object-fit: cover; object-position: center 35%; will-change: transform; }
+    .atmo-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to right, rgba(10,10,10,.75) 0%, rgba(10,10,10,.15) 65%);
+      display: flex; align-items: center; padding: 0 80px;
+    }
+    .atmo-quote { font-family: 'Cormorant Garamond', serif; font-size: clamp(26px, 3.2vw, 44px); font-weight: 300; font-style: italic; line-height: 1.3; color: #fff; max-width: 620px; }
+    .atmo-attribution { margin-top: 20px; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.4); }
+
+    /* Trial detail showcase, split */
+    .trial-showcase {
+      display: grid;
+      grid-template-columns: 1.1fr 1.9fr;
+      gap: 2px;
+      min-height: 540px;
+      border-bottom: 1px solid rgba(26,26,26,.08);
+      overflow: hidden;
+    }
+    .trial-photo-cell { overflow: hidden; position: relative; }
+    .trial-photo-cell img { width: 100%; height: 130%; object-fit: cover; will-change: transform; }
+    .trial-phones2-cell {
+      background: #F4F1EE;
+      overflow: hidden;
+    }
+    .trial-phones2-cell img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    /* Outcomes */
+    #outcomes { background: #1A1A1A; color: #fff; padding: 120px 64px; position: relative; overflow: hidden; }
+    .outcomes-ghost { position: absolute; font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: clamp(180px, 26vw, 380px); color: rgba(255,255,255,.022); top: 50%; right: -40px; transform: translateY(-50%); white-space: nowrap; pointer-events: none; }
+    .outcomes-inner { position: relative; z-index: 1; }
+    .outcomes-label { font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: rgba(255,255,255,.3); margin-bottom: 64px; }
+    .outcomes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(255,255,255,.08); margin-bottom: 48px; }
+    .outcome { background: #1A1A1A; padding: 56px 48px; }
+    .outcome-num { font-family: 'Cormorant Garamond', serif; font-size: clamp(56px, 6vw, 88px); font-weight: 300; line-height: 1; letter-spacing: -.03em; color: #fff; margin-bottom: 16px; }
+    .outcome-desc { font-size: 14px; line-height: 1.7; color: rgba(255,255,255,.4); max-width: 260px; overflow-wrap: anywhere; }
+    .outcomes-dashboard { width: 100%; display: block; border: 1px solid rgba(255,255,255,.08); margin-bottom: 32px; border-radius: 2px; }
+    .outcomes-dashboard-caption { font-size: 11px; color: rgba(255,255,255,.2); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 32px; }
+    .outcomes-footnote { font-size: 12px; color: rgba(255,255,255,.2); letter-spacing: .06em; }
+
+    /* Insights */
+    #insights { padding: 100px 64px; border-bottom: 1px solid rgba(26,26,26,.08); }
+    .insights-header { margin-bottom: 64px; }
+    .insights-h { font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 3.5vw, 48px); font-weight: 300; letter-spacing: -.018em; margin-top: 16px; }
+    .insights-grid { display: flex; flex-direction: column; gap: 0; }
+    .insight { display: grid; grid-template-columns: 60px 280px 1fr; gap: 48px; align-items: start; padding: 48px 0; border-bottom: 1px solid rgba(26,26,26,.06); }
+    .insight:first-child { padding-top: 0; }
+    .insight-idx { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: #6B6560; padding-top: 4px; }
+    .insight-label { font-family: 'Cormorant Garamond', serif; font-size: clamp(20px, 2vw, 26px); font-weight: 400; line-height: 1.3; letter-spacing: -.01em; }
+    .insight-body { font-size: 14px; line-height: 1.85; color: #6B6560; padding-top: 4px; overflow-wrap: anywhere; }
+    .insight-verbatim { margin-top: 24px; padding: 20px 24px; background: #FAFAF9; border-left: 2px solid rgba(26,26,26,.1); font-family: 'Cormorant Garamond', serif; font-size: 18px; font-style: italic; font-weight: 300; line-height: 1.5; color: #1A1A1A; }
+    .insight-verbatim-attr { margin-top: 8px; font-family: 'DM Sans', sans-serif; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #6B6560; font-style: normal; }
+    .insight-data-grid { display: flex; gap: 32px; margin-top: 24px; }
+    .insight-data-point { display: flex; flex-direction: column; gap: 4px; }
+    .insight-data-num { font-family: 'Cormorant Garamond', serif; font-size: 42px; font-weight: 300; line-height: 1; letter-spacing: -.02em; color: #1A1A1A; }
+    .insight-data-label { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: #6B6560; }
+
+    /* Methodology */
+    #methodology { background: #F4F1EE; padding: 80px 64px; border-bottom: 1px solid rgba(26,26,26,.08); }
+    .methods-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+    .method-pill { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #4A4542; border: 1px solid rgba(26,26,26,.18); padding: 8px 20px; border-radius: 100px; }
+
+    /* Next work */
+    #next-work { display: grid; grid-template-columns: 1fr 1fr; height: 420px; overflow: hidden; position: relative; border-bottom: 1px solid rgba(26,26,26,.08); text-decoration: none; color: inherit; }
+    .next-img-wrap { overflow: hidden; position: relative; }
+    .next-img { width: 100%; height: 130%; object-fit: cover; will-change: transform; transition: transform .6s ease; }
+    #next-work:hover .next-img { transform: scale(1.04); }
+    .next-info { display: flex; flex-direction: column; justify-content: center; padding: 64px; background: #FAFAF9; transition: background .3s; }
+    #next-work:hover .next-info { background: #F4F1EE; }
+    .next-eyebrow { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: #6B6560; margin-bottom: 16px; }
+    .next-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(28px, 3vw, 42px); font-weight: 300; letter-spacing: -.015em; line-height: 1.15; margin-bottom: 20px; }
+    .next-arrow { display: inline-flex; align-items: center; gap: 14px; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; transition: gap .3s; }
+    #next-work:hover .next-arrow { gap: 22px; }
+    .next-arrow::after { content: '→'; font-size: 16px; }
+
+    /* Footer */
+    footer { padding: 60px 64px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(26,26,26,.08); }
+    .f-mark { font-family: 'Cormorant Garamond', serif; font-size: 14px; letter-spacing: .12em; text-transform: uppercase; }
+    .f-copy { font-size: 12px; color: #6B6560; }
+    .f-links { display: flex; gap: 32px; list-style: none; }
+    .f-links a { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #6B6560; transition: color .2s; }
+    .f-links a:hover { color: #1A1A1A; }
+
+    /* ── Journey Map ─────────────────────────────────────── */
+    #journey-map { padding: 100px 48px; border-bottom: 1px solid rgba(26,26,26,.08); background: #FAFAF9; }
+    .jm-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 52px; }
+    .jm-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 3.8vw, 52px); font-weight: 300; letter-spacing: -.018em; line-height: 1.05; margin-top: 14px; }
+    .jm-title em { font-style: italic; color: rgba(26,26,26,.38); }
+    .jm-persona-pill { display: flex; align-items: center; gap: 12px; padding: 10px 20px; border: 1px solid rgba(26,26,26,.12); border-radius: 100px; font-size: 12px; letter-spacing: .07em; text-transform: uppercase; color: #4A4542; white-space: nowrap; flex-shrink: 0; margin-left: 40px; }
+    .jm-persona-dot { width: 6px; height: 6px; border-radius: 50%; background: #1A1A1A; flex-shrink: 0; }
+    .jm-curve-bar { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 6px; flex-wrap: wrap; }
+    .jm-curve-bar span { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: rgba(26,26,26,.3); }
+    .jm-curve-wrap { width: 100%; height: 64px; margin-bottom: 2px; position: relative; }
+    .jm-curve-svg { width: 100%; height: 100%; overflow: visible; display: block; }
+    #jm-dot-pins { position: absolute; inset: 0; pointer-events: none; }
+    .jm-dot-pin { position: absolute; border-radius: 50%; transform: translate(-50%, -50%); pointer-events: auto; cursor: pointer; width: 10px; height: 10px; background: #CC2222; border: 2.5px solid #fff; box-shadow: 0 0 0 1.5px #CC2222; transition: transform .15s; }
+    .jm-dot-pin:hover, .jm-dot-pin.is-active { transform: translate(-50%, -50%) scale(1.5); }
+    .jm-dot-tooltip { position: absolute; bottom: calc(100% - 4px); background: #fff; border: 1px solid rgba(26,26,26,.09); border-radius: 8px; padding: 14px 18px; min-width: 200px; max-width: 260px; box-shadow: 0 8px 32px rgba(0,0,0,.12); pointer-events: none; opacity: 0; transition: opacity .15s; z-index: 20; transform: translateX(-50%); }
+    .jm-dot-tooltip.is-visible { opacity: 1; }
+    .jm-dot-tip-step { font-size: 9px; letter-spacing: .16em; text-transform: uppercase; color: rgba(26,26,26,.36); margin-bottom: 6px; }
+    .jm-dot-tip-name { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 400; line-height: 1.2; letter-spacing: -.01em; color: #1A1A1A; margin-bottom: 8px; }
+    .jm-dot-tip-summary { font-size: 12px; line-height: 1.65; color: #6B6560; }
+    .jm-dot-tip-friction { display: inline-flex; align-items: center; gap: 5px; font-size: 9px; letter-spacing: .12em; text-transform: uppercase; margin-top: 10px; }
+    .jm-dot-tip-friction::before { content: '●'; font-size: 7px; }
+    .jm-dot-tip-friction.medium { color: #C9894E; }
+    .jm-dot-tip-friction.medium::before { color: #C9894E; }
+    .jm-dot-tip-friction.high { color: #e0471b; }
+    .jm-dot-tip-friction.high::before { color: #e0471b; }
+    .jm-dot-tip-friction.critical { color: #d10000; }
+    .jm-dot-tip-friction.critical::before { color: #d10000; }
+    .jm-dot-tip-cta { font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: rgba(26,26,26,.32); margin-top: 12px; border-top: 1px solid rgba(26,26,26,.07); padding-top: 10px; }
+    .jm-stages { display: grid; gap: 2px; grid-template-columns: repeat(9, minmax(0, 1fr)); }
+    .jm-stage { background: #F4F1EE; padding: 36px 24px 40px; position: relative; overflow: hidden; cursor: pointer; transition: background .22s ease; user-select: none; outline: none; }
+    .jm-stage:nth-child(3n+2) { background: #EDE9E5; }
+    .jm-stage:nth-child(3n)   { background: #E6E1DB; }
+    .jm-stage:hover            { background: #D9D3CC; }
+    .jm-stage.is-active        { background: #1A1A1A; }
+    .jm-stage:focus-visible    { box-shadow: inset 0 0 0 2px rgba(26,26,26,.35); }
+    .jm-stage-num { font-family: 'Cormorant Garamond', serif; font-size: 64px; font-weight: 300; line-height: 1; color: rgba(26,26,26,.055); position: absolute; top: 10px; right: 14px; letter-spacing: -.04em; pointer-events: none; transition: color .22s; }
+    .jm-stage.is-active .jm-stage-num { color: rgba(255,255,255,.055); }
+    .jm-stage-eyebrow { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #6B6560; margin-bottom: 14px; transition: color .22s; }
+    .jm-stage.is-active .jm-stage-eyebrow { color: rgba(255,255,255,.28); }
+    .jm-stage-name { font-family: 'Cormorant Garamond', serif; font-size: clamp(14px, 1.3vw, 19px); font-weight: 400; line-height: 1.2; margin-bottom: 18px; transition: color .22s; }
+    .jm-stage.is-active .jm-stage-name { color: #fff; }
+    .jm-stage-action { font-size: 11px; line-height: 1.65; color: #6B6560; margin-bottom: 24px; transition: color .22s; overflow-wrap: anywhere; }
+    .jm-stage.is-active .jm-stage-action { color: rgba(255,255,255,.42); }
+    .jm-stage-meta { display: flex; flex-direction: column; gap: 12px; }
+    .jm-pain-pill { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #6B6560; border: 1px solid rgba(26,26,26,.12); padding: 3px 9px; border-radius: 100px; width: fit-content; transition: border-color .22s, color .22s; }
+    .jm-stage.is-active .jm-pain-pill { border-color: rgba(255,255,255,.14); color: rgba(255,255,255,.3); }
+    .jm-pain-count { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-weight: 400; line-height: 1; }
+    .jm-open-hint { position: absolute; bottom: 14px; right: 14px; width: 24px; height: 24px; border-radius: 50%; border: 1px solid rgba(26,26,26,.14); display: flex; align-items: center; justify-content: center; font-size: 14px; color: rgba(26,26,26,.3); opacity: 0; transition: opacity .18s, border-color .22s, color .22s; }
+    .jm-stage:hover .jm-open-hint { opacity: 1; }
+    .jm-stage.is-active .jm-open-hint { border-color: rgba(255,255,255,.18); color: rgba(255,255,255,.35); opacity: 1; }
+    /* Friction dots, GE-style severity indicator on each card */
+    .jm-friction { display: flex; align-items: center; gap: 10px; }
+    .jm-friction-label { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: #6B6560; white-space: nowrap; transition: color .22s; }
+    .jm-stage.is-active .jm-friction-label { color: rgba(255,255,255,.3); }
+    .jm-friction-dots { display: flex; gap: 5px; }
+    .jm-fdot { width: 7px; height: 7px; border-radius: 50%; background: rgba(26,26,26,.1); transition: background .25s; flex-shrink: 0; }
+    .jm-fdot.on { background: var(--fc, #CC2222); }
+    .jm-stage.is-active .jm-fdot { background: rgba(255,255,255,.12); }
+    .jm-stage.is-active .jm-fdot.on { background: rgba(255,255,255,.55); }
+    .jm-friction-word { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: rgba(26,26,26,.5); transition: color .22s; display: inline-flex; align-items: center; gap: 5px; }
+    .jm-friction-word::before { content: '●'; font-size: 7px; }
+    .jm-friction-word.medium::before { color: #C9894E; }
+    .jm-friction-word.high::before { color: #e0471b; }
+    .jm-friction-word.critical::before { color: #d10000; }
+    .jm-stage.is-active .jm-friction-word { color: rgba(255,255,255,.4); }
+    .jm-legend { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; padding: 18px 0 0; margin-top: 18px; border-top: 1px solid rgba(26,26,26,.08); }
+    .jm-legend-label { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #6B6560; margin-right: 4px; }
+    .jm-legend-item { display: inline-flex; align-items: center; gap: 7px; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #6B6560; }
+    .jm-legend-swatch { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+
+    .jm-overlay { position: fixed; inset: 0; background: rgba(26,26,26,.35); z-index: 498; opacity: 0; pointer-events: none; transition: opacity .3s; backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+    .jm-overlay.is-active { opacity: 1; pointer-events: all; }
+    .jm-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 500px; max-width: 90vw; background: #1A1A1A; color: #fff; z-index: 499; display: flex; flex-direction: column; overflow: hidden; transform: translateX(100%); transition: transform .42s cubic-bezier(.22,.68,0,1.12); }
+    .jm-drawer.is-open { transform: translateX(0); }
+    .jm-drawer-header { padding: 44px 44px 28px; border-bottom: 1px solid rgba(255,255,255,.06); position: relative; flex-shrink: 0; }
+    .jm-drawer-close { position: absolute; top: 24px; right: 28px; width: 34px; height: 34px; border: 1px solid rgba(255,255,255,.14); border-radius: 50%; background: none; color: rgba(255,255,255,.38); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: border-color .18s, color .18s; }
+    .jm-drawer-close:hover { border-color: rgba(255,255,255,.45); color: #fff; }
+    .jm-drawer-eyebrow { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.22); margin-bottom: 10px; }
+    .jm-drawer-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(24px, 2.8vw, 36px); font-weight: 300; line-height: 1.12; letter-spacing: -.015em; }
+    .jm-drawer-nav { display: flex; gap: 8px; margin-top: 20px; }
+    .jm-drawer-nav-btn { display: flex; align-items: center; gap: 8px; background: none; border: 1px solid rgba(255,255,255,.1); color: rgba(255,255,255,.35); font-family: 'DM Sans', sans-serif; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; padding: 6px 14px; border-radius: 100px; cursor: pointer; transition: border-color .18s, color .18s; }
+    .jm-drawer-nav-btn:hover { border-color: rgba(255,255,255,.3); color: rgba(255,255,255,.7); }
+    .jm-drawer-nav-btn:disabled { opacity: .25; cursor: default; pointer-events: none; }
+    .jm-drawer-body { flex: 1; overflow-y: auto; padding: 36px 44px 60px; display: flex; flex-direction: column; gap: 34px; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.1) transparent; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; touch-action: pan-y; }
+    .jm-drawer-body::-webkit-scrollbar { width: 4px; }
+    .jm-drawer-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); border-radius: 2px; }
+    .jm-section-label { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.18); margin-bottom: 14px; }
+    .jm-actions { counter-reset: jm-action; display: flex; flex-direction: column; gap: 10px; }
+    .jm-action-item { display: flex; gap: 14px; align-items: flex-start; counter-increment: jm-action; font-size: 13px; line-height: 1.65; color: rgba(255,255,255,.55); }
+    .jm-action-item::before { content: counter(jm-action, decimal-leading-zero); font-family: 'Cormorant Garamond', serif; font-size: 13px; color: rgba(255,255,255,.18); flex-shrink: 0; padding-top: 1px; min-width: 22px; }
+    .jm-thoughts { display: flex; flex-direction: column; gap: 10px; }
+    .jm-thought-item { font-family: 'Cormorant Garamond', serif; font-size: 15px; font-style: italic; font-weight: 300; line-height: 1.55; color: rgba(255,255,255,.45); padding-left: 14px; border-left: 1px solid rgba(255,255,255,.08); }
+    .jm-pain-list { display: flex; flex-direction: column; gap: 10px; }
+    .jm-pain-item { display: flex; gap: 14px; align-items: flex-start; padding: 13px 16px; background: rgba(255,255,255,.04); border-left: 2px solid rgba(255,255,255,.09); }
+    .jm-pain-item-num { font-family: 'Cormorant Garamond', serif; font-size: 13px; color: rgba(255,255,255,.18); flex-shrink: 0; min-width: 20px; }
+    .jm-pain-item-text { font-size: 13px; line-height: 1.65; color: rgba(255,255,255,.52); overflow-wrap: anywhere; }
+    .jm-opp-list { display: flex; flex-direction: column; gap: 10px; }
+    .jm-opp-item { display: flex; gap: 12px; font-size: 13px; line-height: 1.65; color: rgba(255,255,255,.48); overflow-wrap: anywhere; }
+    .jm-opp-item::before { content: '→'; color: rgba(255,255,255,.18); flex-shrink: 0; }
+    .jm-quote { font-family: 'Cormorant Garamond', serif; font-size: clamp(16px, 1.7vw, 21px); font-weight: 300; font-style: italic; line-height: 1.55; color: rgba(255,255,255,.72); border-left: 1px solid rgba(255,255,255,.14); padding-left: 22px; }
+    .jm-quote-attr { display: block; margin-top: 12px; font-family: 'DM Sans', sans-serif; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.22); font-style: normal; }
+    /* AI opportunities, drawer (dark bg) */
+    .jm-ai-section-label { display: inline-flex; align-items: center; gap: 6px; background: rgba(201,137,78,0.14); border: 1px solid rgba(201,137,78,0.3); color: #E0A060; padding: 4px 11px; border-radius: 999px; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; margin-bottom: 14px; }
+    .jm-ai-section-label svg { flex-shrink: 0; }
+    .jm-ai-card-list { display: flex; flex-direction: column; gap: 10px; }
+    .jm-ai-card-dark { background: rgba(201,137,78,0.06); border: 1px solid rgba(201,137,78,0.14); padding: 13px 16px; }
+    .jm-ai-card-dark-title { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: rgba(201,137,78,0.65); margin-bottom: 8px; }
+    .jm-ai-card-dark-copy { font-size: 13px; line-height: 1.65; color: rgba(255,255,255,.46); }
+    /* AI badge on stage cards */
+    .jm-stage-ai-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: #C9894E; margin-top: 8px; }
+    .jm-stage-ai-badge svg { flex-shrink: 0; }
+    .jm-stage.is-active .jm-stage-ai-badge { color: rgba(201,137,78,.5); }
+    /* AI opportunities, static section (light bg) */
+    #c2t-ai { padding: 80px 64px; border-bottom: 1px solid rgba(26,26,26,.08); }
+    .c2t-ai-pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(201,137,78,0.12); border: 1px solid rgba(201,137,78,0.28); color: #8B5A1A; padding: 5px 12px; border-radius: 999px; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; margin-bottom: 20px; }
+    .c2t-ai-pill svg { flex-shrink: 0; color: #C9894E; }
+    .c2t-ai-intro { font-size: 14px; line-height: 1.82; color: #6B6560; max-width: 640px; margin-bottom: 28px; }
+    .c2t-ai-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .c2t-ai-card { background: #FAFAF9; border: 1px solid rgba(26,26,26,.08); padding: 18px 20px; }
+    .c2t-ai-card-title { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: rgba(26,26,26,.42); margin-bottom: 8px; }
+    .c2t-ai-card-copy { font-size: 13px; line-height: 1.65; color: rgba(29,26,23,.74); }
+
+    /* Reveal states */
+    .js-ready .reveal { opacity: 0; transform: translateY(24px); }
+    .js-ready .reveal-left { opacity: 0; transform: translateX(-20px); }
+
+    @media (max-width: 1100px) {
+      nav, .hero-content, #overview, #challenge, #research-scale, #process, #outcomes, #insights, #methodology, #c2t-ai, footer { padding-left: 32px; padding-right: 32px; }
+      .stats-bar, .process-steps, .outcomes-grid { grid-template-columns: repeat(2, 1fr); }
+      #overview, #challenge, #research-scale { grid-template-columns: 1fr; gap: 32px; }
+      .photo-triptych, .trial-showcase, #next-work { height: auto; grid-template-columns: 1fr; }
+      .triptych-cell, .trial-photo-cell, .next-img-wrap { min-height: 280px; }
+      .trial-phones2-cell { min-height: 360px; }
+      .screen-mosaic-header { padding-left: 32px; padding-right: 32px; }
+      .screen-mosaic { height: 420px; }
+      .mosaic-row { gap: 12px; }
+      .mosaic-screen { width: 174px; }
+      .pipeline-stages { grid-template-columns: repeat(3, 1fr); }
+      .pipeline-stage::after { display: none; }
+      .insight { grid-template-columns: 40px 1fr; gap: 20px; }
+      .insight-body { grid-column: 2; }
+      .jm-stages { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 820px) {
+      nav { position: static; flex-direction: column; align-items: flex-start; gap: 18px; padding: 24px 20px; }
+      .nav-links { flex-wrap: wrap; gap: 16px 20px; }
+      .hero-content, #overview, #challenge, #research-scale, #process, #outcomes, #insights, #methodology, #c2t-ai, #pipeline, footer { padding-left: 20px; padding-right: 20px; }
+      .c2t-ai-grid { grid-template-columns: 1fr; }
+      #hero { height: auto; min-height: 70vh; }
+      .hero-content { padding-bottom: 44px; }
+      .hero-title { font-size: clamp(40px, 11vw, 64px); }
+      .hero-meta { gap: 10px 14px; }
+      .stats-bar, .rs-grid, .process-steps, .outcomes-grid { grid-template-columns: 1fr; }
+      .stat, .outcome, .step { padding-left: 24px; padding-right: 24px; }
+      .dw-pair { grid-template-columns: 1fr; gap: 2px; }
+      .screen-mosaic { height: 340px; }
+      .mosaic-row { gap: 10px; }
+      .mosaic-screen { width: 150px; }
+      .pipeline-stages { grid-template-columns: repeat(2, 1fr); }
+      .insight { grid-template-columns: 1fr; }
+      .insight-body { grid-column: auto; }
+      .insight-data-grid, .f-links { flex-wrap: wrap; }
+      #next-work { grid-template-columns: 1fr; height: auto; }
+      .next-info { padding: 32px 20px; }
+      .atmo-divider { height: 400px; }
+      .atmo-overlay { padding: 0 28px; }
+      .process-header, .jm-header { flex-direction: column; align-items: flex-start; }
+      .jm-header { margin-bottom: 28px; }
+      .jm-persona-pill { margin-left: 0; white-space: normal; }
+      .jm-curve-wrap { height: 52px; }
+      .jm-stages { grid-template-columns: 1fr; }
+      #journey-map { padding-left: 20px; padding-right: 20px; }
+      .jm-stage { padding: 28px 20px 32px; }
+      .jm-stage-num { font-size: 52px; top: 8px; right: 12px; }
+      .jm-stage-action { font-size: 12px; }
+      .jm-stage-meta { gap: 10px; }
+      .jm-friction { flex-wrap: wrap; row-gap: 8px; }
+      .jm-friction-label { white-space: normal; }
+      .jm-drawer { width: 100vw; max-width: none; }
+      .jm-drawer-header { padding: 36px 20px 20px; }
+      .jm-drawer-body { padding: 24px 20px 44px; gap: 28px; }
+      .jm-drawer-nav { flex-wrap: wrap; }
+      .trial-phones2-cell { padding: 24px 16px; }
+      .trial-phones2-cell img { max-width: 100%; }
+      .jm-action-item, .jm-pain-item, .jm-opp-item { font-size: 12px; }
+      footer { flex-direction: column; align-items: flex-start; gap: 16px; padding-top: 32px; padding-bottom: 32px; }
+    }
+
+    @media (max-width: 640px) {
+      nav { padding: 20px 16px; }
+      .hero-content, #overview, #challenge, #research-scale, #process, #outcomes, #insights, #methodology, #pipeline, footer, #journey-map { padding-left: 16px; padding-right: 16px; }
+      #hero { min-height: 62vh; }
+      .hero-content { padding-bottom: 36px; }
+      .hero-meta { flex-direction: column; align-items: flex-start; gap: 8px; margin-bottom: 18px; }
+      .hero-title { font-size: clamp(34px, 12vw, 54px); line-height: .98; }
+      .stats-bar, .rs-grid, .process-steps, .outcomes-grid, .pipeline-stages { grid-template-columns: 1fr; }
+      .stat, .outcome, .step, .rs-cell, .pipeline-stage { padding-left: 20px; padding-right: 20px; }
+      .process-intro, .dw-intro { margin-top: 20px; margin-bottom: 32px; font-size: 15px; line-height: 1.75; }
+      .screen-mosaic { height: 300px; }
+      .mosaic-row { gap: 8px; }
+      .mosaic-screen { width: 132px; }
+      .atmo-divider { height: 320px; }
+      .atmo-overlay { padding: 0 20px; }
+      .atmo-quote { font-size: clamp(20px, 6vw, 30px); }
+      .trial-screen-cell { min-height: 300px; padding: 28px 20px; }
+      .trial-screen-cell img { max-height: 320px; }
+      .next-info { padding: 28px 16px; }
+      .next-img-wrap { min-height: 220px; }
+      .jm-curve-wrap { height: 44px; }
+      .jm-curve-bar { margin-bottom: 10px; }
+      .jm-persona-pill { width: 100%; justify-content: flex-start; }
+      .jm-drawer-header { padding: 28px 16px 18px; }
+      .jm-drawer-body { padding: 20px 16px 36px; gap: 24px; }
+      .jm-drawer-nav { gap: 6px; }
+      .jm-drawer-nav-btn { width: 100%; justify-content: center; }
+      .jm-action-item, .jm-pain-item, .jm-opp-item { font-size: 11px; }
+      .insight-data-grid { gap: 18px; flex-direction: column; }
+      .methods-grid { gap: 8px; }
+      .method-pill { width: 100%; text-align: center; }
+      .f-links { gap: 18px; }
+    }
+
+    @media (max-width: 480px) {
+      nav { gap: 14px; }
+      .nav-links { gap: 12px 16px; }
+      .hero-title { font-size: clamp(30px, 13vw, 46px); }
+      .section-eyebrow, .detail-label, .pipeline-label, .rs-label, .outcomes-label { letter-spacing: .18em; }
+      .stat, .outcome, .step, .rs-cell, .pipeline-stage { padding-top: 22px; padding-bottom: 22px; }
+      .dw-cell-caption { font-size: 10px; line-height: 1.5; letter-spacing: .08em; padding: 12px 0 14px; }
+      .stat-num, .outcome-num { margin-bottom: 10px; }
+      .process-img-wrap { margin-top: 40px; }
+      .challenge-pullquote, .atmo-quote { hyphens: auto; }
+      .jm-stage { padding: 24px 18px 30px; }
+      .jm-stage-num { font-size: 46px; }
+      .jm-stage-name { font-size: 15px; }
+      .jm-drawer-title { font-size: 24px; }
+      .jm-curve-bar span { font-size: 9px; }
+      .f-copy { text-align: left; }
+    }
+
+    @media (hover: none), (pointer: coarse) {
+      html { cursor: auto; }
+      #cursor, #cursor-ring { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<nav>
+  <a href="index.html" class="nav-mark">Chris Pennell</a>
+  <ul class="nav-links">
+    <li><a href="index.html#work">Work</a></li>
+    <li><a href="about.html">About</a></li>
+      <li><a href="https://calendly.com/cp86-rice/30min" target="_blank">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<section id="hero">
+  <div class="hero-img-wrap">
+    <img class="hero-img" id="heroParallax"
+      src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1800&auto=format&fit=crop&q=80"
+      alt="Clinical research environment">
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-meta">
+      <span class="hero-tag">Clinical Research · Patient Experience</span>
+      <span class="hero-lead">MVP strategy · 10 pathways · pre-seed prototype</span>
+    </div>
+    <h1 class="hero-title">
+      Connect2Trials<br>
+      <em>The Gap Between Patients and Trials</em>
+    </h1>
+  </div>
+</section>
+
+<!-- Stats bar -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-num reveal">80%</div>
+    <div class="stat-label">Of clinical trials fail to meet enrollment targets on time</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num reveal">9</div>
+    <div class="stat-label">Stages mapped from first interest to site enrollment</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num reveal">10</div>
+    <div class="stat-label">Priority UX pathways designed for MVP</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num reveal">2</div>
+    <div class="stat-label">Core platform experiences: find a trial, join the community</div>
+  </div>
+</div>
+
+<!-- Photo triptych -->
+<div class="photo-triptych">
+  <div class="triptych-cell">
+    <img src="https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=900&auto=format&fit=crop&q=80"
+      alt="Clinical researcher reviewing trial data" data-parallax-triptych>
+    <span class="triptych-caption">Research</span>
+  </div>
+
+  <div class="triptych-cell">
+    <img src="images/C2T/c2t hand.png"
+      alt="Connect2Trials: hand holding phone" data-parallax-triptych>
+    <span class="triptych-caption">Community</span>
+  </div>
+</div>
+
+<!-- Overview -->
+<section id="overview">
+    <div class="overview-problem reveal">
+	      Clinical trial enrollment fails when patients cannot understand their options and site teams cannot find qualified candidates efficiently. Connect2Trials needed an MVP that served both sides without turning the patient experience into a sponsor workflow. I shaped 10 priority UX pathways across search, education, prescreening, community, and sponsor/site coordination. The prototype helped the team raise a pre-seed round.
+    </div>
+  <div class="project-details reveal">
+    <div class="detail-group">
+      <div class="detail-label">Client</div>
+      <div class="detail-value">Connect2Trials - clinical trial patient matching and community engagement platform</div>
+    </div>
+    <div class="detail-group">
+      <div class="detail-label">Engagement</div>
+      <div class="detail-value">Principal UX Researcher &amp; Product Strategist - product definition, UX design, prototype testing</div>
+    </div>
+    <div class="detail-group">
+      <div class="detail-label">Scope</div>
+      <div class="detail-value">0-to-1 mobile platform - patient lifecycle mapping, 10 priority UX pathways, lo-fi prototype testing, MVP definition</div>
+    </div>
+    <div class="detail-group">
+      <div class="detail-label">Platform</div>
+      <div class="detail-value">iOS mobile app - trial search &amp; qualification, community groups, health literacy library, sponsor-patient messaging</div>
+    </div>
+    <div class="detail-group">
+      <div class="detail-label">Timeline</div>
+      <div class="detail-value">2021</div>
+    </div>
+    <div class="detail-group">
+      <div class="detail-label">Lead</div>
+      <div class="detail-value">Chris Pennell - UX Research Lead &amp; Product Strategist</div>
+    </div>
+  </div>
+</section>
+
+<!-- Mosaic showcase -->
+<section class="screen-mosaic-section">
+  <div class="screen-mosaic-header">
+  </div>
+  <div class="screen-mosaic" aria-label="Connect2Trials screen mosaic">
+    <div class="mosaic-track">
+      <!-- row 1: 8 unique × 2 for seamless loop -->
+      <div class="mosaic-row">
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%201.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%201a.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%202.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%202a.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%203.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%203a.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%204.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%204a.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%201.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%201a.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%202.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%202a.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%203.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%203a.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%204.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%204a.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+      </div>
+      <!-- row 2: offset start for stagger -->
+      <div class="mosaic-row">
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%203.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%203a.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%204.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%204a.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%201.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%201a.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%202.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%202a.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%203.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%203a.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%204.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%204a.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%201.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%201a.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%202.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%202a.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+      </div>
+      <!-- row 3: different offset for variety -->
+      <div class="mosaic-row">
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%202.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%202a.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%204.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%204a.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%201.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%203.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%201a.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%203a.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%202.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%202a.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%204.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%204a.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%201.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%203.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%201a.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/C2T/iPhone%20C2T%20Normalized/Iphone%2014%20-%203a.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+      </div>
+    </div>
+    <div class="mosaic-fade"></div>
+  </div>
+</section>
+
+<!-- Challenge -->
+<section id="challenge">
+  <div class="section-eyebrow reveal-left">01 The Challenge</div>
+    <div class="challenge-body reveal">
+	      <p>Clinical trials routinely miss enrollment targets. The stakes fall on both sides: patients who could benefit from research never find it, and sponsors lose time when qualified candidates do not reach sites fast enough. The product problem was translation and qualification: help patients understand their options, then help sites focus on candidates worth the coordinator call.</p>
+	      <p>The platform had two users with different stakes. Patients needed a clear way to find and evaluate studies. Sponsors needed enrollment to move faster. If the experience only helped one side, it would fail both.</p>
+	      <p>The MVP covered 10 UX pathways, from trial search through community support. The prescreening flow filtered candidates before the CRC call. In prototype testing, it eliminated 60%+ of unsuitable leads, pointing to coordinator workload reductions of 12+ hours per week per site. At a burdened rate of $40-50/hr, that projects to roughly $25K per site per year in recovered coordinator time. This figure is extrapolated from prototype testing, not post-deployment measurement.</p>
+    </div>
+  <div class="challenge-pullquote reveal">
+	    Patients had four questions before anything else registered. What is this for. Who is it for. What would I have to do. Will I be compensated. In prototype testing, almost nothing else came up until those were answered.
+    <span class="challenge-pullquote-attr">Research finding - Connect2Trials lo-fi prototype testing sessions</span>
+  </div>
+</section>
+
+<!-- Patient Journey Map -->
+<section id="journey-map">
+  <div class="jm-header">
+    <div>
+      <div class="section-eyebrow">Patient Perspective  All 9 Stages</div>
+      <h2 class="jm-title">The Patient <em>Enrollment Journey</em></h2>
+    </div>
+    <div class="jm-persona-pill">
+      <span class="jm-persona-dot"></span>
+    </div>
+  </div>
+  <div class="jm-curve-bar">
+    <span>High friction</span>
+  </div>
+  <div class="jm-curve-wrap">
+    <svg class="jm-curve-svg" id="jm-curve-svg" viewBox="0 0 1000 64" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="jm-curve-fill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#CC2222" stop-opacity=".08"/>
+          <stop offset="100%" stop-color="#CC2222" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path id="jm-curve-area" fill="url(#jm-curve-fill)" stroke="none"/>
+      <path id="jm-curve-line" fill="none" stroke="#CC2222" stroke-width="2" stroke-dasharray="8 5" stroke-linecap="round"/>
+    </svg>
+      <div class="jm-dot-tooltip" id="jm-dot-tooltip">
+        <div class="jm-dot-tip-step" id="jm-dot-tip-step"></div>
+        <div class="jm-dot-tip-name" id="jm-dot-tip-name"></div>
+        <div class="jm-dot-tip-summary" id="jm-dot-tip-summary"></div>
+        <div class="jm-dot-tip-friction" id="jm-dot-tip-friction"></div>
+        <div class="jm-dot-tip-cta">Click for full breakdown →</div>
+      </div>
+      <div id="jm-dot-pins"></div>
+  </div>
+  <div class="jm-stages" id="jm-stages"></div>
+  <div class="jm-legend">
+    <span class="jm-legend-label">Reading key</span>
+    <span class="jm-legend-item">More filled dots = more friction</span>
+    <span class="jm-legend-item"><span class="jm-legend-swatch" style="background:#C9894E"></span>Medium friction</span>
+    <span class="jm-legend-item"><span class="jm-legend-swatch" style="background:#e0471b"></span>High friction</span>
+    <span class="jm-legend-item"><span class="jm-legend-swatch" style="background:#d10000"></span>Critical friction</span>
+    <span class="jm-legend-item" style="color:#C9894E"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 1 7 7c0 2.76-1.6 5.17-4 6.36V17H9v-1.64C6.6 14.17 5 11.76 5 9a7 7 0 0 1 7-7z"/></svg>AI opportunities in detail</span>
+  </div>
+</section>
+
+<!-- Research scale strip -->
+<section id="research-scale">
+  <div class="rs-label reveal-left">Design Scope</div>
+  <div class="rs-grid">
+    <div class="rs-cell reveal">
+      <span class="rs-num">10</span>
+	      <span class="rs-desc">Priority UX pathways defined for the MVP, from health literacy to sponsor communication</span>
+    </div>
+    <div class="rs-cell reveal">
+      <span class="rs-num">2</span>
+      <span class="rs-desc">Platform experiences designed in parallel: patient app and sponsor/site admin</span>
+    </div>
+    <div class="rs-cell reveal">
+      <span class="rs-num">3</span>
+      <span class="rs-desc">User types designed for: patients seeking trials, clinical research professionals, and trial sponsors</span>
+    </div>
+    <div class="rs-cell reveal">
+      <span class="rs-num">4</span>
+	      <span class="rs-desc">Patient lifecycle phases mapped from diagnosis through post-trial support</span>
+    </div>
+  </div>
+</section>
+
+<!-- Process -->
+<section id="process">
+  <div class="insights-header">
+    <div class="section-eyebrow reveal">02 Research and Delivery</div>
+    <h2 class="insights-h reveal">From discovery to a prototype investors could understand</h2>
+  </div>
+  <div class="insights-grid">
+
+    <div class="insight">
+      <span class="insight-idx reveal">01</span>
+		      <div class="insight-label reveal">The founding scope was too wide to launch. Research narrowed the MVP to what the team could actually prove.</div>
+      <div class="insight-body reveal">
+		        <p>Mapping the patient journey made the friction hard to miss: unclear language, manual recruitment, and a long quiet stretch between enrollment and participation. Interviews with PIs and CRCs sharpened the operational constraint. The founding team wanted to launch with multiple sponsors at once; the system was not ready for that. My recommendation was to anchor on one design partner first, then scale.</p>
+        <div class="dw-artifact" style="margin-top: 28px;">
+          <img src="images/C2T/Process_C2T.png" alt="Connect2Trials process board showing the functional and content requirements mapped across the product workflow">
+          <div class="process-img-caption">Process_C2T: functional and content requirements mapped across the product workflow.</div>
+        </div>
+        <div class="insight-data-grid" style="margin-top: 24px;">
+          <div class="insight-data-point">
+            <span class="insight-data-num">10</span>
+            <span class="insight-data-label">Priority UX pathways defined for MVP</span>
+          </div>
+          <div class="insight-data-point">
+            <span class="insight-data-num">9</span>
+            <span class="insight-data-label">Stages from first interest to enrollment</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight">
+      <span class="insight-idx reveal">02</span>
+		      <div class="insight-label reveal">The patient app and sponsor tools had to work as one enrollment system.</div>
+      <div class="insight-body reveal">
+		        <p>Sponsor tools for recruitment campaigns, community moderation, and prescreener management shaped what the patient app had to support. The reverse was true too. Trial detail pages had to answer the questions patients asked first: condition, participation requirements, who the study was for, and whether it paid. The prescreen moved the first pass out of the CRC call and into a digital survey. Community and education content existed to build enough confidence for the next step.</p>
+        <div class="dw-artifact" style="margin-top: 28px;">
+          <img src="images/C2T/c2t_User Stories.png" alt="Connect2Trials user stories board with requirements and feature mapping">
+	          <div class="process-img-caption">User stories board: the requirements map that turned patient, sponsor, and CRC needs into prioritized product stories.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight">
+      <span class="insight-idx reveal">03</span>
+		      <div class="insight-label reveal">Prototype testing showed that matching was only half the problem. Language was the conversion layer.</div>
+      <div class="insight-body reveal">
+		        <p>Each session tested two flows: find and qualify for a trial, then use the community. PIs, CRCs, and patient-proxy participants ran the same protocol, which let us compare expert and patient reactions directly. Participants kept rewriting trial descriptions in their own words when asked to explain them. The product could not stop at matching; it had to turn clinical vocabulary into language a patient could act on.</p>
+        <div class="insight-verbatim">"Can we help them develop patient-facing language? That was the service hiding inside the product."
+          <div class="insight-verbatim-attr">Research insight - Connect2Trials prototype testing, 2021</div>
+        </div>
+        <div class="process-img-wrap" style="margin-top: 28px;">
+          <img src="images/c2t-wireframes.png" alt="Connect2Trials wireframe progression: from condition picker to community groups to final UI with knowledge and FAQ sections" class="process-img-full">
+          <div class="process-img-caption">Wireframe progression: condition selection into community groups, showing the information architecture evolution from initial concept to testable prototype.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Atmospheric divider -->
+<div class="atmo-divider">
+  <img src="https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?w=1800&auto=format&fit=crop&q=80"
+    alt="Patient and clinical researcher in conversation" id="atmoDividerImg">
+</div>
+
+<!-- Trial detail showcase -->
+<div class="trial-showcase">
+  <div class="trial-photo-cell">
+    <img src="https://images.unsplash.com/photo-1579154204601-01588f351e67?w=1200&auto=format&fit=crop&q=80"
+      alt="Medical professional reviewing clinical trial information" data-parallax-trial>
+  </div>
+  <div class="trial-phones2-cell">
+    <img src="images/C2T/c2t-phones2.png" alt="Connect2Trials app: trial detail screen and three-phone overview showing search, detail, and community">
+  </div>
+</div>
+
+<!-- Outcomes -->
+<section id="outcomes">
+  <div class="outcomes-ghost">Results</div>
+  <div class="outcomes-inner">
+    <div class="outcomes-label">03 What Was Built</div>
+    <div class="outcomes-grid">
+      <div class="outcome">
+        <div class="outcome-num">Find</div>
+		        <div class="outcome-desc">Trial search by condition and location, with detail pages written in patient language instead of protocol vocabulary.</div>
+      </div>
+      <div class="outcome">
+        <div class="outcome-num">Qualify</div>
+	        <div class="outcome-desc">Digitized prescreening that filtered candidates before the CRC call, reducing time spent on leads unlikely to qualify.</div>
+      </div>
+      <div class="outcome">
+        <div class="outcome-num">Connect</div>
+		        <div class="outcome-desc">Condition-specific communities with health literacy content, advocacy-group partnerships, sponsor-patient forums, and FAQs.</div>
+      </div>
+    </div>
+    <img src="images/c2t-phones.png" alt="Connect2Trials: trial search, trial detail, and community screens" class="outcomes-dashboard reveal">
+	    <div class="outcomes-dashboard-caption">Three screens, three moments: search without database logic, a detail page that answers the first call, and a community layer patients did not have before.</div>
+    <div style="border-top: 1px solid rgba(255,255,255,.08); padding-top: 32px; margin-bottom: 32px;">
+      <div style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(18px, 2vw, 24px); line-height: 1.5; color: rgba(255,255,255,.7); max-width: 800px; margin-bottom: 16px;">"He went above and beyond our initial scope and delivered a clickable prototype we could show potential investors. The work helped us win a pre-seed round for the product Chris designed."</div>
+      <div style="font-size: 11px; letter-spacing: .04em; color: rgba(255,255,255,.25);">Abish Ghimire - Founder, Connect2Trials</div>
+    </div>
+    <div class="outcomes-footnote">80% enrollment failure rate is a widely cited industry figure in clinical research. The 9-stage map covers the patient journey from initial interest through site enrollment. Platform scope reflects MVP definition across 10 priority UX pathways for the patient app and sponsor/admin tools.</div>
+  </div>
+</section>
+
+<!-- Insights -->
+<section id="insights">
+  <div class="insights-header">
+    <div class="section-eyebrow reveal">04 Key Research Findings</div>
+    <h2 class="insights-h reveal">What the work revealed</h2>
+  </div>
+  <div class="insights-grid">
+
+    <div class="insight">
+      <span class="insight-idx reveal">01</span>
+		      <div class="insight-label reveal">ClinicalTrials.gov exposes trial information. It does not make the decision legible for patients.</div>
+      <div class="insight-body reveal">
+		        <p>The trials are technically public, but patients often cannot use the information without clinical vocabulary they do not have. ClinicalTrials.gov uses protocol language, assumes people already know what to search for, and rarely gives a plain-language summary. The design problem was translation: take what is public and make it readable by the person it is supposed to help.</p>
+        <div class="insight-verbatim">"What is the minimum and most engaging information we can give them to get them to start the qualification flow?"
+          <div class="insight-verbatim-attr">Research question - Connect2Trials prototype testing protocol</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight">
+      <span class="insight-idx reveal">02</span>
+		      <div class="insight-label reveal">Patients needed the trial to feel understandable before qualification felt safe.</div>
+      <div class="insight-body reveal">
+		        <p>Participants who reached "See if you Qualify" before understanding the trial basics, compensation, and consent process stopped there. The button felt like a commitment before they had enough information. The community and knowledge architecture did real conversion work by answering the questions that made action feel safe.</p>
+        <div class="insight-data-grid">
+          <div class="insight-data-point">
+            <span class="insight-data-num">9</span>
+            <span class="insight-data-label">Stages from interest to enrolled</span>
+          </div>
+          <div class="insight-data-point">
+            <span class="insight-data-num">10</span>
+            <span class="insight-data-label">UX pathways designed for MVP</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight">
+      <span class="insight-idx reveal">03</span>
+		      <div class="insight-label reveal">The brief underplayed the clinical research coordinator, where much of the sponsor value lived.</div>
+      <div class="insight-body reveal">
+		        <p>As we learned more about enrollment, the most useful intervention moved beyond the patient experience. CRCs were buried in manual eligibility checks, unqualified calls, and spreadsheet-based recruitment. Every patient who prescreened digitally before a CRC call was one call the coordinator did not have to make. Splitting intake into a digital survey plus a one-on-one call became a business model decision as much as a UX decision.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- AI Opportunities -->
+<section id="c2t-ai">
+  <div class="c2t-ai-pill"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 1 7 7c0 2.76-1.6 5.17-4 6.36V17H9v-1.64C6.6 14.17 5 11.76 5 9a7 7 0 0 1 7-7z"/></svg>AI opportunities</div>
+	  <p class="c2t-ai-intro">The research showed three places where patients lose momentum: matching, translation, and follow-up. Too much of that work depends on coordinator availability and whether someone can decode clinical language on their own.</p>
+  <div class="c2t-ai-grid reveal">
+    <div class="c2t-ai-card">
+      <div class="c2t-ai-card-title">Personalized trial matching</div>
+	      <div class="c2t-ai-card-copy">Patients should not have to search like researchers. Matching can start with condition, location, eligibility criteria, and demographics, then explain why a trial is worth a closer look.</div>
+    </div>
+    <div class="c2t-ai-card">
+      <div class="c2t-ai-card-title">Plain-language consent generation</div>
+	      <div class="c2t-ai-card-copy">ICF language needs a plain-English companion beside the source text. Consent is already hard enough. People should not have to decode regulatory prose alone.</div>
+    </div>
+    <div class="c2t-ai-card">
+      <div class="c2t-ai-card-title">Retention and dropout prediction</div>
+	      <div class="c2t-ai-card-copy">The system can look for signs that someone is drifting and prompt a check-in before the trial loses them. Clinical engagement happens over months, not one app session.</div>
+    </div>
+  </div>
+</section>
+
+<!-- Methodology -->
+<section id="methodology">
+  <div class="section-eyebrow reveal">Methods Used</div>
+  <div class="methods-grid">
+    <span class="method-pill">Patient lifecycle mapping</span>
+    <span class="method-pill">Stakeholder interviews</span>
+    <span class="method-pill">Clinical research professional research</span>
+    <span class="method-pill">Lo-fi prototype testing</span>
+    <span class="method-pill">Information architecture design</span>
+    <span class="method-pill">Content strategy</span>
+    <span class="method-pill">User story writing</span>
+    <span class="method-pill">Dual-sided platform design</span>
+    <span class="method-pill">HOOKED model for engagement</span>
+    <span class="method-pill">Prescreening flow design</span>
+    <span class="method-pill">Community architecture</span>
+    <span class="method-pill">Task-based usability testing</span>
+  </div>
+</section>
+
+<!-- Next Work -->
+<a href="canyon-ranch.html" id="next-work">
+  <div class="next-img-wrap">
+    <img class="next-img"
+      src="images/cr-hero.png"
+      alt="Canyon Ranch digital guest experience">
+  </div>
+  <div class="next-info">
+    <div class="next-eyebrow">Next Case Study</div>
+    <h3 class="next-title">Canyon Ranch<br>Digital Experience</h3>
+    <span class="next-arrow">View case study</span>
+  </div>
+</a>
+
+<!-- Footer -->
+<footer>
+  <a href="index.html" class="f-mark">Chris Pennell</a>
+  <span class="f-copy">&copy; 2026 Chris Pennell</span>
+  <ul class="f-links">
+    <li><a href="index.html#work">Work</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="https://calendly.com/cp86-rice/30min" target="_blank">Contact</a></li>
+  </ul>
+</footer>
+
+<!-- Journey map overlay + drawer -->
+<div class="jm-overlay" id="jm-overlay"></div>
+<div class="jm-drawer" id="jm-drawer" role="dialog" aria-modal="true" aria-labelledby="jm-drawer-title-el">
+  <div class="jm-drawer-header">
+    <button class="jm-drawer-close" id="jm-drawer-close" aria-label="Close">&#x2715;</button>
+    <div class="jm-drawer-eyebrow" id="jm-drawer-eyebrow-el"></div>
+    <div class="jm-drawer-title" id="jm-drawer-title-el" tabindex="-1"></div>
+    <div class="jm-drawer-nav">
+      <button class="jm-drawer-nav-btn" id="jm-btn-prev">&#8592; Prev</button>
+      <button class="jm-drawer-nav-btn" id="jm-btn-next">Next &#8594;</button>
+    </div>
+  </div>
+  <div class="jm-drawer-body" id="jm-drawer-body"></div>
+</div>
+
+<script>
+  const supportsCustomCursor = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (supportsCustomCursor) {
+    document.documentElement.classList.add('has-custom-cursor');
+  }
+
+  document.body.classList.add('js-ready');
+  gsap.registerPlugin(ScrollTrigger);
+
+  let lenis;
+  try {
+    lenis = new Lenis({ lerp: 0.08, smoothWheel: true });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+    gsap.ticker.lagSmoothing(0);
+  } catch(e) {
+    console.warn('Lenis init failed', e);
+  }
+
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  (function loop() {
+    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    if (cursor) { cursor.style.left = mx + 'px'; cursor.style.top = my + 'px'; }
+    if (ring) { ring.style.left = rx + 'px'; ring.style.top = ry + 'px'; }
+    requestAnimationFrame(loop);
+  })();
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => { if (cursor) { cursor.style.width = '20px'; cursor.style.height = '20px'; } });
+    el.addEventListener('mouseleave', () => { if (cursor) { cursor.style.width = '8px'; cursor.style.height = '8px'; } });
+  });
+
+  // Hero parallax
+  const heroImg = document.getElementById('heroParallax');
+  if (heroImg) {
+    ScrollTrigger.create({
+      trigger: '#hero', start: 'top top', end: 'bottom top',
+      onUpdate: self => { heroImg.style.transform = `translateY(${self.progress * 15}%)`; }
+    });
+  }
+
+  // Triptych parallax
+  document.querySelectorAll('[data-parallax-triptych]').forEach(img => {
+    gsap.fromTo(img, { y: '-10%' }, {
+      y: '10%', ease: 'none',
+      scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: true }
+    });
+  });
+
+  // Trial photo parallax
+  document.querySelectorAll('[data-parallax-trial]').forEach(img => {
+    gsap.fromTo(img, { y: '-10%' }, {
+      y: '10%', ease: 'none',
+      scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: true }
+    });
+  });
+
+  // Atmo divider parallax
+  const atmoImg = document.getElementById('atmoDividerImg');
+  if (atmoImg) {
+    gsap.fromTo(atmoImg, { y: '-10%' }, {
+      y: '10%', ease: 'none',
+      scrollTrigger: { trigger: '.atmo-divider', start: 'top bottom', end: 'bottom top', scrub: true }
+    });
+  }
+
+  // Reveal animations
+  document.querySelectorAll('.reveal').forEach(el => {
+    ScrollTrigger.create({
+      trigger: el, start: 'top 88%',
+      onEnter: () => gsap.to(el, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' })
+    });
+  });
+  document.querySelectorAll('.reveal-left').forEach(el => {
+    ScrollTrigger.create({
+      trigger: el, start: 'top 88%',
+      onEnter: () => gsap.to(el, { opacity: 1, x: 0, duration: 0.7, ease: 'power2.out' })
+    });
+  });
+</script>
+
+<script>
+/* ── Connect2Trials Journey Map ────────────────────────────────── */
+(function () {
+
+
+  const JOURNEY_DATA = {
+    stages: [
+      {
+        eyebrow: 'Stage 01',
+        name: 'See if you Qualify',
+        sentimentValue: 0.3,
+        sentiment: 'neutral',
+        painSeverity: 3,
+        painLabel: 'Medium',
+        keyAction: 'Discovers C2T; searches trials by condition and location; reads the trial detail page',
+        actions: [
+          'Opens the C2T app; enters condition ("breast cancer") and location',
+          'Browses trial cards with plain-language condition and sponsor summaries',
+          'Reads the trial detail page: what it\'s for, who it\'s for, participation requirements, compensation',
+          'Taps "See if you Qualify"',
+        ],
+        thoughts: [
+          'Is this legitimate? How is this different from ClinicalTrials.gov?',
+          'I don\'t understand half of these eligibility criteria.',
+          'Will I be better off in a study than on my current treatment?',
+        ],
+        painPoints: [
+          'Clinical language still shows up in simplified trial cards; "triple negative ER-, PR-, HER2-" is opaque to most patients',
+          'Compensation display context is unclear: is this income? Does it affect my benefits?',
+          '"See if you Qualify" implies commitment before trust has been established',
+        ],
+        opportunities: [
+          'Health literacy library and FAQs that make the CTA feel safer',
+          '"What happens next" preview on the trial detail page lowers commitment anxiety',
+          'Condition-specific glossary embedded inline beside eligibility criteria',
+        ],
+        aiOpportunities: [
+	          { title: 'Personalized trial matching', copy: 'Match patients by condition, location, eligibility criteria, and demographics, then explain the fit in plain language. Discovery should feel guided, not like a manual database search.' },
+        ],
+        quote: 'What is the minimum and most engaging information we can give them to get them to start the qualification flow?',
+        quoteAttr: 'Research question - C2T prototype testing protocol',
+      },
+      {
+        eyebrow: 'Stage 02',
+        name: 'C2T Prescreen',
+        sentimentValue: -0.4,
+        sentiment: 'neutral',
+        painSeverity: 3,
+        painLabel: 'Medium',
+        keyAction: 'Completes the digital prescreening survey; shares health and eligibility information',
+        actions: [
+          'Answers a structured series of eligibility questions within the app',
+          'Provides health history, current medications, and prior treatment information',
+          'Submits the form and enters a waiting state',
+        ],
+        thoughts: [
+          'Why does an app need to know this much about my medical history?',
+          'Am I going to hear back right away, or is this going to sit somewhere?',
+          'What if I answer a question wrong and disqualify myself?',
+        ],
+        painPoints: [
+          'Health data handoff feels risky because the app does not clearly explain why it needs personal information or where that information goes',
+          'Binary submit-and-wait experience creates anxiety with no interim eligibility feedback',
+          'Timeline after submission is undefined; patients don\'t know when or how they\'ll hear back',
+        ],
+        opportunities: [
+          'Data use explanation during the form, not buried in a legal screen before it',
+          'Real-time eligibility signal where criteria are binary (e.g., age, diagnosis type)',
+          'Clear "what happens next" confirmation screen with specific timeline expectations',
+        ],
+        aiOpportunities: [
+	          { title: 'Real-time eligibility scoring', copy: 'As patients answer prescreen questions, the app can show immediate signals for binary criteria. People should not feel like the form disappeared into a queue.' },
+        ],
+        quote: null,
+        quoteAttr: null,
+      },
+      {
+        eyebrow: 'Stage 03',
+        name: 'Approved',
+        sentimentValue: 1.4,
+        sentiment: 'positive',
+        painSeverity: 1,
+        painLabel: 'Minimal',
+        keyAction: 'Receives approval notification; learns they passed initial digital prescreening',
+        actions: [
+          'Receives push notification and in-app approval message',
+          'Reviews what "approved for prescreening" means in context',
+          'Optionally joins the condition-specific community while waiting for next steps',
+        ],
+        thoughts: [
+          'I qualified. This feels real now.',
+          'Does this mean I\'m definitely going to be in the trial?',
+          'What happens now? Is someone going to call me?',
+        ],
+        painPoints: [
+          'Approval notification creates an emotional high that may outpace the reality of the remaining stages',
+          '"Approved for prescreening" is ambiguous; patients may not understand this is early in a 9-stage process',
+          'No bridge from approval into the community; a high-engagement moment is missed',
+        ],
+        opportunities: [
+          'Post-approval milestone message that celebrates progress while setting realistic expectations',
+          'Immediate community onboarding while motivation is high',
+          'Enrollment map showing exactly where the patient stands across all 9 stages',
+        ],
+        aiOpportunities: [
+	          { title: 'Engagement risk prediction', copy: 'Approval is the emotional peak before a long wait. The system can flag patients who may drift before the next stage and prompt follow-up while momentum still exists.' },
+        ],
+        quote: null,
+        quoteAttr: null,
+      },
+      {
+        eyebrow: 'Stage 04',
+        name: 'One-on-One Call',
+        sentimentValue: 0.6,
+        sentiment: 'positive',
+        painSeverity: 2,
+        painLabel: 'Low',
+        keyAction: 'Speaks directly with a clinical research coordinator for the first time',
+        actions: [
+          'Schedules the call, often via email or phone outside the app',
+          'Prepares questions; researches the study more thoroughly before the call',
+          'Attends the call; discusses eligibility, logistics, and what participation involves',
+        ],
+        thoughts: [
+          'Will they confirm I\'m a good fit, or is this where they find a reason to say no?',
+          'I have so many questions but I don\'t want to seem difficult.',
+          'I wish I had a list of things I was supposed to ask.',
+        ],
+        painPoints: [
+          'Call scheduling often happens by email or phone, pulling patients out of the app',
+	          'CRCs often have not reviewed the patient\'s prescreen data before the call, so patients get asked the same questions again',
+          'No shared agenda or prep guide; patients don\'t know what to expect or what to ask',
+        ],
+        opportunities: [
+          'In-app call scheduling with CRC calendar integration (no channel switching)',
+          'Pre-call preparation module with common patient questions and what to expect',
+          'Shared post-call summary visible to both patient and CRC before consent begins',
+        ],
+        aiOpportunities: [
+	          { title: 'CRC call brief', copy: 'Build a CRC brief from prescreen data, likely patient questions, and eligibility edge cases, so the call starts with context instead of repeating the form.' },
+        ],
+        quote: null,
+        quoteAttr: null,
+      },
+      {
+        eyebrow: 'Stage 05',
+        name: 'Informed Consent',
+        sentimentValue: -1.6,
+        sentiment: 'negative',
+        painSeverity: 5,
+        painLabel: 'Critical',
+        keyAction: 'Receives and must review the informed consent form, often 20+ pages of regulatory language',
+        actions: [
+          'Receives the ICF document via email, a web portal, or in person at the site',
+          'Reviews the document alone, with family, or with a personal physician',
+          'Signs, which is the moment that feels most like commitment',
+        ],
+        thoughts: [
+          'This is overwhelming. Is this what I signed up for?',
+          'I can withdraw at any time, right? I need to read this again.',
+          'Should I be showing this to a lawyer? I don\'t understand half of it.',
+        ],
+        painPoints: [
+          'ICF documents are written for regulatory compliance, not patient comprehension: dense, long, and anxiety-producing',
+          'No plain-language alternative is required or consistently provided by trial sites',
+          'Signing feels permanent even though voluntary withdrawal is allowed, which can push nervous patients out',
+        ],
+        opportunities: [
+          'Plain-language ICF companion in the app, paired with the source document',
+          'Persistent "You can withdraw at any time" reinforcement throughout the consent experience and beyond',
+          'FAQ-based consent support: "What does this section mean?" prompts beside complex clauses',
+        ],
+        aiOpportunities: [
+	          { title: 'Plain-language consent support', copy: 'Put plain-language explanations beside difficult ICF sections, so patients get help while they read instead of after they get overwhelmed.' },
+        ],
+        quote: 'Will I be better off in a study? Is participation free? Can I have other treatment?',
+        quoteAttr: 'The most-needed patient FAQs - surfaced through prototype testing',
+      },
+      {
+        eyebrow: 'Stage 06',
+        name: 'Confirm Diagnosis',
+        sentimentValue: -0.6,
+        sentiment: 'neutral',
+        painSeverity: 3,
+        painLabel: 'Medium',
+        keyAction: 'Gathers and submits medical records; the site verifies the qualifying diagnosis',
+        actions: [
+          'Requests medical records from existing care providers',
+          'Coordinates record release between care team and trial site',
+          'May require additional imaging or lab work to confirm eligibility criteria',
+        ],
+        thoughts: [
+          'I thought I already told them all of this. Why do they need it again?',
+          'What if my records are at a different hospital? How long is this going to take?',
+          'What if my diagnosis doesn\'t exactly match what they\'re looking for?',
+        ],
+        painPoints: [
+          'Medical record sharing is fragmented; patients have to coordinate between their providers and the trial site',
+          'Patients often don\'t know which specific records are required; instructions are inconsistent across sites',
+          'No review status; patients feel abandoned after submitting materials',
+        ],
+        opportunities: [
+          'Guided medical records checklist specific to the trial\'s eligibility criteria',
+          'In-app status tracker showing document receipt and review progress',
+          'Record-sharing authorization started directly from the app',
+        ],
+        aiOpportunities: [
+	          { title: 'Medical record review', copy: 'Pull eligibility-relevant facts from submitted records, cut manual CRC review time, and show patients what was found and what is still missing.' },
+        ],
+        quote: null,
+        quoteAttr: null,
+      },
+      {
+        eyebrow: 'Stage 07',
+        name: 'Eligibility Confirmation',
+        sentimentValue: -0.9,
+        sentiment: 'negative',
+        painSeverity: 4,
+        painLabel: 'High',
+        keyAction: 'Waits for the site team to complete final eligibility review, the highest-stakes waiting period',
+        actions: [
+          'Waits for the site to complete formal eligibility assessment',
+          'Responds to any follow-up documentation requests',
+          'Receives the final eligibility decision',
+        ],
+        thoughts: [
+          'This is taking a long time. Is that normal?',
+          'I\'ve done everything they asked. What else could disqualify me?',
+          'If the answer is no, what do I do? Is there another trial I can apply to?',
+        ],
+        painPoints: [
+          'Eligibility review timelines are undefined; the wait varies widely by site',
+          'Follow-up contact during this stage is inconsistent; some sites go silent entirely',
+          'Rejection at this stage is emotionally devastating; no alternative pathway is offered within the platform',
+        ],
+        opportunities: [
+          'Timeline transparency with a range estimate ("Most sites complete this review in 7–14 days")',
+          '"Didn\'t qualify for this trial" pathway that immediately surfaces alternative trials matching the patient\'s profile',
+          'In-app CRC messaging to keep contact during the review period',
+        ],
+        aiOpportunities: [
+	          { title: 'Timeline visibility', copy: 'Historical site data can estimate realistic review windows and flag eligibility issues earlier, so the hardest wait does not feel like silence.' },
+        ],
+        quote: null,
+        quoteAttr: null,
+      },
+      {
+        eyebrow: 'Stage 08',
+        name: 'Scheduled Visit',
+        sentimentValue: 1.2,
+        sentiment: 'positive',
+        painSeverity: 2,
+        painLabel: 'Low',
+        keyAction: 'Receives site visit date; confirms logistics; reviews what to expect at the clinical site',
+        actions: [
+          'Receives visit schedule from the coordinator, typically by phone or email',
+          'Confirms transportation, time off work, and companion logistics',
+          'Reviews preparation materials for the first in-person visit',
+        ],
+        thoughts: [
+          'I made it this far. This is really happening.',
+          'What do I need to bring? What will they do at this visit?',
+          'Should I bring my husband? Is there parking? I\'ve never been to this site.',
+        ],
+        painPoints: [
+          'Travel, parking, childcare, and time off are not addressed by the platform, even for eligible patients',
+          'Preparation materials for the visit vary widely by site; no standardized pre-visit experience exists',
+          'Clinical site anxiety is common but rarely addressed before the first visit',
+        ],
+        opportunities: [
+          'Pre-visit preparation guide in the app: what to bring, what to expect, estimated duration, who to call',
+          'Integration with travel or transportation support programs for eligible patients',
+          'Site profile with photos and a "what to expect" narrative to reduce first-visit clinical anxiety',
+        ],
+        aiOpportunities: [
+	          { title: 'Logistics support matching', copy: 'Suggest transportation, lodging, and support programs based on patient location and trial site, without putting more coordination work on the CRC.' },
+        ],
+        quote: null,
+        quoteAttr: null,
+      },
+      {
+        eyebrow: 'Stage 09',
+        name: 'Enrolled',
+        sentimentValue: 1.9,
+        sentiment: 'positive',
+        painSeverity: 3,
+        painLabel: 'Medium',
+        keyAction: 'Completes the first site visit; officially joins the trial cohort',
+        actions: [
+          'Completes first in-person site visit',
+          'Signs any remaining site-specific documents',
+          'Receives trial protocol, schedule, and coordinator contact information',
+          'Joins the active participant community within C2T',
+        ],
+        thoughts: [
+          'I\'m part of something now. I hope this helps me.',
+          'I hope it helps other people too; that\'s part of why I did this.',
+          'I need to make sure I follow through. This is a long commitment.',
+        ],
+        painPoints: [
+          'The emotional high of enrollment is immediately followed by the reality of a months-to-years commitment',
+          'Ongoing communication varies by site; dropout risk rises when patients feel unsupported',
+          'No planned community onboarding at the moment when motivation is highest',
+        ],
+        opportunities: [
+          'Enrollment milestone acknowledgment and immediate link to an active participant community group',
+          'Trial progress tracker so patients can see forward motion across the full study',
+          'Regular milestone check-ins to reduce dropout (the HOOKED model applied to long-arc clinical engagement)',
+        ],
+        aiOpportunities: [
+	          { title: 'Retention and dropout prediction', copy: 'Watch for signs that a patient is drifting during the trial and prompt the right check-in before disengagement becomes permanent.' },
+        ],
+        quote: 'The patients who reached the CRC already knew enough to be worth calling.',
+        quoteAttr: 'Research insight - Connect2Trials platform design, 2021',
+      },
+    ],
+  };
+
+  /* ── Render ──────────────────────────────────────────────────── */
+  const stages      = JOURNEY_DATA.stages;
+  const stagesEl    = document.getElementById('jm-stages');
+  const drawer      = document.getElementById('jm-drawer');
+  const overlay     = document.getElementById('jm-overlay');
+  const drawerClose = document.getElementById('jm-drawer-close');
+  const drawerEyebrow = document.getElementById('jm-drawer-eyebrow-el');
+  const drawerTitle = document.getElementById('jm-drawer-title-el');
+  const drawerBody  = document.getElementById('jm-drawer-body');
+  const btnPrev     = document.getElementById('jm-btn-prev');
+  const btnNext     = document.getElementById('jm-btn-next');
+  const curveLine   = document.getElementById('jm-curve-line');
+  const curveArea   = document.getElementById('jm-curve-area');
+
+    /* Stage cards */
+  function frictionColor(n) {
+    if (n >= 5) return '#d10000';
+    if (n >= 4) return '#e0471b';
+    if (n >= 3) return '#C9894E';
+    return 'rgba(26,26,26,0.14)';
+  }
+
+  stages.forEach(function (stage, i) {
+    var dotsHTML = '';
+    var frictionClass = stage.painSeverity >= 5 ? 'critical' : stage.painSeverity >= 4 ? 'high' : 'medium';
+    for (var d = 0; d < 5; d++) {
+      dotsHTML += '<div class="jm-fdot' + (d < stage.painSeverity ? ' on' : '') + '"></div>';
+    }
+    var el = document.createElement('div');
+    el.className = 'jm-stage';
+    el.style.setProperty('--fc', frictionColor(stage.painSeverity));
+    el.setAttribute('tabindex', '0');
+    el.setAttribute('role', 'button');
+    el.setAttribute('aria-label', 'View details for ' + stage.name);
+    el.innerHTML =
+      '<div class="jm-stage-num">' + String(i + 1).padStart(2, '0') + '</div>' +
+      '<div class="jm-stage-eyebrow">' + stage.eyebrow + '</div>' +
+      '<div class="jm-stage-name">' + stage.name + '</div>' +
+      '<div class="jm-stage-action">' + stage.keyAction + '</div>' +
+      '<div class="jm-stage-meta">' +
+        '<div class="jm-friction">' +
+          '<span class="jm-friction-label">Friction</span>' +
+          '<div class="jm-friction-dots">' + dotsHTML + '</div>' +
+          '<span class="jm-friction-word ' + frictionClass + '">' + stage.painLabel + '</span>' +
+        '</div>' +
+      '</div>' +
+      (stage.aiOpportunities && stage.aiOpportunities.length ? '<div class="jm-stage-ai-badge" title="AI opportunities"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="AI opportunities"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 1 7 7c0 2.76-1.6 5.17-4 6.36V17H9v-1.64C6.6 14.17 5 11.76 5 9a7 7 0 0 1 7-7z"/></svg></div>' : '') +
+      '<div class="jm-open-hint" aria-hidden="true">+</div>';
+    el.addEventListener('click', function () { openDrawer(i); });
+    el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDrawer(i); } });
+    stagesEl.appendChild(el);
+  });
+
+  /* Friction curve, recompute on resize so the line and pins stay aligned */
+  var curveResizeTimer = null;
+  function renderCurve() {
+    var n = stages.length, vw = 1000, vh = 64;
+    var pad = vw / n / 2;
+    var toY = function(severity) {
+      var normalized = ((severity || 1) - 1) / 4;
+      return vh - normalized * (vh - 8) - 4;
+    };
+    var pts = stages.map(function(s, i) {
+      return { x: pad + (i / (n - 1)) * (vw - pad * 2), y: toY(s.painSeverity) };
+    });
+
+    var linePath = 'M ' + pts[0].x + ' ' + pts[0].y;
+    for (var i = 1; i < pts.length; i++) {
+      var cpx = (pts[i - 1].x + pts[i].x) / 2;
+      linePath += ' C ' + cpx + ' ' + pts[i - 1].y + ', ' + cpx + ' ' + pts[i].y + ', ' + pts[i].x + ' ' + pts[i].y;
+    }
+    curveLine.setAttribute('d', linePath);
+    curveArea.setAttribute('d', linePath + ' L ' + pts[pts.length - 1].x + ' ' + vh + ' L ' + pts[0].x + ' ' + vh + ' Z');
+
+    var svgEl  = document.getElementById('jm-curve-svg');
+    var pinsEl = document.getElementById('jm-dot-pins');
+    var dotTooltip = document.getElementById('jm-dot-tooltip');
+    var tipStep    = document.getElementById('jm-dot-tip-step');
+    var tipName    = document.getElementById('jm-dot-tip-name');
+    var tipSummary = document.getElementById('jm-dot-tip-summary');
+    var tipFriction = document.getElementById('jm-dot-tip-friction');
+    pinsEl.innerHTML = '';
+    dotTooltip.classList.remove('is-visible');
+
+    function positionTooltip(xPx) {
+      var wrapW = pinsEl.getBoundingClientRect().width;
+      var tooltipW = 240, halfW = tooltipW / 2;
+      var left = xPx;
+      if (left - halfW < 8) left = halfW + 8;
+      if (left + halfW > wrapW - 8) left = wrapW - halfW - 8;
+      dotTooltip.style.left = left + 'px';
+    }
+
+    pts.forEach(function(pt, i) {
+      var stage = stages[i];
+      var sev   = stage.painSeverity || 1;
+      var frictionClass = sev >= 5 ? 'critical' : sev >= 4 ? 'high' : 'medium';
+
+      var svgRect  = svgEl.getBoundingClientRect();
+      var wrapRect = pinsEl.getBoundingClientRect();
+      var xPx = (svgRect.left - wrapRect.left) + (pt.x / 1000) * svgRect.width;
+      var yPx = (svgRect.top  - wrapRect.top)  + (pt.y / vh)   * svgRect.height;
+
+      var pin = document.createElement('div');
+      pin.className = 'jm-dot-pin';
+      pin.dataset.idx = i;
+      pin.style.left = xPx + 'px';
+      pin.style.top  = yPx + 'px';
+
+      pin.addEventListener('mouseenter', function() {
+        tipStep.textContent    = stage.eyebrow;
+        tipName.textContent    = stage.name;
+        tipSummary.textContent = stage.keyAction;
+        tipFriction.textContent = 'Friction ' + sev + '/5 - ' + stage.painLabel;
+        tipFriction.className  = 'jm-dot-tip-friction ' + frictionClass;
+        positionTooltip(xPx);
+        dotTooltip.classList.add('is-visible');
+      });
+      pin.addEventListener('mouseleave', function() {
+        dotTooltip.classList.remove('is-visible');
+      });
+      pin.addEventListener('click', function() { openDrawer(i); });
+      pinsEl.appendChild(pin);
+    });
+
+    if (activeIdx !== null) {
+      document.querySelectorAll('.jm-stage').forEach(function (el, i) {
+        el.classList.toggle('is-active', i === activeIdx);
+      });
+      document.querySelectorAll('.jm-dot-pin').forEach(function(pin, i) {
+        pin.classList.toggle('is-active', i === activeIdx);
+      });
+    }
+  }
+
+  renderCurve();
+  window.addEventListener('resize', function() {
+    clearTimeout(curveResizeTimer);
+    curveResizeTimer = setTimeout(renderCurve, 120);
+  });
+  window.addEventListener('orientationchange', function() {
+    clearTimeout(curveResizeTimer);
+    curveResizeTimer = setTimeout(renderCurve, 160);
+  });
+
+  /* Drawer */
+  var activeIdx = null;
+  var lockedScrollY = 0;
+  var lastFocusedElement = null;
+
+  function trapFocus(e) {
+    if (e.key !== 'Tab') return;
+    var focusable = Array.prototype.slice.call(drawer.querySelectorAll('button:not([disabled]), [tabindex]:not([tabindex="-1"]), a[href]'));
+    if (!focusable.length) return;
+    var first = focusable[0];
+    var last = focusable[focusable.length - 1];
+    if (e.shiftKey) {
+      if (document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      }
+    } else if (document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
+
+  function openDrawer(idx) {
+    var stage = stages[idx];
+    var wasClosed = activeIdx === null;
+    activeIdx = idx;
+    document.querySelectorAll('.jm-stage').forEach(function (el, i) { el.classList.toggle('is-active', i === idx); });
+    document.querySelectorAll('.jm-dot-pin').forEach(function(pin, i) {
+      pin.classList.toggle('is-active', i === idx);
+    });
+    drawerEyebrow.textContent = stage.eyebrow;
+    drawerTitle.textContent   = stage.name;
+    btnPrev.disabled = idx === 0;
+    btnNext.disabled = idx === stages.length - 1;
+
+    var html = '';
+    if (stage.actions && stage.actions.length) {
+      html += '<div><div class="jm-section-label">What they\'re doing</div><div class="jm-actions">' +
+        stage.actions.map(function (a) { return '<div class="jm-action-item">' + a + '</div>'; }).join('') +
+        '</div></div>';
+    }
+    if (stage.thoughts && stage.thoughts.length) {
+      html += '<div><div class="jm-section-label">What they\'re thinking</div><div class="jm-thoughts">' +
+        stage.thoughts.map(function (t) { return '<div class="jm-thought-item">' + t + '</div>'; }).join('') +
+        '</div></div>';
+    }
+    if (stage.painPoints && stage.painPoints.length) {
+      html += '<div><div class="jm-section-label">Pain points</div><div class="jm-pain-list">' +
+        stage.painPoints.map(function (p, i) {
+          return '<div class="jm-pain-item"><span class="jm-pain-item-num">0' + (i + 1) + '</span><span class="jm-pain-item-text">' + p + '</span></div>';
+        }).join('') + '</div></div>';
+    }
+    if (stage.opportunities && stage.opportunities.length) {
+      html += '<div><div class="jm-section-label">Design opportunities</div><div class="jm-opp-list">' +
+        stage.opportunities.map(function (o) { return '<div class="jm-opp-item">' + o + '</div>'; }).join('') +
+        '</div></div>';
+    }
+    if (stage.aiOpportunities && stage.aiOpportunities.length) {
+      html += '<div><div class="jm-ai-section-label"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 1 7 7c0 2.76-1.6 5.17-4 6.36V17H9v-1.64C6.6 14.17 5 11.76 5 9a7 7 0 0 1 7-7z"/></svg>AI opportunities</div><div class="jm-ai-card-list">' +
+        stage.aiOpportunities.map(function (item) {
+          return '<div class="jm-ai-card-dark"><div class="jm-ai-card-dark-title">' + item.title + '</div><div class="jm-ai-card-dark-copy">' + item.copy + '</div></div>';
+        }).join('') +
+        '</div></div>';
+    }
+    if (stage.quote) {
+      html += '<div><div class="jm-section-label">Voice of user</div>' +
+        '<blockquote class="jm-quote">&ldquo;' + stage.quote + '&rdquo;' +
+        (stage.quoteAttr ? '<cite class="jm-quote-attr">' + stage.quoteAttr + '</cite>' : '') +
+        '</blockquote></div>';
+    }
+    drawerBody.innerHTML = html;
+    drawerBody.scrollTop = 0;
+    gsap.fromTo(drawerBody, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: .26, ease: 'power2.out' });
+    drawer.classList.add('is-open');
+    overlay.classList.add('is-active');
+    if (wasClosed) {
+      lastFocusedElement = document.activeElement;
+      lockedScrollY = window.scrollY;
+      document.documentElement.classList.add('jm-drawer-open');
+      document.body.classList.add('jm-drawer-open');
+      document.body.style.top = '-' + lockedScrollY + 'px';
+      document.addEventListener('keydown', trapFocus);
+    }
+    drawerTitle.focus();
+  }
+
+  function closeDrawer() {
+    var wasOpen = drawer.classList.contains('is-open');
+    drawer.classList.remove('is-open');
+    overlay.classList.remove('is-active');
+    document.querySelectorAll('.jm-stage').forEach(function (el) { el.classList.remove('is-active'); });
+    document.querySelectorAll('.jm-dot-pin').forEach(function(pin) {
+      pin.classList.remove('is-active');
+    });
+    activeIdx = null;
+    if (!wasOpen) return;
+    document.documentElement.classList.remove('jm-drawer-open');
+    document.body.classList.remove('jm-drawer-open');
+    document.body.style.top = '';
+    window.scrollTo(0, lockedScrollY);
+    document.removeEventListener('keydown', trapFocus);
+    if (lastFocusedElement) {
+      lastFocusedElement.focus();
+      lastFocusedElement = null;
+    }
+  }
+
+  drawerClose.addEventListener('click', closeDrawer);
+  overlay.addEventListener('click', closeDrawer);
+  btnPrev.addEventListener('click', function () { if (activeIdx > 0) openDrawer(activeIdx - 1); });
+  btnNext.addEventListener('click', function () { if (activeIdx < stages.length - 1) openDrawer(activeIdx + 1); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { closeDrawer(); return; }
+    if (activeIdx !== null) {
+      if (e.key === 'ArrowRight' && activeIdx < stages.length - 1) openDrawer(activeIdx + 1);
+      if (e.key === 'ArrowLeft'  && activeIdx > 0)                 openDrawer(activeIdx - 1);
+    }
+  });
+
+  window.addEventListener('wheel', function (e) {
+    if (activeIdx === null) return;
+    e.preventDefault();
+    drawerBody.scrollTop += e.deltaY;
+  }, { passive: false });
+
+})();
+</script>
+</body>
+</html>

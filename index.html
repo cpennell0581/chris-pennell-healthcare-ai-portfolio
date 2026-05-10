@@ -1,0 +1,1617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chris Pennell | Healthcare Product &amp; UX Leader</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <style>
+    /* ─── Reset ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      background: #fff;
+      color: #1A1A1A;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: clip;
+      cursor: auto;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; width: 100%; }
+
+    /* ─── Custom Cursor ──────────────────────────────────── */
+    #cursor {
+      display: none;
+      position: fixed;
+      width: 8px; height: 8px;
+      background: #1A1A1A;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s, width 0.3s ease, height 0.3s ease, background 0.3s ease;
+      mix-blend-mode: multiply;
+    }
+    #cursor-ring {
+      display: none;
+      position: fixed;
+      width: 36px; height: 36px;
+      border: 1px solid rgba(26,26,26,0.25);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), width 0.4s, height 0.4s, border-color 0.3s;
+    }
+    .has-custom-cursor {
+      cursor: none;
+    }
+    .has-custom-cursor #cursor,
+    .has-custom-cursor #cursor-ring {
+      display: block;
+    }
+
+    /* ─── Nav ────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 28px 48px;
+      background: rgba(255,255,255,.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(26,26,26,.06);
+    }
+    .nav-wordmark {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #1A1A1A;
+    }
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #1A1A1A;
+      opacity: 0.5;
+      transition: opacity 0.2s;
+    }
+    .nav-links a:hover { opacity: 1; }
+
+    /* ─── Ghost text utility ─────────────────────────────── */
+    .ghost {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(120px, 18vw, 280px);
+      line-height: 0.85;
+      color: rgba(26,26,26,0.035);
+      pointer-events: none;
+      user-select: none;
+      white-space: nowrap;
+      letter-spacing: -0.02em;
+    }
+
+    /* ─── Section labels ─────────────────────────────────── */
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #9A9188;
+      font-weight: 400;
+    }
+
+    /* ─── Hero ───────────────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 48px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-ghost {
+      position: absolute;
+      top: 60%;
+      left: -20px;
+      transform: translateY(-50%);
+      z-index: 0;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(120px, 18vw, 280px);
+      line-height: 0.85;
+      color: rgba(26,26,26,0.035);
+      pointer-events: none;
+      user-select: none;
+      white-space: nowrap;
+      letter-spacing: -0.02em;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+    }
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    .hero-tag {
+      font-size: 11px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: #1A1A1A;
+      border: 1px solid rgba(26,26,26,.2);
+      padding: 5px 14px;
+      border-radius: 100px;
+    }
+    .hero-lead {
+      font-size: 11px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: #9A9188;
+    }
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .hero-eyebrow-line {
+      width: 40px;
+      height: 1px;
+      background: #9A9188;
+    }
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(48px, 7vw, 96px);
+      font-weight: 300;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: #1A1A1A;
+      overflow: hidden;
+    }
+    .h1-line {
+      display: block;
+      overflow: hidden;
+    }
+    .h1-line span {
+      display: block;
+      transform: translateY(110%);
+    }
+    .hero-sub {
+      margin-top: 40px;
+      font-size: 15px;
+      font-weight: 300;
+      color: #9A9188;
+      line-height: 1.7;
+      max-width: 420px;
+      opacity: 0;
+    }
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 80px;
+      right: 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      opacity: 0;
+    }
+    .hero-scroll-hint span {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #9A9188;
+      writing-mode: vertical-rl;
+    }
+    .scroll-line {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, #9A9188, transparent);
+      transform-origin: top;
+    }
+
+    /* ─── Marquee strip ──────────────────────────────────── */
+    .marquee-strip {
+      border-top: 1px solid rgba(26,26,26,0.08);
+      border-bottom: 1px solid rgba(26,26,26,0.08);
+      padding: 18px 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .marquee-track {
+      display: inline-flex;
+      animation: marquee 28s linear infinite;
+    }
+    .marquee-track span {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #9A9188;
+      padding: 0 40px;
+    }
+    .marquee-track .dot {
+      color: #1A1A1A;
+      opacity: 0.2;
+      padding: 0;
+      letter-spacing: 0;
+    }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* ─── Services ───────────────────────────────────────── */
+    #services {
+      padding: 120px 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .services-ghost {
+      position: absolute;
+      bottom: -60px;
+      right: -40px;
+      z-index: 0;
+    }
+    .services-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 80px;
+      position: relative;
+      z-index: 1;
+    }
+    .services-headline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(32px, 4vw, 54px);
+      font-weight: 300;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      max-width: 480px;
+    }
+    .services-headline em {
+      font-style: italic;
+    }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      border-top: 1px solid rgba(26,26,26,0.1);
+      position: relative;
+      z-index: 1;
+    }
+    .service-card {
+      padding: 48px 40px 48px 0;
+      border-right: 1px solid rgba(26,26,26,0.1);
+    }
+    .service-card:last-child { border-right: none; }
+    .service-card:not(:first-child) { padding-left: 40px; }
+    .service-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 11px;
+      color: #9A9188;
+      letter-spacing: 0.15em;
+      margin-bottom: 32px;
+      display: block;
+    }
+    .service-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      font-weight: 400;
+      line-height: 1.3;
+      margin-bottom: 20px;
+    }
+    .service-body {
+      font-size: 14px;
+      font-weight: 300;
+      color: #9A9188;
+      line-height: 1.75;
+    }
+    .service-icon {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 24px;
+    }
+    .service-desc {
+      font-size: 14px;
+      font-weight: 300;
+      color: #9A9188;
+      line-height: 1.75;
+    }
+
+    /* ─── Approach ───────────────────────────────────────── */
+    #approach {
+      background: #1A1A1A;
+      color: #fff;
+      padding: 120px 48px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .approach-ghost {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: rgba(255,255,255,0.025);
+      z-index: 0;
+    }
+    .approach-left {
+      position: relative;
+      z-index: 1;
+    }
+    .approach-label { color: rgba(255,255,255,0.35); }
+    .approach-headline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(36px, 4.5vw, 60px);
+      font-weight: 300;
+      line-height: 1.15;
+      letter-spacing: -0.015em;
+      margin-top: 24px;
+      color: #fff;
+    }
+    .approach-right {
+      position: relative;
+      z-index: 1;
+    }
+    .approach-items {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .approach-item {
+      padding: 32px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    .approach-item:first-child { border-top: 1px solid rgba(255,255,255,0.08); }
+    .approach-item-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 13px;
+      color: rgba(255,255,255,0.25);
+      letter-spacing: 0.1em;
+      padding-top: 3px;
+    }
+    .approach-item-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 400;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .approach-item-body {
+      font-size: 13px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.7;
+    }
+
+    /* ─── Current R&D ───────────────────────────────────── */
+    #research {
+      padding: 120px 48px;
+      background: #FAFAF9;
+      position: relative;
+      overflow: hidden;
+    }
+    .research-ghost {
+      position: absolute;
+      top: 32px;
+      right: -32px;
+      z-index: 0;
+    }
+    .research-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(280px, 0.95fr) minmax(320px, 1.25fr);
+      gap: 80px;
+      align-items: start;
+    }
+    .research-kicker {
+      font-size: 11px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: #9A9188;
+      margin-bottom: 20px;
+      display: block;
+    }
+    .research-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(34px, 4.5vw, 58px);
+      font-weight: 300;
+      line-height: 1.12;
+      letter-spacing: -0.015em;
+      max-width: 520px;
+    }
+    .research-status {
+      display: inline-flex;
+      margin-top: 32px;
+      border: 1px solid rgba(26,26,26,.16);
+      padding: 7px 14px;
+      border-radius: 100px;
+      font-size: 11px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: #6B6560;
+    }
+    .research-copy {
+      display: grid;
+      gap: 28px;
+    }
+    .research-copy p {
+      font-size: 15px;
+      font-weight: 300;
+      color: #6B6560;
+      line-height: 1.85;
+      max-width: 680px;
+    }
+    .research-principles {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0;
+      border-top: 1px solid rgba(26,26,26,.1);
+    }
+    .research-principle {
+      padding: 26px 24px 26px 0;
+      border-bottom: 1px solid rgba(26,26,26,.1);
+    }
+    .research-principle:nth-child(even) {
+      padding-left: 24px;
+      border-left: 1px solid rgba(26,26,26,.1);
+    }
+    .research-principle-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 400;
+      margin-bottom: 10px;
+    }
+    .research-principle-body {
+      font-size: 13px;
+      font-weight: 300;
+      color: #9A9188;
+      line-height: 1.7;
+    }
+
+    /* ─── Work ───────────────────────────────────────────── */
+    #work {
+      padding: 60px 0 0;
+      position: relative;
+    }
+
+    #work .projects {
+      padding: 0;
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    #work .projects::-webkit-scrollbar { display: none; }
+
+    /* Carousel indicator */
+    .work::after {
+      content: '← Drag →';
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(26,26,26,0.4);
+    }
+    .work-header {
+      padding: 0 48px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 40px;
+    }
+    .work-headline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(36px, 5vw, 64px);
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .work-ghost {
+      position: absolute;
+      top: 60px;
+      left: -20px;
+      z-index: 0;
+    }
+    .work-view-all {
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #9A9188;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: color 0.2s;
+    }
+    .work-view-all:hover { color: #1A1A1A; }
+    .work-view-all::after {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: currentColor;
+      transition: width 0.3s;
+    }
+    .work-view-all:hover::after { width: 48px; }
+    .projects {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      position: relative;
+      z-index: 1;
+    }
+    .project {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      height: 520px;
+      overflow: hidden;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .projects .project:first-child { margin-left: 0; }
+    .projects .project:last-child { margin-right: 0; }
+    .project:nth-child(even) .project-img-wrap { order: -1; }
+    .project-img-wrap {
+      overflow: hidden;
+      position: relative;
+    }
+    .project-img {
+      width: 100%;
+      height: 130%;
+      object-fit: cover;
+      will-change: transform;
+    }
+    .project-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px;
+      background: #FAFAF9;
+    }
+    .project:nth-child(even) .project-info {
+      background: #F4F1EE;
+    }
+    .project-tag {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #9A9188;
+      margin-bottom: 16px;
+    }
+    .project-lead {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(26,26,26,0.35);
+      margin-bottom: 24px;
+    }
+    .project-lead::before {
+      content: '';
+      display: inline-block;
+      width: 16px;
+      height: 1px;
+      background: rgba(26,26,26,0.25);
+    }
+    /* Gradient panels for non-photo projects */
+    .project-panel {
+      overflow: hidden;
+      position: relative;
+    }
+    .project-panel-inner {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .project-panel-word {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(80px, 12vw, 160px);
+      line-height: 1;
+      letter-spacing: -0.03em;
+      color: rgba(255,255,255,0.12);
+      user-select: none;
+      will-change: transform;
+    }
+    .panel-kroger {
+      background: linear-gradient(135deg, #1C3A5E 0%, #0E2340 100%);
+    }
+    .panel-motorola {
+      background: linear-gradient(135deg, #2A1A1A 0%, #4A1010 100%);
+    }
+    .panel-spacetime {
+      background: linear-gradient(135deg, #1A2A1A 0%, #0D1F1A 100%);
+    }
+    .project-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(28px, 3.5vw, 44px);
+      font-weight: 300;
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      margin-bottom: 20px;
+    }
+    .project-desc {
+      font-size: 14px;
+      font-weight: 300;
+      color: #9A9188;
+      line-height: 1.75;
+      max-width: 360px;
+      margin-bottom: 40px;
+    }
+    .project-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #1A1A1A;
+      transition: gap 0.3s;
+    }
+    .project-link:hover { gap: 22px; }
+    .project-link::after {
+      content: '';
+      display: block;
+      width: 28px;
+      height: 1px;
+      background: #1A1A1A;
+    }
+
+    /* ─── Testimonials ─────────────────────────────────────── */
+    #testimonials {
+      padding: 60px 0 100px;
+      position: relative;
+      background: #EBE8E4;
+    }
+    .testimonials-ghost {
+      position: absolute;
+      bottom: -60px;
+      left: -40px;
+      z-index: 0;
+    }
+    .testimonials-header {
+      padding: 0 48px;
+      margin-bottom: 48px;
+      position: relative;
+      z-index: 1;
+    }
+    .testimonials-headline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(32px, 4vw, 52px);
+      font-weight: 300;
+      line-height: 1.15;
+      letter-spacing: -0.015em;
+    }
+    .testimonials-grid {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 24px;
+      padding: 0 48px 40px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      position: relative;
+      z-index: 1;
+    }
+    .testimonials-grid::-webkit-scrollbar { display: none; }
+    .testimonial {
+      background: #fff;
+      flex: 0 0 calc((100vw - 100px) / 3.2);
+      max-width: calc((100vw - 100px) / 3.2);
+      padding: 40px 40px 40px 48px;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+      scroll-snap-align: start;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .testimonial:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+    }
+    .testimonial-quote p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(18px, 2vw, 24px);
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.5;
+      letter-spacing: -0.01em;
+      color: #1A1A1A;
+    }
+    .testimonial-author {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 14px;
+      margin-top: 24px;
+    }
+    .testimonial-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      overflow: hidden;
+      background: #EDE9E4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 16px;
+      font-weight: 400;
+      color: #9A9188;
+      letter-spacing: 0.02em;
+    }
+    .testimonial-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .testimonial-author-text {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+    }
+    .testimonial-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: #1A1A1A;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .testimonial-linkedin {
+      display: inline-flex;
+      align-items: center;
+      opacity: 0.35;
+      transition: opacity .2s;
+      flex-shrink: 0;
+    }
+    .testimonial-linkedin:hover { opacity: 0.8; }
+    .testimonial-linkedin svg { width: 13px; height: 13px; fill: #1A1A1A; }
+    .testimonial-company {
+      font-size: 12px;
+      font-weight: 300;
+      color: #9A9188;
+      letter-spacing: 0.03em;
+    }
+    .testimonial-context {
+      font-size: 10px;
+      font-weight: 300;
+      color: rgba(154,145,136,.5);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    /* ─── CTA ────────────────────────────────────────────── */
+    #cta {
+      background: #1A1A1A;
+      color: #fff;
+      padding: 140px 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-ghost {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: rgba(255,255,255,0.025);
+      z-index: 0;
+      font-size: clamp(100px, 20vw, 340px);
+    }
+    .cta-label { color: rgba(255,255,255,0.3); margin-bottom: 40px; position: relative; z-index: 1; }
+    .cta-headline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(40px, 6vw, 80px);
+      font-weight: 300;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: #fff;
+      max-width: 700px;
+      margin-bottom: 56px;
+      position: relative;
+      z-index: 1;
+    }
+    .cta-headline em { font-style: italic; }
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+      border: 1px solid rgba(255,255,255,0.25);
+      padding: 18px 40px;
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #fff;
+      transition: border-color 0.3s, background 0.3s;
+      position: relative;
+      z-index: 1;
+    }
+    .cta-btn:hover {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.5);
+    }
+    .cta-btn::after {
+      content: '→';
+      font-size: 14px;
+    }
+
+    /* ─── Footer ─────────────────────────────────────────── */
+    footer {
+      padding: 64px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(26,26,26,0.08);
+    }
+    .footer-wordmark {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .footer-copy {
+      font-size: 12px;
+      color: #9A9188;
+      letter-spacing: 0.05em;
+    }
+    .footer-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .footer-links a {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #9A9188;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: #1A1A1A; }
+
+    /* ─── Scroll reveal base ─────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+
+    /* ─── Animated gradient line (hero accent) ───────────── */
+    .gradient-line {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #9A9188, #1A1A1A, #9A9188, transparent);
+      background-size: 200% 100%;
+      animation: gradientShift 6s ease infinite;
+      margin-top: 80px;
+      opacity: 0.3;
+    }
+    @keyframes gradientShift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @media (max-width: 1100px) {
+      nav,
+      #hero,
+      #services,
+      #approach,
+      #work,
+      #team,
+      #cta,
+      footer {
+        padding-left: 32px;
+        padding-right: 32px;
+      }
+      .services-grid,
+      .project,
+      .expert {
+        grid-template-columns: 1fr;
+      }
+      .service-card,
+      .service-card:not(:first-child) {
+        padding: 32px 0;
+        border-right: none;
+        border-bottom: 1px solid rgba(26,26,26,0.1);
+      }
+      .service-card:last-child {
+        border-bottom: none;
+      }
+      .project-img-wrap,
+      .project-panel {
+        min-height: 360px;
+      }
+      .research-inner {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+    }
+
+    @media (max-width: 820px) {
+      nav {
+        position: static;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 18px;
+        padding: 24px 20px;
+      }
+      .nav-links {
+        flex-wrap: wrap;
+        gap: 16px 20px;
+      }
+      #hero,
+      #services,
+      #approach,
+      #work,
+      #team,
+      #cta,
+      footer {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+      #hero {
+        min-height: auto;
+        padding-top: 72px;
+        padding-bottom: 56px;
+      }
+      .hero-scroll-hint,
+      .ghost,
+      .research-ghost,
+      .testimonials-ghost,
+      .services-ghost,
+      .approach-ghost,
+      .cta-ghost {
+        display: none;
+      }
+      .services-header,
+      .testimonials-header {
+        display: block;
+        margin-bottom: 40px;
+      }
+      .project-panel,
+      .project-img-wrap {
+        min-height: 260px;
+      }
+      .project-title br,
+      .testimonials-headline br,
+      .cta-headline br {
+        display: none;
+      }
+      .testimonials-grid {
+        padding: 0 20px 24px;
+        gap: 16px;
+      }
+      .testimonial {
+        flex: 0 0 80vw;
+        max-width: 80vw;
+      }
+      .research-principles {
+        grid-template-columns: 1fr;
+      }
+      .research-principle,
+      .research-principle:nth-child(even) {
+        padding: 22px 0;
+        border-left: none;
+      }
+      .footer-links {
+        flex-wrap: wrap;
+      }
+      footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        padding-top: 32px;
+        padding-bottom: 32px;
+      }
+    }
+
+    @media (hover: none), (pointer: coarse) {
+      html {
+        cursor: auto;
+      }
+      #cursor,
+      #cursor-ring {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cursor -->
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- Nav -->
+  <nav>
+    <a href="index.html" class="nav-wordmark">Chris Pennell</a>
+    <ul class="nav-links">
+      <li><a href="#work">Work</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="#cta">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <section id="hero">
+    <div class="hero-ghost ghost">Hi, I'm Chris.</div>
+    <div class="hero-content">
+      <div class="hero-meta">
+      <span class="hero-tag">Healthcare & Wellness · Product Strategy</span>
+        <span class="hero-lead">15 yrs UX·PM·Strategy</span>
+      </div>
+      <h1 class="hero-title">
+        <span class="h1-line"><span>Healthcare product strategy</span></span>
+        <span class="h1-line"><span>built around how</span></span>
+        <span class="h1-line"><span><em>people actually work.</em></span></span>
+      </h1>
+       <p class="hero-sub">
+         I help healthcare and wellness teams turn messy workflows into products people actually use.
+         Seven years scaling Jintronix to 500+ clinical sites.
+         Canyon Ranch's first mobile app to 78% adoption in three weeks.
+         My job is to find the friction early, make the tradeoffs visible, and keep the product honest once real users get involved.
+       </p>
+  </section>
+
+  <!-- Marquee -->
+  <div class="marquee-strip">
+    <div class="marquee-track">
+      <span>Healthcare UX</span><span class="dot">·</span>
+        <span>Product Strategy</span><span class="dot">·</span>
+        <span>Business Outcomes</span><span class="dot">·</span>
+      <span>Adoption Design</span><span class="dot">·</span>
+      <span>Change Management</span><span class="dot">·</span>
+      <span>Clinical Research</span><span class="dot">·</span>
+      <span>Healthcare UX</span><span class="dot">·</span>
+        <span>Product Strategy</span><span class="dot">·</span>
+        <span>Human Factors</span><span class="dot">·</span>
+      <span>Business Outcomes</span><span class="dot">·</span>
+      <span>Change Management</span><span class="dot">·</span>
+    </div>
+  </div>
+
+  <!-- Services -->
+  <section id="services">
+    <div class="services-ghost ghost">Practice</div>
+    <div class="services-header">
+      <div>
+        <span class="section-label reveal">Practice</span>
+        <h2 class="services-headline reveal" style="margin-top:20px;">
+          Product strategy for healthcare<br>and wellness teams. Built around the work<br><em>people already have to do.</em>
+        </h2>
+      </div>
+    </div>
+    <div class="services-grid">
+      <div class="service-card">
+        <span class="service-num">01</span>
+        <h3 class="service-title">Product Strategy<br>& Roadmaps</h3>
+        <p class="service-body">Every organization has the process on paper and the one people actually use to get through the day. The roadmap has to answer to the second one. I work with leadership, product, and frontline teams to find where the work breaks, then turn that evidence into scope, sequencing, and decisions the team can act on.</p>
+      </div>
+      <div class="service-card">
+        <span class="service-num">02</span>
+        <h3 class="service-title">Change Enablement<br>& Adoption</h3>
+        <p class="service-body">Adoption usually breaks in the gap between what leadership approved and what frontline teams can live with. I stay with teams through that gap, turning research into workflow changes, training decisions, and release calls. In clinical settings, change has to respect patient load, compliance pressure, and the work already happening in the room.</p>
+      </div>
+      <div class="service-card">
+        <span class="service-num">03</span>
+        <h3 class="service-title">Program<br>Measurement</h3>
+        <p class="service-body">If success gets defined after rollout, the team is already late. I set adoption and outcome measures while the work is still shapeable, establish the baseline, and keep the data visible while decisions are being made. In healthcare, usage data and outcome data are not the same thing. Opening the platform does not mean the clinical workflow changed.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Approach -->
+  <section id="approach">
+    <div class="approach-ghost ghost">Method</div>
+    <div class="approach-left">
+      <span class="section-label approach-label reveal-left">How I Work</span>
+      <h2 class="approach-headline reveal-left" style="margin-top:24px;">
+         Good work starts<br>with honest<br><em>questions.</em>
+      </h2>
+    </div>
+    <div class="approach-right">
+      <div class="approach-items">
+        <div class="approach-item reveal">
+          <span class="approach-item-num">01</span>
+          <div>
+            <p class="approach-item-title">Evidence before opinion</p>
+            <p class="approach-item-body">I separate what we know from what we assume. Every recommendation is grounded in data, observation, and documentation.</p>
+          </div>
+        </div>
+        <div class="approach-item reveal">
+          <span class="approach-item-num">02</span>
+          <div>
+            <p class="approach-item-title">Make research change the decision</p>
+            <p class="approach-item-body">Research earns its keep when it changes what the organization does next. I stay involved through strategy and execution so the useful signal does not die in a deck.</p>
+          </div>
+        </div>
+        <div class="approach-item reveal">
+          <span class="approach-item-num">03</span>
+          <div>
+            <p class="approach-item-title">Name the finish line early</p>
+            <p class="approach-item-body">Success should not be a post-launch debate. Naming it early forces the harder conversation about what the work is supposed to change.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Current R&D -->
+  <section id="research">
+    <div class="research-ghost ghost">R&D</div>
+    <div class="research-inner">
+      <div>
+        <span class="research-kicker reveal">Current R&amp;D</span>
+        <h2 class="research-title reveal">Designing AI workflows for real decisions.</h2>
+        <span class="research-status reveal">Independent practice · In progress</span>
+      </div>
+      <div class="research-copy">
+        <p class="reveal">I am building a private set of role-based AI agents to test a simple question: can AI make strategy work sharper when it is built into a workflow instead of treated like a blank chat box? This is self-initiated R&amp;D, not a client case study. The useful part is the habit: define the decision, bring in the right context, pressure-test the answer, and keep a human accountable for the call.</p>
+        <p class="reveal">Each agent has a job. The marketing agent checks positioning, customer specificity, pricing, and go-to-market choices. The operations agent looks for bottlenecks, capacity constraints, wait time, and workflow friction. The finance agent turns numbers into decisions and watches for risk. The chief-of-staff layer keeps priorities from turning into a junk drawer.</p>
+        <div class="research-principles">
+          <div class="research-principle reveal">
+            <h3 class="research-principle-title">Start with the work</h3>
+            <p class="research-principle-body">The question comes before the tool. If the user, business goal, or constraint is fuzzy, the workflow stops there and makes the missing piece visible.</p>
+          </div>
+          <div class="research-principle reveal">
+            <h3 class="research-principle-title">Show the receipts</h3>
+            <p class="research-principle-body">Recommendations separate what is known, assumed, and missing. If the answer depends on a guess, it should say so plainly.</p>
+          </div>
+          <div class="research-principle reveal">
+            <h3 class="research-principle-title">Adoption before scale</h3>
+            <p class="research-principle-body">An agent is only useful if it changes how work gets done. I look for clearer decisions, faster first drafts, repeatable steps, and less mental clutter.</p>
+          </div>
+          <div class="research-principle reveal">
+            <h3 class="research-principle-title">Keep judgment human</h3>
+            <p class="research-principle-body">The point is not to automate leadership. It is to make expert judgment easier to apply when the work crosses product, operations, finance, and market strategy.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Work -->
+  <section id="work">
+    <div class="work-ghost ghost">Work</div>
+    <div class="work-header">
+      <div>
+        <span class="section-label reveal">Selected Projects</span>
+        <h2 class="work-headline reveal" style="margin-top:16px;">Case Studies</h2>
+      </div>
+      <a href="about.html" class="work-view-all reveal">About Chris</a>
+    </div>
+    <p class="reveal" style="padding:0 48px;font-size:15px;line-height:1.9;color:#6B6560;max-width:608px;margin:0 0 56px;">Healthcare technology often fails at the workflow layer. The platform launches, but the behavior does not change. These case studies sit in that gap: skilled nursing teams deciding whether to trust a rehabilitation platform, technologists using imaging tools under real time pressure, guests trying to book care without staff mediation, and patients trying to understand clinical trials before they can act.</p>
+    <div class="projects">
+
+      <!-- Project 1: Canyon Ranch (Healthcare) -->
+      <div class="project" data-project>
+        <div class="project-img-wrap">
+          <img class="project-img" data-parallax
+            src="images/cr-hero.png"
+            alt="Canyon Ranch">
+        </div>
+        <div class="project-info">
+          <span class="project-tag reveal">Health & Wellness · End-to-End Launch</span>
+          <span class="project-lead reveal">Led by Chris Pennell</span>
+          <h3 class="project-title reveal">Canyon Ranch<br>Digital Experience</h3>
+          <p class="project-desc reveal">Defined the product strategy for Canyon Ranch's first mobile app, moving routine booking off the front desk and tying launch scope to adoption, revenue, and staff capacity.</p>
+          <a href="canyon-ranch.html" class="project-link reveal">View case study</a>
+        </div>
+      </div>
+
+      <!-- Project 2: Jintronix (Healthcare) -->
+      <div class="project" data-project>
+        <div class="project-info">
+          <span class="project-tag reveal">Healthcare · 7-Year Embedded Role</span>
+          <span class="project-lead reveal">Led by Chris Pennell</span>
+          <h3 class="project-title reveal">Jintronix<br>Rehabilitation Platform</h3>
+          <p class="project-desc reveal">Rebuilt rehabilitation workflows around therapist trust, patient motivation, and clinical visibility, helping the platform scale across 500+ clinical clients.</p>
+          <a href="jintronix.html" class="project-link reveal">View case study</a>
+        </div>
+        <div class="project-img-wrap">
+          <img class="project-img" data-parallax
+            src="images/Jintronix-clinical-outcomes2.jpg"
+            alt="Jintronix">
+        </div>
+      </div>
+
+      <!-- Project 3: GE Healthcare -->
+      <div class="project" data-project>
+        <div class="project-img-wrap">
+          <img class="project-img" data-parallax
+            src="images/ge-field1.png"
+            alt="GE Healthcare diagnostic viewer">
+        </div>
+        <div class="project-info">
+          <span class="project-tag reveal">Medical Imaging · Enterprise Research</span>
+          <span class="project-lead reveal">Led by Chris Pennell</span>
+          <h3 class="project-title reveal">GE Healthcare<br>Diagnostic Viewer</h3>
+          <p class="project-desc reveal">Translated global field research into the interaction model for medical imaging software used under real throughput, patient-care, and diagnostic pressure.</p>
+          <a href="ge-healthcare.html" class="project-link reveal">View case study</a>
+        </div>
+      </div>
+
+      <!-- Project 4: Connect2Trials -->
+      <div class="project" data-project>
+        <div class="project-info">
+          <span class="project-tag reveal">Clinical Research · 0-to-1 MVP</span>
+          <span class="project-lead reveal">Led by Chris Pennell</span>
+          <h3 class="project-title reveal">Connect2Trials<br>Patient Matching</h3>
+          <p class="project-desc reveal">Defined the MVP for a clinical trial matching platform, clarifying patient language, prescreening, and sponsor workflows before engineering investment.</p>
+          <a href="connect2trials.html" class="project-link reveal">View case study</a>
+        </div>
+        <div class="project-img-wrap">
+          <img class="project-img" data-parallax
+            src="images/c2t.png"
+            alt="Connect2Trials">
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section id="testimonials">
+    <div class="testimonials-ghost ghost">Hear</div>
+    <div class="testimonials-header">
+      <span class="section-label reveal">What Clients Say</span>
+      <h2 class="testimonials-headline reveal" style="margin-top:20px;">What it feels like<br><em>to work with me.</em></h2>
+    </div>
+
+    <div class="testimonials-grid">
+      <div class="testimonial reveal">
+        <div class="testimonial-quote">
+          <p>"He takes on client challenges like they are his own. He is patient, thoughtful, organized, proactive, and thorough. My team felt Chris's deep investment and commitment, his passion and talent, throughout our work together. I still miss working with him."</p>
+        </div>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar"><img src="images/mara-gerstein.jpg" alt="Mara Gerstein"></div>
+          <div class="testimonial-author-text">
+            <span class="testimonial-name">
+              Mara Gerstein
+              <a class="testimonial-linkedin" href="https://www.linkedin.com/in/mara-gerstein-ba74a014/" target="_blank" rel="noopener" aria-label="Mara Gerstein on LinkedIn">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              </a>
+            </span>
+            <span class="testimonial-company">CEO & Founder</span>
+            <span class="testimonial-context">Client · Verified</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial reveal">
+        <div class="testimonial-quote">
+          <p>"He went above and beyond our initial scope to eventually deliver us a clickable prototype to demonstrate to potential investors. We received accolades for our work, including winning of pre-seed round for the product that Chris designed. I would work with him again in the future for anything, particularly when things are vague and unclear."</p>
+        </div>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar"><img src="images/abish-ghimire.jpg" alt="Abish Ghimire"></div>
+          <div class="testimonial-author-text">
+            <span class="testimonial-name">
+              Abish Ghimire
+              <a class="testimonial-linkedin" href="https://www.linkedin.com/in/abishghimire/" target="_blank" rel="noopener" aria-label="Abish Ghimire on LinkedIn">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              </a>
+            </span>
+            <span class="testimonial-company">Founder & CEO, JobScreener AI</span>
+            <span class="testimonial-context">Client · Verified</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial reveal">
+        <div class="testimonial-quote">
+          <p>"Chris effectively draws out users' psychological drivers, operational objectives, and functional requirements, leading to +15% revenue gains and 78% adoption. With excellent communication skills he tells leadership what they need to hear, not what they want to hear."</p>
+        </div>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar"><img src="images/kevin-hughes.jpg" alt="Kevin Hughes"></div>
+          <div class="testimonial-author-text">
+            <span class="testimonial-name">
+              Kevin Hughes
+              <a class="testimonial-linkedin" href="https://www.linkedin.com/in/kevin-hughes/" target="_blank" rel="noopener" aria-label="Kevin Hughes on LinkedIn">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              </a>
+            </span>
+            <span class="testimonial-company">Chief Information Officer</span>
+            <span class="testimonial-context">Collaborator · Verified</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial reveal">
+        <div class="testimonial-quote">
+          <p>"Chris has a way of understanding what users need before you've fully articulated it yourself. He was easy to work with. The project went better because he was on it."</p>
+        </div>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar"><img src="images/swati-chakraborty.jpg" alt="Swati Chakraborty"></div>
+          <div class="testimonial-author-text">
+            <span class="testimonial-name">
+              Swati Chakraborty
+              <a class="testimonial-linkedin" href="https://www.linkedin.com/in/swati-chakraborty/" target="_blank" rel="noopener" aria-label="Swati Chakraborty on LinkedIn">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              </a>
+            </span>
+            <span class="testimonial-company">Product Management Leader, Enterprise Software</span>
+            <span class="testimonial-context">Collaborator · Verified</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="cta">
+    <div class="cta-ghost ghost">Hello</div>
+    <span class="section-label cta-label">Start a Conversation</span>
+    <h2 class="cta-headline reveal">      
+      Got a <em>hard problem?</em><br>I'm interested.
+    </h2>
+    <a href="https://calendly.com/cp86-rice/30min" class="cta-btn reveal">Book a Strategy Call</a>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <span class="footer-wordmark">Chris Pennell</span>
+    <span class="footer-copy">© 2026 Chris Pennell</span>
+    <ul class="footer-links">
+      <li><a href="#work">Work</a></li>
+      <li><a href="#testimonials">Testimonials</a></li>
+      <li><a href="https://calendly.com/cp86-rice/30min">Book a Call</a></li>
+    </ul>
+  </footer>
+
+  <script>
+    const supportsCustomCursor = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    if (supportsCustomCursor) {
+      document.documentElement.classList.add('has-custom-cursor');
+    }
+
+    // ─── Smooth scroll (Lenis) ────────────────────────────
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smooth: true,
+    });
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    // ─── Custom cursor ────────────────────────────────────
+    const cursor = document.getElementById('cursor');
+    const cursorRing = document.getElementById('cursor-ring');
+    let mouseX = 0, mouseY = 0;
+    let ringX = 0, ringY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      cursor.style.left = mouseX + 'px';
+      cursor.style.top  = mouseY + 'px';
+    });
+
+    (function animateRing() {
+      ringX += (mouseX - ringX) * 0.12;
+      ringY += (mouseY - ringY) * 0.12;
+      cursorRing.style.left = ringX + 'px';
+      cursorRing.style.top  = ringY + 'px';
+      requestAnimationFrame(animateRing);
+    })();
+
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.width  = '14px';
+        cursor.style.height = '14px';
+        cursorRing.style.width  = '52px';
+        cursorRing.style.height = '52px';
+        cursorRing.style.borderColor = 'rgba(26,26,26,0.15)';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.width  = '8px';
+        cursor.style.height = '8px';
+        cursorRing.style.width  = '36px';
+        cursorRing.style.height = '36px';
+        cursorRing.style.borderColor = 'rgba(26,26,26,0.25)';
+      });
+    });
+
+    // ─── GSAP + ScrollTrigger ─────────────────────────────
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Tell ScrollTrigger to use Lenis scroll position
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => lenis.raf(time * 1000));
+    gsap.ticker.lagSmoothing(0);
+
+    // Hero headline stagger
+    gsap.to('.h1-line span', {
+      y: 0,
+      duration: 1.1,
+      ease: 'power4.out',
+      stagger: 0.12,
+      delay: 0.3,
+    });
+    gsap.to('.hero-sub', {
+      opacity: 1,
+      duration: 1,
+      ease: 'power3.out',
+      delay: 0.9,
+    });
+    gsap.to('.hero-scroll-hint', {
+      opacity: 1,
+      duration: 1,
+      delay: 1.4,
+      ease: 'power2.out',
+    });
+
+    // Generic reveal
+    gsap.utils.toArray('.reveal').forEach(el => {
+      gsap.to(el, {
+        opacity: 1,
+        y: 0,
+        duration: 0.9,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 88%',
+          toggleActions: 'play none none none',
+        }
+      });
+    });
+
+    gsap.utils.toArray('.reveal-left').forEach(el => {
+      gsap.to(el, {
+        opacity: 1,
+        x: 0,
+        duration: 0.9,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 88%',
+        }
+      });
+    });
+
+    gsap.utils.toArray('.reveal-right').forEach(el => {
+      gsap.to(el, {
+        opacity: 1,
+        x: 0,
+        duration: 0.9,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 88%',
+        }
+      });
+    });
+
+    // Ghost text parallax (subtle drift)
+    gsap.utils.toArray('.ghost').forEach((ghost, i) => {
+      gsap.to(ghost, {
+        y: i % 2 === 0 ? -80 : 80,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: ghost.closest('section') || ghost.parentElement,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 1.5,
+        }
+      });
+    });
+
+    // Project image + panel word parallax
+    gsap.utils.toArray('[data-parallax]').forEach(el => {
+      const isWord = el.classList.contains('project-panel-word');
+      gsap.fromTo(el,
+        { y: isWord ? '-12%' : '-8%' },
+        {
+          y: isWord ? '12%' : '8%',
+          ease: 'none',
+          scrollTrigger: {
+            trigger: el.closest('[data-project]'),
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: true,
+          }
+        }
+      );
+    });
+
+    // Approach section: slide in from sides
+    gsap.to('#approach .approach-headline', {
+      x: 0,
+      opacity: 1,
+      duration: 1,
+      ease: 'power3.out',
+      scrollTrigger: { trigger: '#approach', start: 'top 70%' }
+    });
+
+    // Section number counters (subtle)
+    gsap.utils.toArray('.service-card').forEach((card, i) => {
+      gsap.from(card, {
+        y: 50,
+        opacity: 0,
+        duration: 0.7,
+        delay: i * 0.12,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: card, start: 'top 85%' }
+      });
+    });
+
+    gsap.utils.toArray('.expert').forEach((el, i) => {
+      gsap.from(el, {
+        y: 50,
+        opacity: 0,
+        duration: 0.9,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: 'top 85%' }
+      });
+    });
+
+    // Expert quote fade in after row appears
+    gsap.utils.toArray('.expert-quote').forEach(el => {
+      gsap.from(el, {
+        opacity: 0,
+        y: 20,
+        duration: 1.1,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: 'top 88%' }
+      });
+    });
+  </script>
+</body>
+</html>

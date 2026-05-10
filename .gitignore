@@ -1,0 +1,5 @@
+.DS_Store
+.netlify/
+deploy-*.zip
+node_modules/
+*.log

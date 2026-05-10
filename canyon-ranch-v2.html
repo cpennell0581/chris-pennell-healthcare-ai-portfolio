@@ -1,0 +1,2101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="How Chris Pennell aligned eight senior Canyon Ranch stakeholders and built the business case for a revenue-generating mobile platform - 15% ancillary revenue lift, $0 to launch.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canyon Ranch On-Property App, Chris Pennell</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #fff; color: #1A1A1A; font-family: 'DM Sans', sans-serif; font-weight: 300; -webkit-font-smoothing: antialiased; overflow-x: hidden; cursor: auto; }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; }
+
+    /* Cursor */
+    #cursor { display: none; position: fixed; width: 8px; height: 8px; background: #1A1A1A; border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); mix-blend-mode: multiply; transition: width .3s, height .3s; }
+    #cursor-ring { display: none; position: fixed; width: 36px; height: 36px; border: 1px solid rgba(26,26,26,.2); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); }
+    .has-custom-cursor { cursor: none; }
+    .has-custom-cursor #cursor, .has-custom-cursor #cursor-ring { display: block; }
+
+    /* Nav */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 28px 64px; background: rgba(255,255,255,.95); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(26,26,26,.06); }
+    .nav-mark { font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; }
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #9A9188; transition: color .2s; }
+    .nav-links a:hover { color: #1A1A1A; }
+
+    /* ── Hero ────────────────────────────────────────── */
+    #hero {
+      height: 92vh;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    .hero-img-wrap {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: #1a1a1a;
+    }
+    .hero-img {
+      width: 100%;
+      height: 120%;
+      object-fit: cover;
+      object-position: center 30%;
+      will-change: transform;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(10,10,10,0) 20%,
+        rgba(10,10,10,.5) 65%,
+        rgba(10,10,10,.85) 100%
+      );
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 0 64px 64px;
+      color: #fff;
+    }
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+    .hero-tag {
+      font-size: 11px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.55);
+      border: 1px solid rgba(255,255,255,.2);
+      padding: 5px 14px;
+      border-radius: 100px;
+    }
+    .hero-lead {
+      font-size: 11px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.4);
+    }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(52px, 7.5vw, 108px);
+      font-weight: 300;
+      line-height: 1.02;
+      letter-spacing: -.025em;
+      margin-bottom: 0;
+    }
+    .hero-title em { font-style: italic; color: rgba(255,255,255,.65); }
+
+    /* Stats bar */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid rgba(26,26,26,.1);
+      background: #fff;
+    }
+    .stat {
+      padding: 32px 48px;
+      border-right: 1px solid rgba(26,26,26,.08);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(36px, 4vw, 58px);
+      font-weight: 300;
+      line-height: 1;
+      letter-spacing: -.02em;
+      margin-bottom: 8px;
+    }
+    .stat-label { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #9A9188; line-height: 1.4; }
+
+    /* ── Overview ─────────────────────────────────────── */
+    #overview {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 80px;
+      padding: 100px 64px;
+      border-bottom: 1px solid rgba(26,26,26,.08);
+      align-items: start;
+    }
+    .overview-problem {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(28px, 3vw, 40px);
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.4;
+      letter-spacing: -.01em;
+      color: #1A1A1A;
+    }
+    .project-details { display: flex; flex-direction: column; gap: 28px; padding-top: 6px; }
+    .detail-group {}
+    .detail-label { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: #9A9188; margin-bottom: 6px; }
+    .detail-value { font-size: 14px; line-height: 1.55; color: #4A4542; }
+
+    /* ── Challenge ────────────────────────────────────── */
+    #challenge {
+      padding: 100px 64px;
+      display: grid;
+      grid-template-columns: 200px 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+      border-bottom: 1px solid rgba(26,26,26,.08);
+      background: #FAFAF9;
+    }
+    .section-eyebrow {
+      font-size: 10px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: #9A9188;
+      padding-top: 6px;
+    }
+    .challenge-body { font-size: 17px; line-height: 1.85; color: #4A4542; }
+    .challenge-body p + p { margin-top: 20px; }
+    .challenge-body strong { color: #1A1A1A; font-weight: 400; }
+    .challenge-pullquote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(22px, 2.2vw, 28px);
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.5;
+      color: #1A1A1A;
+      border-left: 1px solid rgba(26,26,26,.15);
+      padding-left: 32px;
+    }
+    .challenge-pullquote-attr {
+      display: block;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-style: normal;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: #9A9188;
+      margin-top: 16px;
+    }
+
+    /* ── Research scale strip ─────────────────────────── */
+    #research-scale {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 64px;
+      padding: 72px 64px;
+      border-bottom: 1px solid rgba(26,26,26,.08);
+      align-items: center;
+    }
+    .rs-label {
+      font-size: 10px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: #9A9188;
+    }
+    .rs-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 48px;
+    }
+    .rs-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(40px, 4vw, 60px);
+      font-weight: 300;
+      line-height: 1;
+      letter-spacing: -.02em;
+      color: #1A1A1A;
+      display: block;
+      margin-bottom: 10px;
+    }
+    .rs-desc {
+      font-size: 12px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: #9A9188;
+      line-height: 1.5;
+    }
+
+    /* ── Process ──────────────────────────────────────── */
+    #process { padding: 100px 64px; border-bottom: 1px solid rgba(26,26,26,.08); }
+    .process-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 64px;
+    }
+    .process-h {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(36px, 4vw, 56px);
+      font-weight: 300;
+      letter-spacing: -.018em;
+    }
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      margin-bottom: 2px;
+    }
+    .step {
+      background: #FAFAF9;
+      padding: 56px 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .step:nth-child(2) { background: #F4F1EE; }
+    .step:nth-child(3) { background: #EDE9E5; }
+    .step-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 80px;
+      font-weight: 300;
+      line-height: 1;
+      color: rgba(26,26,26,.06);
+      position: absolute;
+      top: 24px;
+      right: 28px;
+      letter-spacing: -.04em;
+    }
+    .step-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      font-weight: 400;
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+    .step-body { font-size: 14px; line-height: 1.8; color: #6B6560; }
+    .step-body li { margin-left: 16px; margin-bottom: 8px; }
+    .step-tag {
+      display: inline-block;
+      margin-top: 24px;
+      font-size: 10px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #9A9188;
+      border: 1px solid rgba(26,26,26,.12);
+      padding: 4px 12px;
+      border-radius: 100px;
+    }
+    .process-img-full {
+      width: 100%;
+      height: 480px;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+    .process-img-caption {
+      padding: 16px 48px;
+      font-size: 11px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: #9A9188;
+      background: #F4F1EE;
+      border-top: 1px solid rgba(26,26,26,.06);
+    }
+
+    /* ── App showcase ─────────────────────────────────── */
+    .app-showcase {
+      background: #111;
+      padding: 80px 64px;
+      border-bottom: 1px solid rgba(26,26,26,.08);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .app-showcase img {
+      width: 100%;
+      max-width: 960px;
+      display: block;
+    }
+    .app-showcase-caption {
+      margin-top: 24px;
+      font-size: 11px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.25);
+      text-align: center;
+    }
+
+    /* ── Outcomes ─────────────────────────────────────── */
+    #outcomes {
+      background: #1A1A1A;
+      color: #fff;
+      padding: 120px 64px;
+      position: relative;
+      overflow: hidden;
+    }
+    .outcomes-ghost {
+      position: absolute;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(180px, 26vw, 380px);
+      color: rgba(255,255,255,.022);
+      top: 50%;
+      right: -40px;
+      transform: translateY(-50%);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .outcomes-inner { position: relative; z-index: 1; }
+    .outcomes-label { font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: rgba(255,255,255,.3); margin-bottom: 64px; }
+    .outcomes-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: rgba(255,255,255,.08);
+      margin-bottom: 64px;
+    }
+    .outcome {
+      background: #1A1A1A;
+      padding: 56px 48px;
+    }
+    .outcome-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(56px, 6vw, 88px);
+      font-weight: 300;
+      line-height: 1;
+      letter-spacing: -.03em;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+    .outcome-desc { font-size: 14px; line-height: 1.7; color: rgba(255,255,255,.4); max-width: 260px; }
+    .outcomes-cmo {
+      border-top: 1px solid rgba(255,255,255,.08);
+      padding-top: 48px;
+      margin-bottom: 32px;
+    }
+    .outcomes-cmo-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(20px, 2.2vw, 28px);
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.5;
+      color: rgba(255,255,255,.7);
+      max-width: 800px;
+      margin-bottom: 20px;
+    }
+    .outcomes-cmo-attr {
+      font-size: 11px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.25);
+    }
+    .outcomes-footnote { font-size: 12px; color: rgba(255,255,255,.2); letter-spacing: .06em; }
+    .outcomes-shipped { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(255,255,255,.06); margin-bottom: 48px; }
+    .outcomes-shipped-col { background: #1A1A1A; padding: 28px 36px; }
+    .outcomes-shipped-label { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.25); margin-bottom: 12px; }
+    .outcomes-shipped-items { font-size: 13px; line-height: 1.9; color: rgba(255,255,255,.4); }
+
+    /* ── Insights ──────────────────────────────────────── */
+    #insights { padding: 100px 64px; border-bottom: 1px solid rgba(26,26,26,.08); }
+    .insights-header { margin-bottom: 64px; }
+    .insights-h {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(32px, 3.5vw, 48px);
+      font-weight: 300;
+      letter-spacing: -.018em;
+      margin-top: 16px;
+    }
+    .insights-grid { display: flex; flex-direction: column; gap: 0; }
+    .insight {
+      display: grid;
+      grid-template-columns: 60px 280px 1fr;
+      gap: 48px;
+      align-items: start;
+      padding: 48px 0;
+      border-bottom: 1px solid rgba(26,26,26,.06);
+    }
+    .insight:first-child { padding-top: 0; }
+    .insight-idx {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 14px;
+      color: #9A9188;
+      padding-top: 4px;
+    }
+    .insight-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(20px, 2vw, 26px);
+      font-weight: 400;
+      line-height: 1.3;
+      letter-spacing: -.01em;
+    }
+    .insight-body { font-size: 14px; line-height: 1.85; color: #6B6560; padding-top: 4px; }
+    .insight-img { width: 100%; height: auto; display: block; border-radius: 8px; box-shadow: 0 8px 32px rgba(0,0,0,.10); }
+    .process-artifacts { margin-top: 64px; }
+    .insight-verbatim {
+      margin-top: 24px;
+      padding: 20px 24px;
+      background: #FAFAF9;
+      border-left: 2px solid rgba(26,26,26,.1);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      font-style: italic;
+      font-weight: 300;
+      line-height: 1.5;
+      color: #1A1A1A;
+    }
+    .insight-verbatim-attr {
+      margin-top: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: #9A9188;
+      font-style: normal;
+    }
+    .insight-data-point {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #F4F1EE;
+      border-radius: 2px;
+    }
+    .insight-data-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 300;
+      letter-spacing: -.02em;
+      color: #1A1A1A;
+    }
+    .insight-data-label {
+      font-size: 11px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: #9A9188;
+    }
+
+    /* ── Methodology strip ─────────────────────────────── */
+    #methodology {
+      background: #F4F1EE;
+      padding: 80px 64px;
+      border-bottom: 1px solid rgba(26,26,26,.08);
+    }
+    .methods-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+    .method-pill {
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: #4A4542;
+      border: 1px solid rgba(26,26,26,.18);
+      padding: 8px 20px;
+      border-radius: 100px;
+    }
+
+    /* ── Next work ─────────────────────────────────────── */
+    #next-work {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      height: 420px;
+      overflow: hidden;
+      position: relative;
+      border-bottom: 1px solid rgba(26,26,26,.08);
+      text-decoration: none;
+      color: inherit;
+    }
+    .next-img-wrap { overflow: hidden; position: relative; }
+    .next-img {
+      width: 100%; height: 130%;
+      object-fit: cover;
+      will-change: transform;
+      transition: transform .6s ease;
+    }
+    #next-work:hover .next-img { transform: scale(1.04); }
+    .next-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 64px;
+      background: #FAFAF9;
+      transition: background .3s;
+    }
+    #next-work:hover .next-info { background: #F4F1EE; }
+    .next-eyebrow { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: #9A9188; margin-bottom: 16px; }
+    .next-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(28px, 3vw, 42px);
+      font-weight: 300;
+      letter-spacing: -.015em;
+      line-height: 1.15;
+      margin-bottom: 20px;
+    }
+    .next-arrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 12px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      transition: gap .3s;
+    }
+    #next-work:hover .next-arrow { gap: 22px; }
+    .next-arrow::after { content: '→'; font-size: 16px; }
+
+    /* Footer */
+    footer { padding: 60px 64px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(26,26,26,.08); }
+    .f-mark { font-family: 'Cormorant Garamond', serif; font-size: 14px; letter-spacing: .12em; text-transform: uppercase; }
+    .f-copy { font-size: 12px; color: #9A9188; }
+    .f-links { display: flex; gap: 32px; list-style: none; }
+    .f-links a { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #9A9188; transition: color .2s; }
+    .f-links a:hover { color: #1A1A1A; }
+
+    /* Reveal states set by JS */
+    .js-ready .reveal { opacity: 0; transform: translateY(24px); }
+    .js-ready .reveal-left { opacity: 0; transform: translateX(-20px); }
+
+    /* ── Photo triptych ───────────────────────────────── */
+    .photo-triptych {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 2px;
+      height: 480px;
+      overflow: hidden;
+    }
+    .triptych-cell { overflow: hidden; position: relative; }
+    .triptych-cell img {
+      width: 100%; height: 130%;
+      object-fit: cover;
+      will-change: transform;
+      display: block;
+    }
+    .triptych-caption {
+      position: absolute;
+      bottom: 20px; left: 20px;
+      font-size: 10px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.6);
+      background: rgba(0,0,0,.3);
+      padding: 4px 10px;
+      border-radius: 100px;
+      backdrop-filter: blur(4px);
+    }
+
+    /* ── Screen mosaic ────────────────────────────────── */
+    .screen-mosaic-section {
+      padding: 0;
+      background: #F4F1EE;
+      border-bottom: 1px solid rgba(26,26,26,.08);
+      overflow: hidden;
+    }
+    .screen-mosaic-header {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 64px 28px;
+    }
+    .screen-mosaic-kicker {
+      font-size: 10px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: #9A9188;
+      margin-bottom: 10px;
+    }
+    .screen-mosaic-h {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(30px, 3.6vw, 50px);
+      font-weight: 300;
+      line-height: 1.08;
+      letter-spacing: -.02em;
+      color: #1A1A1A;
+      margin-bottom: 12px;
+    }
+    .screen-mosaic-copy {
+      max-width: 720px;
+      font-size: 14px;
+      line-height: 1.8;
+      color: #6B6560;
+    }
+    .screen-mosaic {
+      position: relative;
+      height: clamp(320px, 40vw, 500px);
+      overflow: hidden;
+      background: #0B0810;
+    }
+    .mosaic-track {
+      position: absolute;
+      left: -60px;
+      right: -60px;
+      top: 50%;
+      transform: translateY(-50%) rotate(-9deg);
+      transform-origin: center center;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      padding: 60px 0;
+    }
+    @keyframes mosaic-scroll-left {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    .mosaic-row {
+      display: flex;
+      flex-shrink: 0;
+      gap: 18px;
+      will-change: transform;
+      animation: mosaic-scroll-left 55s linear infinite;
+    }
+    .mosaic-row:nth-child(2) { animation-duration: 70s; animation-delay: -35s; }
+    .mosaic-row:nth-child(3) { animation-duration: 45s; animation-delay: -18s; }
+    .mosaic-screen {
+      flex: 0 0 auto;
+      width: clamp(155px, 12vw, 200px);
+      height: clamp(272px, 21vw, 352px);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #1B1820;
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 28px 60px rgba(0,0,0,.45), 0 8px 16px rgba(0,0,0,.28);
+    }
+    .mosaic-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+    .mosaic-fade {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(to right, #0B0810 0%, rgba(11,8,16,0) 12%, rgba(11,8,16,0) 88%, #0B0810 100%),
+        linear-gradient(to bottom, rgba(11,8,16,0) 72%, #0B0810 100%);
+    }
+
+    /* ── Atmosphere divider ───────────────────────────── */
+    .atmo-divider {
+      height: 520px;
+      overflow: hidden;
+      position: relative;
+    }
+    .atmo-divider img {
+      width: 100%; height: 130%;
+      object-fit: cover;
+      object-position: center 40%;
+      will-change: transform;
+    }
+    .atmo-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, rgba(10,10,10,.72) 0%, rgba(10,10,10,.2) 65%);
+      display: flex;
+      align-items: center;
+      padding: 0 80px;
+    }
+    .atmo-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(26px, 3.2vw, 44px);
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.3;
+      color: #fff;
+      max-width: 620px;
+    }
+    .atmo-attribution {
+      margin-top: 20px;
+      font-size: 11px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.45);
+    }
+
+    /* ── Property showcase ────────────────────────────── */
+    .properties {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      height: 420px;
+      border-top: 1px solid rgba(26,26,26,.08);
+      border-bottom: 1px solid rgba(26,26,26,.08);
+      overflow: hidden;
+    }
+    .property-cell { overflow: hidden; position: relative; }
+    .property-cell img { width: 100%; height: 130%; object-fit: cover; will-change: transform; }
+    .property-label {
+      position: absolute;
+      bottom: 24px; left: 28px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      font-weight: 300;
+      color: #fff;
+      text-shadow: 0 1px 12px rgba(0,0,0,.4);
+    }
+    .property-sublabel {
+      display: block;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.55);
+      margin-top: 4px;
+    }
+
+    /* ── Discovery grid (within process) ─────────────── */
+    .cr-discovery-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      margin-top: 2px;
+    }
+    .cr-discovery-card {
+      background: #FAFAF9;
+      padding: 48px 48px;
+    }
+    .cr-discovery-card:nth-child(2) { background: #F4F1EE; }
+    .cr-discovery-card:nth-child(3) { background: #F4F1EE; }
+    .cr-discovery-card:nth-child(4) { background: #EDE9E5; }
+    .cr-discovery-badge {
+      display: inline-block;
+      font-size: 10px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: #9A9188;
+      border: 1px solid rgba(26,26,26,.12);
+      padding: 4px 12px;
+      border-radius: 100px;
+      margin-bottom: 16px;
+    }
+    .cr-discovery-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 400;
+      line-height: 1.25;
+      margin-bottom: 12px;
+      letter-spacing: -.01em;
+    }
+    .cr-discovery-desc {
+      font-size: 13px;
+      line-height: 1.75;
+      color: #6B6560;
+    }
+
+    /* ── Timeline track ──────────────────────────────── */
+    .cr-timeline-header {
+      font-size: 10px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: #9A9188;
+      padding: 28px 0 12px;
+    }
+    .cr-timeline { display: flex; }
+    .cr-timeline-phase {
+      flex: 1;
+      padding: 28px 32px;
+      background: #FAFAF9;
+      border-right: 2px solid #fff;
+    }
+    .cr-timeline-phase:nth-child(2) { background: #F4F1EE; }
+    .cr-timeline-phase:nth-child(3) { background: #EDE9E5; }
+    .cr-timeline-phase:last-child { border-right: none; background: #1A1A1A; }
+    .cr-tl-badge {
+      font-size: 10px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #9A9188;
+      margin-bottom: 10px;
+    }
+    .cr-timeline-phase:last-child .cr-tl-badge { color: rgba(255,255,255,.35); }
+    .cr-tl-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      font-weight: 400;
+      line-height: 1.3;
+      color: #1A1A1A;
+      margin-bottom: 6px;
+    }
+    .cr-timeline-phase:last-child .cr-tl-title { color: rgba(255,255,255,.9); }
+    .cr-tl-desc {
+      font-size: 12px;
+      line-height: 1.65;
+      color: #6B6560;
+    }
+    .cr-timeline-phase:last-child .cr-tl-desc { color: rgba(255,255,255,.4); }
+
+    /* ── Guest personas ───────────────────────────────── */
+    .cr-guest-compare { margin-top: 64px; }
+    .cr-compare-header {
+      font-size: 10px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: #9A9188;
+      margin-bottom: 16px;
+    }
+    .cr-persona-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+    }
+    .cr-persona-card { padding: 48px 40px; }
+    .cr-persona-light { background: #F4F1EE; }
+    .cr-persona-dark { background: #1A1A1A; }
+    .cr-persona-tag {
+      font-size: 10px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: #9A9188;
+      margin-bottom: 20px;
+    }
+    .cr-persona-dark .cr-persona-tag { color: rgba(255,255,255,.3); }
+    .cr-persona-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(36px, 4vw, 54px);
+      font-weight: 300;
+      letter-spacing: -.02em;
+      color: #1A1A1A;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+    .cr-persona-dark .cr-persona-name { color: #fff; }
+    .cr-persona-line {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(15px, 1.6vw, 19px);
+      color: #6B6560;
+      line-height: 1.45;
+      margin-bottom: 32px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid rgba(26,26,26,.1);
+    }
+    .cr-persona-dark .cr-persona-line {
+      color: rgba(255,255,255,.35);
+      border-bottom-color: rgba(255,255,255,.1);
+    }
+    .cr-persona-traits {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .cr-persona-traits li {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #4A4542;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(26,26,26,.06);
+    }
+    .cr-persona-traits li:last-child { border-bottom: none; }
+    .cr-persona-dark .cr-persona-traits li {
+      color: rgba(255,255,255,.6);
+      border-bottom-color: rgba(255,255,255,.07);
+    }
+
+    /* ── Research voices ─────────────────────────────────── */
+    #research-voices {
+      background: #111;
+      padding: 100px 64px;
+      border-bottom: 1px solid rgba(255,255,255,.04);
+    }
+    .rv-header { margin-bottom: 56px; }
+    .rv-eyebrow {
+      font-size: 10px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.25);
+      margin-bottom: 16px;
+    }
+    .rv-h {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(32px, 3.5vw, 48px);
+      font-weight: 300;
+      letter-spacing: -.018em;
+      color: rgba(255,255,255,.85);
+      line-height: 1.15;
+    }
+    .rv-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+    }
+    .rv-cell { overflow: hidden; }
+    .rv-tag {
+      font-size: 10px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 100px;
+      display: inline-block;
+      margin-bottom: 16px;
+    }
+    .rv-tag.before {
+      color: rgba(255,255,255,.5);
+      border: 1px solid rgba(255,255,255,.15);
+    }
+    .rv-tag.after {
+      color: #1A1A1A;
+      background: rgba(255,255,255,.85);
+    }
+    .rv-context {
+      font-size: 13px;
+      line-height: 1.7;
+      color: rgba(255,255,255,.35);
+      margin-bottom: 20px;
+      max-width: 380px;
+    }
+    .rv-video-wrap {
+      position: relative;
+      width: 100%;
+      background: #000;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .rv-video-wrap video {
+      width: 100%;
+      display: block;
+      max-height: 420px;
+      object-fit: cover;
+    }
+    .rv-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.38);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity .3s;
+    }
+    .rv-video-wrap.playing .rv-overlay { opacity: 0; pointer-events: none; }
+    .rv-play-btn {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform .2s, border-color .2s;
+    }
+    .rv-video-wrap:hover .rv-play-btn {
+      transform: scale(1.08);
+      border-color: rgba(255,255,255,.9);
+    }
+    .rv-play-btn::after {
+      content: '';
+      display: block;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 9px 0 9px 16px;
+      border-color: transparent transparent transparent rgba(255,255,255,.85);
+      margin-left: 4px;
+    }
+    .rv-participant {
+      margin-top: 16px;
+      font-size: 11px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.2);
+    }
+
+    /* ── Process image grid ──────────────────────────────── */
+    .process-img-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-top: 64px;
+    }
+    .process-img-grid-cell {
+      overflow: hidden;
+      border: 1px solid rgba(26,26,26,.08);
+    }
+    .process-img-grid-cell img {
+      width: 100%;
+      height: 380px;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+    .process-img-grid-cell.artifact img {
+      object-fit: contain;
+      background: #F4F1EE;
+      padding: 28px;
+      box-sizing: border-box;
+    }
+    .process-img-grid-caption {
+      padding: 14px 20px;
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: #9A9188;
+      background: #F4F1EE;
+      border-top: 1px solid rgba(26,26,26,.06);
+      line-height: 1.55;
+    }
+
+    /* ── Process artifact container (diagrams / composites) ─ */
+    .process-artifact-wrap {
+      width: 100%;
+      background: #F4F1EE;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      margin-top: 2px;
+    }
+    .process-artifact-wrap img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+      padding: 48px;
+    }
+    .process-artifact-wrap.tall { height: 520px; }
+    .process-artifact-wrap.short { height: 380px; }
+    .process-artifact-wrap.white { background: #fff; }
+
+    /* ── Key decisions section ───────────────────────── */
+    #decisions {
+      padding: 100px 64px;
+      border-bottom: 1px solid rgba(26,26,26,.08);
+    }
+    .decisions-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 48px;
+    }
+    .decisions-h {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(36px, 4vw, 56px);
+      font-weight: 300;
+      letter-spacing: -.018em;
+    }
+    .decision-card {
+      border: 1px solid rgba(26,26,26,.08);
+      overflow: hidden;
+      background: #fff;
+      margin-bottom: 32px;
+    }
+    .decision-card:last-child { margin-bottom: 0; }
+    .decision-head {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 24px 36px;
+      border-bottom: 1px solid rgba(26,26,26,.06);
+      background: #FAFAF9;
+    }
+    .decision-badge {
+      font-size: 10px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: #9A9188;
+      border: 1px solid rgba(26,26,26,.12);
+      padding: 4px 12px;
+      border-radius: 100px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .decision-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 400;
+      line-height: 1.3;
+      letter-spacing: -.01em;
+      color: #1A1A1A;
+    }
+    .decision-cols { display: grid; grid-template-columns: repeat(4, 1fr); }
+    .decision-col {
+      padding: 28px;
+      border-right: 1px solid rgba(26,26,26,.06);
+    }
+    .decision-col:last-child { border-right: none; }
+    .decision-col-label {
+      font-size: 10px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: #9A9188;
+      margin-bottom: 12px;
+    }
+    .decision-col p {
+      font-size: 13px;
+      line-height: 1.7;
+      color: #6B6560;
+    }
+    .decision-quote {
+      padding: 16px 36px;
+      border-top: 1px solid rgba(26,26,26,.06);
+      background: #F4F1EE;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      font-style: italic;
+      font-weight: 300;
+      color: #1A1A1A;
+    }
+    .decision-quote-attr {
+      display: block;
+      margin-top: 4px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      font-style: normal;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #9A9188;
+    }
+
+    @media (max-width: 1100px) {
+      nav, .hero-content, #overview, #challenge, #research-scale, #process, #decisions, #outcomes, #insights, #methodology, .screen-mosaic-header, footer { padding-left: 32px; padding-right: 32px; }
+      .stats-bar, .process-steps, .outcomes-grid { grid-template-columns: repeat(2, 1fr); }
+      #overview, #challenge, #research-scale { grid-template-columns: 1fr; gap: 32px; }
+      .photo-triptych, .properties, #next-work { height: auto; grid-template-columns: 1fr; }
+      .triptych-cell, .property-cell, .next-img-wrap { min-height: 280px; }
+      .insight { grid-template-columns: 40px 1fr; gap: 20px; }
+      .insight-body { grid-column: 2; }
+      .process-img-grid { gap: 16px; }
+      .decision-cols { grid-template-columns: 1fr 1fr; }
+      .decision-col { border-right: none; border-bottom: 1px solid rgba(26,26,26,.06); }
+      .decision-col:nth-child(odd) { border-right: 1px solid rgba(26,26,26,.06); }
+      .decision-col:last-child, .decision-col:nth-last-child(2):nth-child(odd) { border-bottom: none; }
+    }
+
+    @media (max-width: 820px) {
+      nav {
+        position: static;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 18px;
+        padding: 24px 20px;
+      }
+      .nav-links { flex-wrap: wrap; gap: 16px 20px; }
+      .hero-content, #overview, #challenge, #research-scale, #process, #decisions, #outcomes, #insights, #methodology, footer { padding-left: 20px; padding-right: 20px; }
+      #hero { height: auto; min-height: 70vh; }
+      .stats-bar, .rs-grid, .process-steps, .outcomes-grid, .outcomes-shipped { grid-template-columns: 1fr; }
+      .stat, .outcome, .step { padding-left: 24px; padding-right: 24px; }
+      .insight { grid-template-columns: 1fr; }
+      .insight-body { grid-column: auto; }
+      .f-links, .methods-grid { flex-wrap: wrap; }
+      #next-work { grid-template-columns: 1fr; height: auto; }
+      .next-info { padding: 32px 20px; }
+      footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        padding-top: 32px;
+        padding-bottom: 32px;
+      }
+      #research-voices { padding-left: 20px; padding-right: 20px; }
+      .rv-grid { grid-template-columns: 1fr; gap: 48px; }
+      .process-img-grid { grid-template-columns: 1fr; gap: 16px; }
+      .process-img-grid-cell img { height: 260px; }
+      .cr-discovery-grid { grid-template-columns: 1fr; }
+      .cr-discovery-card { padding: 32px 24px; }
+      .screen-mosaic-header { padding-left: 20px; padding-right: 20px; }
+      .screen-mosaic { height: 320px; }
+      .mosaic-track { width: 380%; gap: 12px; }
+      .mosaic-row { gap: 12px; }
+      .mosaic-screen { width: 130px; height: 228px; }
+      .cr-timeline { flex-direction: column; }
+      .cr-timeline-phase { border-right: none; border-bottom: 2px solid #fff; }
+      .cr-timeline-phase:last-child { border-bottom: none; }
+      .cr-persona-cards { grid-template-columns: 1fr; }
+      .decisions-header { flex-direction: column; gap: 8px; }
+      .decision-cols { grid-template-columns: 1fr; }
+      .decision-col { border-right: none; border-bottom: 1px solid rgba(26,26,26,.06); }
+      .decision-col:last-child { border-bottom: none; }
+      .decision-head { flex-direction: column; align-items: flex-start; gap: 10px; }
+    }
+
+    @media (hover: none), (pointer: coarse) {
+      html { cursor: auto; }
+      #cursor, #cursor-ring { display: none !important; }
+    }
+
+
+    /* Process story narrative */
+    .process-story { margin-top: 48px; display: flex; flex-direction: column; gap: 48px; }
+    .process-story-text p { font-size: 15px; line-height: 1.85; color: #4A4542; margin-bottom: 16px; }
+    .process-story-text .process-lead { font-family: 'Cormorant Garamond', serif; font-size: clamp(28px, 3vw, 40px); font-weight: 300; font-style: italic; line-height: 1.4; letter-spacing: -.01em; color: #1A1A1A; margin-bottom: 20px; }
+    .process-story-visual { margin-top: 8px; }
+    .process-caption { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: #9A9188; margin-top: 12px; }
+    .process-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; margin-top: 32px; }
+    .process-grid-item { display: flex; flex-direction: column; gap: 8px; }
+    .process-grid-label { font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: #9A9188; }
+    .process-grid-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 400; line-height: 1.3; color: #1A1A1A; }
+    .process-grid-body { font-size: 13px; line-height: 1.7; color: #6B6560; }
+
+    /* Segmentation intro */
+    .segmentation-intro { margin-bottom: 56px; padding-top: 72px; border-top: 1px solid rgba(26,26,26,.08); }
+    .segmentation-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(28px, 3vw, 42px); font-weight: 400; line-height: 1.2; letter-spacing: -.018em; color: #1A1A1A; margin-bottom: 28px; max-width: 780px; }
+    .segmentation-intro p { font-size: 15px; line-height: 1.85; color: #4A4542; margin-bottom: 16px; max-width: 720px; }
+    .segmentation-stat { display: flex; gap: 48px; align-items: baseline; margin-top: 48px; padding-top: 36px; border-top: 1px solid rgba(26,26,26,.08); }
+    .segmentation-stat-num { font-family: 'Cormorant Garamond', serif; font-size: clamp(60px, 6vw, 88px); font-weight: 300; line-height: 1; letter-spacing: -.03em; color: #1A1A1A; flex-shrink: 0; }
+    .segmentation-stat-detail { display: flex; flex-direction: column; gap: 8px; }
+    .segmentation-stat-label { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: #9A9188; }
+    .segmentation-stat-desc { font-size: 13px; line-height: 1.7; color: #6B6560; max-width: 420px; }
+    .segmentation-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 24px; padding-top: 24px; border-top: 1px solid rgba(26,26,26,.08); }
+    .seg-stat { display: flex; flex-direction: column; gap: 6px; }
+    .seg-stat-num { font-family: 'Cormorant Garamond', serif; font-size: 42px; font-weight: 300; line-height: 1; letter-spacing: -.02em; color: #1A1A1A; }
+    .seg-stat-label { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: #9A9188; line-height: 1.5; }
+
+    @media (max-width: 768px) {
+      .process-grid { grid-template-columns: 1fr 1fr; }
+      .segmentation-stats { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<nav>
+  <a href="index.html" class="nav-mark">Chris Pennell</a>
+  <ul class="nav-links">
+    <li><a href="index.html#work">Work</a></li>
+    <li><a href="about.html">About</a></li>
+      <li><a href="https://calendly.com/cp86-rice/30min" target="_blank">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ── Hero ─────────────────────────────────────────────── -->
+<section id="hero">
+  <div class="hero-img-wrap">
+    <img class="hero-img" id="heroParallax"
+      src="images/cr-hero-app.png"
+      alt="Canyon Ranch On-Property Mobile App: My Schedule, Explore, and Service Booking screens">
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-meta">
+      <span class="hero-tag">UX Research · Product Strategy · Health &amp; Wellness</span>
+      <span class="hero-lead">+15% revenue · 8 stakeholders aligned · 0-to-1 iOS app</span>
+    </div>
+    <h1 class="hero-title">
+      Canyon Ranch<br>
+      <em>On-Property App</em>
+    </h1>
+  </div>
+</section>
+
+<!-- Stats bar -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-num reveal" data-count="15" data-prefix="+" data-suffix="%">+15%</div>
+    <div class="stat-label">Increase in on-ranch ancillary revenue</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num reveal" data-count="78" data-suffix="%">78%</div>
+    <div class="stat-label">Guest adoption in the first three weeks</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num reveal">~9 hrs</div>
+    <div class="stat-label">Saved per wellness guide each week</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num reveal" data-count="175" data-suffix="+">175+</div>
+    <div class="stat-label">Guests validated across all research phases</div>
+  </div>
+</div>
+
+<!-- ── Photo triptych ─────────────────────────────────────── -->
+<div class="photo-triptych">
+  <div class="triptych-cell">
+    <img src="images/cr-treadmill.jpg" alt="Performance science at Canyon Ranch" data-parallax-triptych>
+    <span class="triptych-caption">Performance</span>
+  </div>
+  <div class="triptych-cell">
+    <img src="images/cr-massage.jpg" alt="Spa treatment at Canyon Ranch" data-parallax-triptych>
+    <span class="triptych-caption">Restoration</span>
+  </div>
+  <div class="triptych-cell">
+    <img src="images/cr-meditation.jpg" alt="Group meditation at Canyon Ranch" data-parallax-triptych>
+    <span class="triptych-caption">Mindfulness</span>
+  </div>
+</div>
+
+<!-- ── Overview ──────────────────────────────────────────── -->
+<section id="overview">
+    <div class="overview-problem reveal">
+      When Canyon Ranch brought me in, the ask sounded straightforward. Build a mobile app so guests can book services without calling the desk. What I found when I started talking to guests and staff was more complicated, and more interesting. Getting from the first research session to a product that actually launched took two years, eight senior stakeholders, and a lot of conversations about what the app should not try to do. The app launched to 78% adoption in three weeks and drove a 15% lift in ancillary revenue. I want to explain how we got there.</div>
+    </div>
+  <div class="project-details reveal">
+    <div class="detail-group">
+      <div class="detail-label">Client</div>
+      <div class="detail-value">Canyon Ranch: luxury wellness resort group with properties in Tucson, Lenox, and Las Vegas</div>
+    </div>
+    <div class="detail-group">
+      <div class="detail-label">Engagement</div>
+      <div class="detail-value">Principal UX Researcher &amp; Product Strategy Consultant via InfoBeans</div>
+    </div>
+    <div class="detail-group">
+      <div class="detail-label">Scope</div>
+      <div class="detail-value">0-to-1 mobile app: product strategy, guest journey research, roadmap definition, prototyping, usability testing, alpha launch</div>
+    </div>
+    <div class="detail-group">
+      <div class="detail-label">Timeline</div>
+      <div class="detail-value">2021 - 2023</div>
+    </div>
+    <div class="detail-group">
+      <div class="detail-label">Lead</div>
+      <div class="detail-value">Chris Pennell, Principal UX Researcher &amp; Product Strategist</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Property showcase ──────────────────────────────────── -->
+<div class="properties">
+  <div class="property-cell">
+    <img src="images/cr-mansion.jpg" alt="Bellefontaine Mansion at Canyon Ranch Lenox" data-parallax-prop>
+    <div class="property-label">
+      Canyon Ranch Lenox
+      <span class="property-sublabel">Lenox, Massachusetts</span>
+    </div>
+  </div>
+  <div class="property-cell">
+    <img src="images/cr-aquavana.jpg" alt="Aquavana at Canyon Ranch Las Vegas" data-parallax-prop>
+    <div class="property-label">
+      Canyon Ranch Las Vegas
+      <span class="property-sublabel">Las Vegas, Nevada</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── Challenge ─────────────────────────────────────────── -->
+<section id="challenge">
+  <div class="section-eyebrow reveal-left">01 The Challenge</div>
+    <div class="challenge-body reveal">
+      <p>Guests at Canyon Ranch pay around $3,000 for a three-day stay. During that stay, they might want to book a massage, a personal training session, or a nutrition consultation. To do any of that, they had to call the front desk or stand in line. If the line was too long, sometimes they gave up and went back to their room. The front desk was staffed by people doing their jobs well. The problem was that the booking system itself had never been updated. Every competitor at Canyon Ranch's scale had already moved to self-service mobile booking. Canyon Ranch was still using paper.</p>
+      <p>One story made it concrete. A guest who was a CEO tried to book a personal trainer during her stay. The line at the front desk was too long. She walked away and the booking never happened. That was $300 gone in less than two minutes. The operations team had seen it play out over and over, and they had an estimate for what it was costing the business. Around $1.2 million a year across both properties.</p>
+      <p>The brief was to build a native iOS app from scratch. Before we could build anything, eight senior leaders from across the organization had to agree on what the app would actually do. Mike Fulkerson (CMO), Scott Nunn (SVP &amp; CIO), Kevin Coleman (VP Consumer Insights), Molly Anderson (VP Sales), Dustin Nabhan (VP Health &amp; Performance), Deirdre Strunk (VP Spa), Liz Shupe (Dir Digital Experience), and Jim Eastburn (Dir Transformational Experience) all had a stake in the product. Getting them to a shared scope was a real part of the job, and it took work. It took eighteen months from the first research session to an alpha launch.</p>
+      <p>There was one more thing worth knowing. There was no incremental budget. Whatever we built had to pay for itself through the revenue it recovered or the staff time it freed up. That meant every feature needed a business case before it made the roadmap. The research and the financial justification had to happen together.</p>
+    </div>
+    <div class="challenge-pullquote reveal">
+      Guests arrived with their stay already planned in their heads. The front desk was the only thing standing between them and carrying it out. Once I understood that, almost every scope decision became easier to make.
+    </div>
+</section>
+
+<!-- ── Research scale strip ───────────────────────────────── -->
+<section id="research-scale">
+  <div class="rs-label reveal-left">Research Foundation</div>
+  <div class="rs-grid">
+    <div class="reveal">
+      <span class="rs-num">32</span>
+      <span class="rs-desc">Guest interviews in concept validation</span>
+    </div>
+    <div class="reveal">
+      <span class="rs-num">175+</span>
+      <span class="rs-desc">Guests validated across all phases</span>
+    </div>
+    <div class="reveal">
+      <span class="rs-num">38</span>
+      <span class="rs-desc">Hypotheses developed and tracked</span>
+    </div>
+    <div class="reveal">
+      <span class="rs-num">5</span>
+      <span class="rs-desc">Iterative research experiments on property</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── Process ────────────────────────────────────────────── -->
+<section id="process">
+  <div class="process-header">
+    <h2 class="process-h reveal">How we worked</h2>
+    <span class="section-eyebrow reveal">02 Approach</span>
+  </div>
+  <div class="process-steps">
+    <div class="step">
+      <span class="step-num">01</span>
+      <h3 class="step-title">Discovery &amp; Guest Journey Research</h3>
+      <ul class="step-body">
+        <li>Three stakeholder workshops in the first two weeks, with wellness, operations, marketing, and revenue all in the room at once, working through competing priorities until we had shared scope</li>
+        <li>32 guest interviews on property in Tucson and Lenox</li>
+        <li>Competitive review across wellness apps, luxury hospitality, and concierge platforms</li>
+        <li>38 hypotheses that every subsequent build decision ran through</li>
+      </ul>
+      <span class="step-tag">Research · Strategy</span>
+    </div>
+    <div class="step">
+      <span class="step-num">02</span>
+      <h3 class="step-title">Product Roadmap &amp; Concept Design</h3>
+      <ul class="step-body">
+        <li>Roadmap came from validated hypotheses, not from what stakeholders asked for</li>
+        <li>Core flows: activity booking, wellness schedule, guide messaging, conflict detection</li>
+        <li>Prototyped fast, showed work weekly</li>
+        <li>Early usability made clear that new guests and returning guests used the product completely differently, so the IA had to work for both mental models from day one</li>
+      </ul>
+      <span class="step-tag">IA · Prototyping</span>
+    </div>
+    <div class="step">
+      <span class="step-num">03</span>
+      <h3 class="step-title">Usability Testing &amp; Alpha Launch</h3>
+      <ul class="step-body">
+        <li>Usability testing on property, in real rooms, device in hand. Debriefed daily, updated the designs, retested</li>
+        <li>When 7 of 8 guests couldn't locate a massage under the original categories, ran a card sort with 16 participants and rebuilt the taxonomy from the ground up. Next round: 8 of 8</li>
+        <li>Design QA and co-shore engineering handoff with India team</li>
+        <li>Alpha launched at Tucson. 78% adoption in three weeks</li>
+      </ul>
+      <span class="step-tag">Testing · Launch</span>
+    </div>
+  </div>
+  <!-- Discovery evidence -->
+  <div class="cr-discovery-grid">
+
+
+  </div>
+  <div class="insights-grid process-artifacts">
+    <div class="insight">
+      <span class="insight-idx reveal">01</span>
+      <div class="insight-label reveal">End-to-end process : discovery, synthesis, concept design, prototype iteration, and alpha launch</div>
+      <div class="insight-body reveal">
+        <p>Three cross functional sessions over two weeks. Marketing, IT, sales, spa, all in one room. Getting eight business line leads to sign a roadmap was challenging and I wasn't sure how it would play out. We left with a journey map, hypothesis backlog, and a roadmap they signed off on.</p>
+        <p>The journey map covered the full guest and wellness guide experience, airport to checkout. We defined "done" for alpha as our success criteria. Every sprint decision had to tie back to that.</p>
+        <img src="images/cr-process.png" alt="Canyon Ranch UX research and design process: discovery through alpha launch" class="insight-img" style="margin-top: 24px;">
+      </div>
+    </div>
+
+    <div style="grid-column: 1 / -1; margin: 0 -0px;">
+      <div class="cr-timeline-header reveal">Delivery timeline: Nov to Jul</div>
+      <div class="cr-timeline reveal">
+        <div class="cr-timeline-phase">
+          <div class="cr-tl-badge">Nov to Jan</div>
+          <div class="cr-tl-title">Concept Validation &amp; MVP Definition</div>
+          <p class="cr-tl-desc">Journey mapping, hypothesis backlog, MVP scoping. About 5 usability sessions per week in Tucson.</p>
+        </div>
+        <div class="cr-timeline-phase">
+          <div class="cr-tl-badge">Alpha: March</div>
+          <div class="cr-tl-title">Alpha Launch</div>
+          <p class="cr-tl-desc">Tucson flagship. Qualitative usability testing, 5 sessions per week. Findings fed directly into sprint backlog.</p>
+        </div>
+        <div class="cr-timeline-phase">
+          <div class="cr-tl-badge">Beta: June</div>
+          <div class="cr-tl-title">Beta Launch</div>
+          <p class="cr-tl-desc">TestFlight rollout. 5 to 10 users per week, quantitative and qualitative. Recommendations at each sprint review.</p>
+        </div>
+        <div class="cr-timeline-phase">
+          <div class="cr-tl-badge">MVP: July</div>
+          <div class="cr-tl-title">Full Launch</div>
+          <p class="cr-tl-desc">78% guest adoption in the first three weeks at the Tucson flagship.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight">
+      <span class="insight-idx reveal">02</span>
+      <div class="insight-label reveal">Canyon Ranch MVP : My Schedule, Activity Booking, and Wellness Guide messaging screens</div>
+      <div class="insight-body reveal">
+        <p>A single "my schedule" view for all booked, complimentary services. It showed up in all eight usability sessions as the top pain point. Service booking let users skip the front desk line. Guests hated the queue, and that friction was a booking deterrent more than a convenience issue. Wellness guides stayed in flow for complex decisions. Removing them from routine scheduling was a tradeoff we tested carefully. The data was clear. Their presence in simple booking flows was creating hesitation without adding value.</p>
+        <img src="images/cr-mvp.png" alt="Canyon Ranch MVP: My Schedule, Activity Booking, and Wellness Guide messaging screens" class="insight-img" style="margin-top: 24px;">
+      </div>
+    </div>
+    <div class="insight">
+      <span class="insight-idx reveal">03</span>
+      <div class="insight-label reveal">On-ranch prototype testing at the Tucson property : device in hand, whiteboard sessions, wireframes</div>
+      <div class="insight-body reveal">
+        <p>Testing was on property in Tucson, with real guests, real devices. Five to eight moderated sessions per week. After each one, the team debriefed and updated the backlog before the next morning. The gap between "we heard this" and "we changed this" was usually one sprint.</p>
+        <img src="images/cr-testing2.png" alt="On-ranch prototype testing at the Tucson property: device in hand, whiteboard sessions, wireframes" class="insight-img" style="margin-top: 24px;">
+      </div>
+    </div>
+    <div class="insight">
+      <span class="insight-idx reveal">04</span>
+      <div class="insight-label reveal">Delivery roadmap at beta : Alpha through Phase 2 timeline with sprint milestones and app screen progress</div>
+      <div class="insight-body reveal">
+        <p>Sprint planning, grooming, and research synthesis ran weekly across US and India. Findings from research became user stories in the same sprint. Nothing piled up waiting on a product decision.</p>
+        <img src="images/cr-old-beta.png" alt="Canyon Ranch MVP roadmap: Alpha, Beta, and Phase 2 delivery timeline with app screens" class="insight-img" style="margin-top: 24px;">
+      </div>
+    </div>
+  </div>
+
+  <!-- Guest segmentation -->
+
+</section>
+
+<!-- ── Screen mosaic ─────────────────────────────────────── -->
+<section class="screen-mosaic-section">
+  <div class="screen-mosaic" aria-label="Canyon Ranch screen mosaic">
+    <div class="mosaic-track">
+      <!-- row 1: 9 unique × 2 for seamless loop -->
+      <div class="mosaic-row">
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark01.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark02.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark03.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark04.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark05.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark06.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark07.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark01.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark02.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark01.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark02.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark03.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark04.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark05.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark06.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark07.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark01.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark02.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+      </div>
+      <!-- row 2: offset start for staggered look -->
+      <div class="mosaic-row">
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark03.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark04.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark05.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark06.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark07.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark01.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark02.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark03.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark04.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark03.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark04.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark05.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark06.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark07.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark01.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark02.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark03.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark04.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+      </div>
+      <!-- row 3: different offset for variety -->
+      <div class="mosaic-row">
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark05.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark06.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark07.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark01.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark02.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark03.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark04.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark05.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark06.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark05.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark06.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark07.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark01.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark02.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark03.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark04.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark05.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+        <div class="mosaic-screen"><img src="images/Canyon%20Ranch%20Screens/CR_dark06.png" alt="" aria-hidden="true" loading="eager" decoding="async"></div>
+      </div>
+    </div>
+    <div class="mosaic-fade"></div>
+  </div>
+</section>
+
+<!-- ── Key Decisions ──────────────────────────────────────── -->
+<section id="decisions">
+  <div class="decisions-header">
+    <h2 class="decisions-h reveal">Three calls that shaped the product</h2>
+    <span class="section-eyebrow reveal">03 PM Judgment</span>
+  </div>
+  <p class="reveal" style="font-size:15px;line-height:1.85;color:#6B6560;max-width:680px;margin-bottom:48px;">Over a nine-month build with a distributed team, three situations required a recommendation to senior stakeholders. Each involved a real tradeoff and a case I had to make with data.</p>
+
+  <div class="decision-card reveal">
+    <div class="decision-head">
+      <span class="decision-badge">Decision 01</span>
+      <span class="decision-title">API sequencing: keeping the India team productive while US infrastructure was still being set up</span>
+    </div>
+    <div class="decision-cols">
+      <div class="decision-col">
+        <div class="decision-col-label">The situation</div>
+        <p>About two months into the build, we hit a coordination problem. The engineering lead in the US was still getting the APIs configured. The development team in India needed work they could actually do in the meantime. And design was still iterating on screens that were not finalized. Three teams were all waiting on each other in different ways, and the project calendar was not going to accommodate a long stall.</p>
+      </div>
+      <div class="decision-col">
+        <div class="decision-col-label">My recommendation</div>
+        <p>I recommended building against mock data and greyscale wireframes so all three teams could keep moving in parallel. Once the real APIs and finalized designs were ready, we would swap them in. I brought the plan to the Product Owner and CIO before committing the team to it, so they understood what we were doing, why, and what the dependencies looked like at each stage.</p>
+      </div>
+      <div class="decision-col">
+        <div class="decision-col-label">What happened</div>
+        <p>All three teams kept moving. No milestone slipped. The sequencing approach worked well enough that we used a version of it whenever a new team member joined the project later in the engagement.</p>
+      </div>
+      <div class="decision-col">
+        <div class="decision-col-label">Risk managed</div>
+        <p>A distributed team with three interdependent streams and no agreed-on sequencing plan is a situation where weeks can disappear without anyone making a bad decision. The mock data approach gave everyone something concrete to build toward while the real dependencies were being resolved.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="decision-card reveal">
+    <div class="decision-head">
+      <span class="decision-badge">Decision 02</span>
+      <span class="decision-title">Conflict alerts: elevating a nice-to-have based on what usability data was showing</span>
+    </div>
+    <div class="decision-cols">
+      <div class="decision-col">
+        <div class="decision-col-label">The situation</div>
+        <p>During usability sessions, I noticed people slowing down or stopping right before they completed a booking. When I probed on it, they said they were worried about scheduling something that might conflict with a class or appointment they had already planned. The MVP design at that point did not show them whether a conflict existed. That uncertainty was enough to make some guests abandon the booking entirely.</p>
+      </div>
+      <div class="decision-col">
+        <div class="decision-col-label">My recommendation</div>
+        <p>I recommended adding conflict detection before we moved to beta. It was a smaller feature than it sounds, scoped to about one sprint. I brought the usability session data to the Product Owner alongside an estimate of what booking hesitation was costing in completion rate, and made the case for absorbing the extra scope rather than shipping without it.</p>
+      </div>
+      <div class="decision-col">
+        <div class="decision-col-label">What happened</div>
+        <p>After launch, Canyon Ranch collected feedback from guests who had used the app on property. Conflict alerts came back as the most valued feature in the app. That was not what I expected given everything else the product did. One sprint of scope had outperformed everything else in that release.</p>
+      </div>
+      <div class="decision-col">
+        <div class="decision-col-label">Risk managed</div>
+        <p>Booking hesitation was appearing in every session where conflicts were not surfaced. Catching it before launch meant fixing it at a reasonable cost. A post-launch investigation into booking drop-off, followed by a retrofit sprint, would have taken longer and cost more than the original fix.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="decision-card reveal">
+    <div class="decision-head">
+      <span class="decision-badge">Decision 03</span>
+      <span class="decision-title">Taxonomy: recommending an extra research sprint to avoid a post-launch navigation failure</span>
+    </div>
+    <div class="decision-cols">
+      <div class="decision-col">
+        <div class="decision-col-label">The situation</div>
+        <p>In the first round of usability sessions, seven out of eight participants could not find a massage in the booking flow. They navigated confidently. They just kept ending up in the wrong category. The taxonomy had been built around how Canyon Ranch organized services internally, and it did not match how a guest thought about what they wanted or how they would look for it.</p>
+      </div>
+      <div class="decision-col">
+        <div class="decision-col-label">My recommendation</div>
+        <p>I recommended running a card sort with enough participants to build a defensible navigation structure before we finalized the IA. That meant absorbing additional time. I brought the failure rate data and a timeline impact estimate to the Product Owner and VP of Digital Experience, and framed it as two options. Spend the time now and get the structure right, or ship the existing taxonomy and deal with a navigation problem after launch.</p>
+      </div>
+      <div class="decision-col">
+        <div class="decision-col-label">What happened</div>
+        <p>The card sort data pointed clearly toward a different structure. After rebuilding the categories around the research findings, follow-up testing showed 8 of 8 participants completing the same task that had failed 7 of 8 times before. The IA that came out of that study was what shipped.</p>
+      </div>
+      <div class="decision-col">
+        <div class="decision-col-label">Risk managed</div>
+        <p>A seven-of-eight failure rate on a core task would have shown up immediately in post-launch analytics, and would have been much harder to diagnose and fix once real users were in the product. Running the card sort before launch was the lower-cost option, even after accounting for the additional time it required.</p>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ── Research voices ───────────────────────────────────── -->
+<section id="research-voices">
+  <div class="rv-header reveal">
+    <div class="rv-eyebrow">Guest voices, concept validation phase</div>
+    <h2 class="rv-h">What guests said before the app existed,<br>and what they said after.</h2>
+  </div>
+  <div class="rv-grid">
+    <div class="rv-cell reveal">
+      <div class="rv-tag before">Before</div>
+      <p class="rv-context">P10, returning guest, Canyon Ranch Tucson. Concept validation phase. Describing the paper activity booklet and how she manages her schedule on property.</p>
+      <div class="rv-video-wrap" id="rv-before">
+        <video preload="metadata" playsinline>
+          <source src="images/cr-p10-before.mp4" type="video/mp4">
+        </video>
+        <div class="rv-overlay">
+          <div class="rv-play-btn"></div>
+        </div>
+      </div>
+      <div class="rv-participant">P10, Returning guest, Tucson</div>
+    </div>
+    <div class="rv-cell reveal">
+      <div class="rv-tag after">After</div>
+      <p class="rv-context">P11, returning guest, Canyon Ranch Tucson. Post-launch usability session. Reacting to the app after using it on property for the first time.</p>
+      <div class="rv-video-wrap" id="rv-after">
+        <video preload="metadata" playsinline>
+          <source src="images/this-app-would-make-life-so-much-easier.mp4" type="video/mp4">
+        </video>
+        <div class="rv-overlay">
+          <div class="rv-play-btn"></div>
+        </div>
+      </div>
+      <div class="rv-participant">P11, Returning guest, Tucson</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Atmospheric divider ────────────────────────────────── -->
+<div class="atmo-divider">
+  <img src="images/cr-sunrise.jpg" alt="Canyon Ranch at sunrise" id="atmoDividerImg">
+  <div class="atmo-overlay">
+    <div>
+      <div class="atmo-quote">"If I had it all right here, it would make life so much easier."</div>
+      <div class="atmo-attribution">P4, CEO, first-time guest at Canyon Ranch Tucson</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Outcomes ───────────────────────────────────────────── -->
+<section id="outcomes">
+  <div class="outcomes-ghost">Results</div>
+  <div class="outcomes-inner">
+    <div class="outcomes-label">04 What Changed</div>
+    <div class="outcomes-grid">
+      <div class="outcome">
+        <div class="outcome-num">+15%</div>
+        <div class="outcome-desc">In the first quarter after the Tucson launch, ancillary revenue from on-property services went up 15 percent compared to the same period the prior year. The research had predicted this. When guests can browse and book on their own, they spend more.</div>
+      </div>
+      <div class="outcome">
+        <div class="outcome-num">78%</div>
+        <div class="outcome-desc">Three weeks after the Tucson launch, 78 percent of guests on property were using the app. There was no marketing campaign. Guests found it on their own, which said something about how much friction the old system had been creating.</div>
+      </div>
+      <div class="outcome">
+        <div class="outcome-num">~9 hrs</div>
+        <div class="outcome-desc">Before the launch, wellness guides were spending more than 20 hours a week on scheduling calls. After launch, the operations team measured the change in call volume using call logs. The reduction worked out to roughly nine hours per guide per week. Across the full staff, that is around $260,000 a year in recovered capacity that shifted back to actual wellness work.</div>
+      </div>
+    </div>
+
+    <div class="outcomes-cmo">
+      <div class="outcomes-cmo-quote">"You have such an amazing and rigorous process for brainstorming, synthesis and gathering customer feedback. It really is amazing watching you work."</div>
+      <div class="outcomes-cmo-attr">Mike Fulkerson, Chief Marketing Officer, Canyon Ranch</div>
+    </div>
+    <div class="outcomes-footnote">Revenue lift measured in the first quarter post-launch at the Tucson flagship against the prior comparable period. Guest adoption rate measured in the first three weeks at the Tucson property. Staff time savings sourced from Canyon Ranch operations call logs before and after launch.</div>
+  </div>
+</section>
+
+<!-- ── Insights ───────────────────────────────────────────── -->
+<section id="insights">
+  <div class="insights-header">
+    <div class="section-eyebrow reveal">05 Key Research Findings</div>
+    <h2 class="insights-h reveal">What the research revealed</h2>
+  </div>
+  <div class="insights-grid">
+
+    <div class="insight">
+      <span class="insight-idx reveal">01</span>
+      <div class="insight-label reveal">Every interview came back to the same moment. A guest with something specific in mind, and a phone call standing in the way.</div>
+      <div class="insight-body reveal">
+        <p>About two weeks into research, I started seeing the same thing in almost every session. Guests came to Canyon Ranch with a clear picture of what they wanted their stay to look like. The problem was execution. Getting to the thing they had already decided to do required a phone call, a trip to the front desk, or finding the right staff member. None of those steps were difficult on their own. But all of them added friction to an experience guests were paying a premium not to have friction in.</p>
+        <p>That finding shaped the roadmap pretty directly. Features designed to help guests explore new services went to the backlog. Features that let them do what they had already decided to do shipped first.</p>
+        <div class="insight-verbatim">
+          "I hate carrying the book. My phone is always with me."
+          <div class="insight-verbatim-attr">P1, returning guest, Canyon Ranch Tucson</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight">
+      <span class="insight-idx reveal">02</span>
+      <div class="insight-label reveal">I had not expected wellness guides to be a major part of the research. Once I talked to them, it was clear the original brief had left out one of the most important people in the whole system.</div>
+      <div class="insight-body reveal">
+        <p>The brief was focused on guests. But the more people I talked to, the clearer it became that wellness guides were the ones holding the whole stay together. They were the connective tissue between what guests wanted and what actually happened during a visit. And they were spending more than 20 hours a week on scheduling calls. That was time taken directly from the work Canyon Ranch hired them to do. When I mapped their day, it looked less like a wellness role and more like a phone-based admin job with occasional client contact.</p>
+        <p>Once I understood that, the argument for getting operations stakeholders into the room became much easier to make. The app was not just a convenience tool for guests. It was also a way to give guides their time back. Framing it that way early in the project changed who needed to be involved in scope decisions and what those conversations were about. The nine hours per week of recovered guide time after launch came directly from that framing happening before a single screen was designed.</p>
+        <div class="insight-verbatim">
+          "It's even better than the book."
+          <div class="insight-verbatim-attr">P49, returning guest, Canyon Ranch Lenox</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight">
+      <span class="insight-idx reveal">03</span>
+      <div class="insight-label reveal">The navigation categories reflected how Canyon Ranch organized services internally. Seven out of eight guests in early sessions could not find what they were looking for under them.</div>
+      <div class="insight-body reveal">
+        <p>This showed up clearly in the first round of usability sessions. Guests would open the booking section, scan the category list, and start guessing. A massage might be under Medical Spa, they thought. Or Signature Services. Or Health and Performance. Seven out of eight participants looked in the wrong place first. The category structure made complete sense from inside the organization. It made almost no sense to someone arriving for the first time.</p>
+        <p>We ran a card sort. Four moderated sessions, 12 unmoderated, 16 participants total. The results pointed toward a full restructure. Service categories were rebuilt around how guests searched for wellness services. Follow-up testing showed 8 of 8 found what they needed.</p>
+        <p>We pushed for this work even though it added time. The final ease-of-use rating was 2.23 on a 5-point scale where 1 is the best score, close to the top end.</p>
+        <div class="insight-data-point">
+          <span class="insight-data-num">7/8</span>
+          <span class="insight-data-label">failing the original taxonomy</span>
+        </div>
+        <div class="insight-data-point" style="margin-left: 12px;">
+          <span class="insight-data-num">8/8</span>
+          <span class="insight-data-label">succeeding after the redesign</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight">
+      <span class="insight-idx reveal">04</span>
+      <div class="insight-label reveal">Something came up in concept validation that I had not thought to ask about: whether guests would download the app at all.</div>
+      <div class="insight-body reveal">
+        <p>In early concept validation sessions, I started asking guests whether they would download an app if Canyon Ranch released one. The answers split along familiarity with the brand. Guests who had visited before said yes without hesitation. Guests who were coming for the first time described the download itself as a kind of commitment they were not sure they wanted to make yet. That was not something I had expected, and it changed what I thought the design needed to accomplish first.</p>
+        <p>That finding shaped the design priorities in a specific way. The app needed to feel like Canyon Ranch before it asked guests to do anything. The typography, the photography, the way the copy was written all had to match what guests already associated with the brand. A feature that delivered real value but felt out of character could undermine the download decision before a guest ever reached it. So we made trust signals non-negotiable and everything else negotiable.</p>
+        <div class="insight-verbatim">
+          "There are some apps I wouldn't trust, but Canyon Ranch is a place I trust, like my church, and I would download it immediately."
+          <div class="insight-verbatim-attr">P22, returning guest, Canyon Ranch Tucson</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight">
+      <span class="insight-idx reveal">05</span>
+      <div class="insight-label reveal">Guests who could book themselves spent more during their stay.</div>
+      <div class="insight-body reveal">
+        <p>When guests could browse and book services on their own schedule, their spending during the stay went up. We saw this pattern across every pilot cohort. It also matched what other hospitality brands had been reporting from similar features. Removing friction at the point of decision turns out to have a measurable effect on how much people spend.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="segmentation-intro reveal">
+    <div class="segmentation-stat">
+      <span class="segmentation-stat-num">32</span>
+      <div class="segmentation-stat-detail">
+        <span class="segmentation-stat-label">Moderated interviews, Concept Validation phase</span>
+        <span class="segmentation-stat-desc">17 new guests, 15 returning. Insights delivered to Product Owner and UX lead with roadmap recommendations attached.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cr-guest-compare reveal">
+    <div class="cr-compare-header">Guest segmentation - how new and returning guests approached the product differently</div>
+    <div class="cr-persona-cards">
+
+      <div class="cr-persona-card cr-persona-light">
+        <div class="cr-persona-tag">First-time visitor</div>
+        <div class="cr-persona-name">New Guests</div>
+        <div class="cr-persona-line">They came with a health goal in mind. The range of services was exciting and a little overwhelming, and they worried about missing something they should have tried.</div>
+        <ul class="cr-persona-traits">
+          <li>Arrived with a defined wellness goal</li>
+          <li>Came to improve health or change a habit</li>
+          <li>Open to any provider - no established preference</li>
+          <li>Searched by intention: "I want to relax"</li>
+          <li>Anxious about missing available services</li>
+        </ul>
+      </div>
+
+      <div class="cr-persona-card cr-persona-dark">
+        <div class="cr-persona-tag">Repeat visitor</div>
+        <div class="cr-persona-name">Returning Guests</div>
+        <div class="cr-persona-line">They already knew Canyon Ranch. They had a provider they liked, a routine that worked, and a preference for being left to navigate on their own.</div>
+        <ul class="cr-persona-traits">
+          <li>Visiting to decompress - no defined wellness pathway needed</li>
+          <li>Came to get away, not to change</li>
+          <li>Often had a specific provider they wanted to see again</li>
+          <li>Searched by category - already knew the taxonomy</li>
+          <li>Less need for discovery prompts; comfortable navigating</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  </div>
+</section>
+
+
+    <!-- ── Methodology ────────────────────────────────────────── -->
+<section id="methodology">
+  <div class="section-eyebrow reveal">Methods Used</div>
+  <div class="methods-grid">
+    <span class="method-pill">In-depth guest interviews</span>
+    <span class="method-pill">Stakeholder workshops</span>
+    <span class="method-pill">Journey mapping</span>
+    <span class="method-pill">Hypothesis tracking</span>
+    <span class="method-pill">Product roadmapping</span>
+    <span class="method-pill">Competitive analysis</span>
+    <span class="method-pill">Rapid prototyping</span>
+    <span class="method-pill">Card sorting</span>
+    <span class="method-pill">Moderated usability testing</span>
+    <span class="method-pill">Unmoderated testing via TestFlight</span>
+    <span class="method-pill">Co-shore team coordination</span>
+    <span class="method-pill">Design QA</span>
+    <span class="method-pill">Alpha launch support</span>
+  </div>
+</section>
+
+<!-- ── Next Work ──────────────────────────────────────────── -->
+<a href="jintronix.html" id="next-work">
+  <div class="next-img-wrap">
+    <img class="next-img"
+      src="images/jintronix-background-clinical.jpg"
+      alt="Jintronix clinical rehab platform">
+  </div>
+  <div class="next-info">
+    <div class="next-eyebrow">Next Case Study</div>
+    <h3 class="next-title">Jintronix<br>Rehabilitation Platform</h3>
+    <span class="next-arrow">View case study</span>
+  </div>
+</a>
+
+<!-- Footer -->
+<footer>
+  <a href="index.html" class="f-mark">Chris Pennell</a>
+  <span class="f-copy">&copy; 2026 Chris Pennell</span>
+  <ul class="f-links">
+    <li><a href="index.html#work">Work</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="https://calendly.com/cp86-rice/30min" target="_blank">Contact</a></li>
+  </ul>
+</footer>
+
+<script>
+  const supportsCustomCursor = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (supportsCustomCursor) {
+    document.documentElement.classList.add('has-custom-cursor');
+  }
+
+  document.body.classList.add('js-ready');
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Smooth scroll
+  let lenis;
+  try {
+    lenis = new Lenis({ lerp: 0.08, smoothWheel: true });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+    gsap.ticker.lagSmoothing(0);
+  } catch(e) {
+    console.warn('Lenis init failed, using native scroll', e);
+  }
+
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let rx = 0, ry = 0, cx = 0, cy = 0;
+  document.addEventListener('mousemove', e => {
+    cx = e.clientX; cy = e.clientY;
+    gsap.set(cursor, { x: cx, y: cy });
+  });
+  (function loop() {
+    rx += (cx - rx) * 0.1;
+    ry += (cy - ry) * 0.1;
+    gsap.set(ring, { x: rx, y: ry });
+    requestAnimationFrame(loop);
+  })();
+
+  // Hero parallax
+  gsap.to('#heroParallax', {
+    yPercent: -15,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '#hero',
+      start: 'top top',
+      end: 'bottom top',
+      scrub: true
+    }
+  });
+
+  gsap.from('.hero-title', { y: 40, opacity: 0, duration: 1.1, ease: 'power3.out', delay: 0.2 });
+  gsap.from('.hero-meta', { y: 20, opacity: 0, duration: 0.8, ease: 'power3.out', delay: 0.05 });
+
+  // Scroll reveals
+  gsap.utils.toArray('.reveal').forEach(el => {
+    gsap.to(el, {
+      opacity: 1,
+      y: 0,
+      duration: 0.8,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: el,
+        start: 'top 88%',
+        toggleActions: 'play none none none'
+      }
+    });
+  });
+
+  gsap.utils.toArray('.reveal-left').forEach(el => {
+    gsap.to(el, {
+      opacity: 1,
+      x: 0,
+      duration: 0.7,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: el,
+        start: 'top 88%',
+        toggleActions: 'play none none none'
+      }
+    });
+  });
+
+  // Process steps stagger
+  gsap.utils.toArray('.step').forEach((step, i) => {
+    gsap.from(step, {
+      opacity: 0,
+      y: 30,
+      duration: 0.7,
+      delay: i * 0.12,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '#process',
+        start: 'top 75%',
+        toggleActions: 'play none none none'
+      }
+    });
+  });
+
+  // Outcomes animation
+  gsap.utils.toArray('.outcome-num').forEach(el => {
+    gsap.from(el, {
+      opacity: 0,
+      y: 20,
+      duration: 0.8,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: '#outcomes',
+        start: 'top 70%',
+        toggleActions: 'play none none none'
+      }
+    });
+  });
+
+  // Research voice videos: click to play/pause
+  document.querySelectorAll('.rv-video-wrap').forEach(wrap => {
+    const video = wrap.querySelector('video');
+    wrap.addEventListener('click', () => {
+      if (video.paused) {
+        video.play();
+        wrap.classList.add('playing');
+      } else {
+        video.pause();
+        wrap.classList.remove('playing');
+      }
+    });
+    video.addEventListener('ended', () => wrap.classList.remove('playing'));
+  });
+
+  // Triptych parallax
+  gsap.utils.toArray('[data-parallax-triptych]').forEach(img => {
+    gsap.to(img, {
+      yPercent: -10,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: img.closest('.triptych-cell'),
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: true
+      }
+    });
+  });
+
+  // Property parallax
+  gsap.utils.toArray('[data-parallax-prop]').forEach(img => {
+    gsap.to(img, {
+      yPercent: -12,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: img.closest('.property-cell'),
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: true
+      }
+    });
+  });
+
+  // Atmo divider parallax
+  gsap.to('#atmoDividerImg', {
+    yPercent: -12,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '.atmo-divider',
+      start: 'top bottom',
+      end: 'bottom top',
+      scrub: true
+    }
+  });
+
+  // Next work image parallax
+  gsap.to('.next-img', {
+    yPercent: -10,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '#next-work',
+      start: 'top bottom',
+      end: 'bottom top',
+      scrub: true
+    }
+  });
+
+  // Research scale numbers animate in
+  gsap.utils.toArray('.rs-num').forEach(el => {
+    gsap.from(el, {
+      opacity: 0,
+      y: 20,
+      duration: 0.7,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '#research-scale',
+        start: 'top 80%',
+        toggleActions: 'play none none none'
+      }
+    });
+  });
+</script>
+</body>
+</html>

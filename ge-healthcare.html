@@ -1,0 +1,2228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="How Chris Pennell studied MR technologist workflows at GE Healthcare and turned 57 interviews across 9 hospitals into a product specification for AW Server.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GE Healthcare, Chris Pennell</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html.jm-drawer-open,
+    body.jm-drawer-open { overflow: hidden; }
+    html { overscroll-behavior-x: none; }
+    body { background: #fff; color: #1A1A1A; font-family: 'DM Sans', sans-serif; font-weight: 300; -webkit-font-smoothing: antialiased; overflow-x: hidden; cursor: auto; }
+    body.jm-drawer-open {
+      position: fixed;
+      left: 0;
+      right: 0;
+      width: 100%;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; }
+    :root {
+      --page-pad: clamp(20px, 5vw, 64px);
+      --section-pad-y: clamp(72px, 8vw, 100px);
+    }
+
+    /* Cursor */
+    #cursor { display: none; position: fixed; width: 8px; height: 8px; background: #1A1A1A; border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); mix-blend-mode: multiply; transition: width .3s, height .3s; }
+    #cursor-ring { display: none; position: fixed; width: 36px; height: 36px; border: 1px solid rgba(26,26,26,.2); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); }
+    .has-custom-cursor { cursor: none; }
+    .has-custom-cursor #cursor, .has-custom-cursor #cursor-ring { display: block; }
+
+    /* Nav */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 28px var(--page-pad); background: rgba(255,255,255,.95); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(26,26,26,.06); }
+    .nav-mark { font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; }
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #6B6560; transition: color .2s; }
+    .nav-links a:hover { color: #1A1A1A; }
+
+    /* ── Hero ────────────────────────────────────────── */
+    #hero { height: 92vh; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; }
+    .hero-img-wrap { position: absolute; inset: 0; overflow: hidden; background: #1a1a1a; }
+    .hero-img { width: 100%; height: 120%; object-fit: cover; object-position: center 40%; will-change: transform; }
+    .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(10,10,10,0) 20%, rgba(10,10,10,.5) 65%, rgba(10,10,10,.85) 100%); }
+    .hero-content { position: relative; z-index: 2; padding: 0 var(--page-pad) clamp(36px, 6vw, 64px); color: #fff; }
+    .hero-meta { display: flex; align-items: center; gap: 24px; margin-bottom: 28px; }
+    .hero-tag { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.55); border: 1px solid rgba(255,255,255,.2); padding: 5px 14px; border-radius: 100px; }
+    .hero-lead { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.4); }
+    .hero-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(52px, 7.5vw, 108px); font-weight: 300; line-height: 1.02; letter-spacing: -.025em; }
+    .hero-title em { font-style: italic; color: rgba(255,255,255,.65); }
+
+    /* Stats bar */
+    .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid rgba(26,26,26,.1); background: #fff; }
+    .stat { padding: clamp(24px, 3vw, 32px) clamp(24px, 4vw, 48px); border-right: 1px solid rgba(26,26,26,.08); }
+    .stat:last-child { border-right: none; }
+    .stat-num { font-family: 'Cormorant Garamond', serif; font-size: clamp(36px, 4vw, 58px); font-weight: 300; line-height: 1; letter-spacing: -.02em; margin-bottom: 8px; }
+    .stat-label { font-size: 12px; letter-spacing: .01em; color: #6B6560; line-height: 1.4; }
+
+    /* ── Photo triptych ───────────────────────────────── */
+    .photo-triptych { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; min-height: 360px; height: clamp(340px, 42vw, 480px); overflow: hidden; }
+    .triptych-cell { overflow: hidden; position: relative; }
+    .triptych-cell img { width: 100%; height: 130%; object-fit: cover; will-change: transform; display: block; }
+    .triptych-caption { position: absolute; bottom: 20px; left: 20px; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.6); background: rgba(0,0,0,.3); padding: 4px 10px; border-radius: 100px; backdrop-filter: blur(4px); }
+
+    /* ── Overview ─────────────────────────────────────── */
+    #overview { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 340px); gap: clamp(32px, 6vw, 80px); padding: var(--section-pad-y) var(--page-pad); border-bottom: 1px solid rgba(26,26,26,.08); align-items: start; }
+    .overview-problem { font-family: 'Cormorant Garamond', serif; font-size: clamp(28px, 3vw, 40px); font-weight: 300; font-style: italic; line-height: 1.4; letter-spacing: -.01em; color: #1A1A1A; }
+    .project-details { display: flex; flex-direction: column; gap: 28px; padding-top: 6px; }
+    .detail-label { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: #6B6560; margin-bottom: 6px; }
+    .detail-value { font-size: 14px; line-height: 1.55; color: #4A4542; }
+
+    /* ── Context showcase ─────────────────────────────── */
+    .context-showcase { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; min-height: 320px; height: clamp(300px, 36vw, 420px); border-top: 1px solid rgba(26,26,26,.08); border-bottom: 1px solid rgba(26,26,26,.08); overflow: hidden; }
+    .context-cell { overflow: hidden; position: relative; }
+    .context-cell img { width: 100%; height: 130%; object-fit: cover; will-change: transform; }
+    .context-label { position: absolute; bottom: 24px; left: 28px; font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 300; color: #fff; text-shadow: 0 1px 12px rgba(0,0,0,.45); }
+    .context-sublabel { display: block; font-family: 'DM Sans', sans-serif; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-top: 4px; }
+
+    /* ── Challenge ────────────────────────────────────── */
+    #challenge { padding: var(--section-pad-y) var(--page-pad); display: grid; grid-template-columns: 200px minmax(0, 1fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 64px); align-items: start; border-bottom: 1px solid rgba(26,26,26,.08); background: #FAFAF9; }
+    .section-eyebrow { font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: #6B6560; padding-top: 6px; }
+    .challenge-body { font-size: 17px; line-height: 1.85; color: #4A4542; }
+    .challenge-body p + p { margin-top: 20px; }
+    .challenge-body strong { color: #1A1A1A; font-weight: 400; }
+    .challenge-pullquote { font-family: 'Cormorant Garamond', serif; font-size: clamp(22px, 2.2vw, 28px); font-weight: 300; font-style: italic; line-height: 1.5; color: #1A1A1A; border-left: 1px solid rgba(26,26,26,.15); padding-left: 32px; }
+    .challenge-pullquote-attr { display: block; margin-top: 16px; font-family: 'DM Sans', sans-serif; font-size: 11px; letter-spacing: .01em; color: #6B6560; font-style: normal; }
+
+    /* ── Research scale strip ─────────────────────────── */
+    #research-scale { display: grid; grid-template-columns: 200px 1fr; gap: clamp(28px, 5vw, 64px); padding: clamp(56px, 7vw, 72px) var(--page-pad); border-bottom: 1px solid rgba(26,26,26,.08); align-items: center; }
+    .rs-label { font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: #6B6560; }
+    .rs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: clamp(20px, 4vw, 48px); }
+    .rs-num { font-family: 'Cormorant Garamond', serif; font-size: clamp(40px, 4vw, 60px); font-weight: 300; line-height: 1; letter-spacing: -.02em; color: #1A1A1A; display: block; margin-bottom: 10px; }
+    .rs-desc { font-size: 12px; letter-spacing: .01em; color: #6B6560; line-height: 1.5; }
+
+    /* ── Process ──────────────────────────────────────── */
+    #process { padding: var(--section-pad-y) var(--page-pad); border-bottom: 1px solid rgba(26,26,26,.08); }
+    .process-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 64px; }
+    .process-h { font-family: 'Cormorant Garamond', serif; font-size: clamp(36px, 4vw, 56px); font-weight: 300; letter-spacing: -.018em; }
+    .process-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; margin-bottom: 2px; }
+    .step { background: #FAFAF9; padding: clamp(32px, 5vw, 56px) clamp(24px, 4vw, 48px); position: relative; overflow: hidden; }
+    .step:nth-child(2) { background: #F4F1EE; }
+    .step:nth-child(3) { background: #EDE9E5; }
+    .step-num { font-family: 'Cormorant Garamond', serif; font-size: 80px; font-weight: 300; line-height: 1; color: rgba(26,26,26,.06); position: absolute; top: 24px; right: 28px; letter-spacing: -.04em; }
+    .step-title { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 400; margin-bottom: 20px; line-height: 1.2; }
+    .step-body { font-size: 14px; line-height: 1.8; color: #6B6560; }
+    .step-body li { margin-left: 16px; margin-bottom: 8px; }
+    .step-tag { display: inline-block; margin-top: 24px; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #6B6560; border: 1px solid rgba(26,26,26,.12); padding: 4px 12px; border-radius: 100px; }
+    .process-img-full { width: 100%; min-height: 320px; height: clamp(320px, 40vw, 480px); object-fit: cover; object-position: center top; display: block; }
+    .process-img-contain { width: 100%; display: block; background: #F4F1EE; padding: clamp(20px, 4vw, 40px) var(--page-pad); }
+    .process-img-caption { padding: 16px clamp(20px, 4vw, 48px); font-size: 11px; letter-spacing: .04em; color: #6B6560; background: #F4F1EE; border-top: 1px solid rgba(26,26,26,.06); text-transform: none; }
+
+    /* ── Journey map ──────────────────────────────────── */
+    .map-shell { border-top: 1px solid rgba(26,26,26,.06); background: #FAFAF9; }
+    .map-head { display: flex; align-items: center; gap: clamp(24px, 4vw, 56px); padding: clamp(20px, 2.5vw, 32px) 64px; border-bottom: 1px solid rgba(26,26,26,.08); background: #fff; }
+    .map-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.1rem, 1.6vw, 1.5rem); font-weight: 300; line-height: 1; letter-spacing: -0.02em; white-space: nowrap; flex-shrink: 0; }
+    .jm-tabs { display: flex; gap: 0; flex: 1; }
+    .jm-tab { background: none; border: none; padding: 0 28px 0 0; font-family: 'DM Sans', sans-serif; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #6B6560; cursor: pointer; position: relative; display: flex; align-items: center; transition: color .2s; }
+    .jm-tab::after { content: ''; position: absolute; bottom: calc(-1 * clamp(20px, 2.5vw, 32px) - 1px); left: 0; width: calc(100% - 28px); height: 2px; background: #1A1A1A; transform: scaleX(0); transform-origin: left; transition: transform .25s ease; }
+    .jm-tab.is-active { color: #1A1A1A; }
+    .jm-tab.is-active::after { transform: scaleX(1); }
+    .jm-persona-pill { flex-shrink: 0; margin-left: auto; padding: 6px 14px; border: 1px solid rgba(26,26,26,.14); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #6B6560; }
+    .tab-count { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: rgba(26,26,26,.08); font-size: 9px; letter-spacing: 0; color: rgba(26,26,26,.4); margin-left: 6px; transition: background .2s, color .2s; }
+    .jm-tab.is-active .tab-count { background: #1A1A1A; color: #fff; }
+    .jm-curve-wrap { padding: 18px 64px 18px; background: #fff; border-top: 1px solid rgba(26,26,26,.04); border-bottom: 1px solid rgba(26,26,26,.08); position: relative; }
+    .jm-axis-label { position: absolute; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #6B6560; pointer-events: none; z-index: 5; left: 64px; }
+    .jm-axis-label--pos { top: 6px; }
+    .jm-axis-label--neg { bottom: 24px; }
+    #jm-dot-pins { position: absolute; inset: 0; pointer-events: none; }
+    .jm-dot-pin { position: absolute; border-radius: 50%; transform: translate(-50%, -50%); pointer-events: auto; cursor: pointer; width: 10px; height: 10px; background: #CC2222; border: 2.5px solid #fff; box-shadow: 0 0 0 1.5px #CC2222; transition: transform .15s; }
+    .jm-dot-pin:hover, .jm-dot-pin.is-active { transform: translate(-50%, -50%) scale(1.5); }
+    .jm-dot-tooltip { position: absolute; bottom: calc(100% - 4px); background: #fff; border: 1px solid rgba(26,26,26,.09); border-radius: 8px; padding: 14px 18px; min-width: 200px; max-width: 260px; box-shadow: 0 8px 32px rgba(0,0,0,.12); pointer-events: none; opacity: 0; transition: opacity .15s; z-index: 20; transform: translateX(-50%); }
+    .jm-dot-tooltip.is-visible { opacity: 1; }
+    .jm-dot-tip-step { font-size: 9px; letter-spacing: .16em; text-transform: uppercase; color: #6B6560; margin-bottom: 6px; }
+    .jm-dot-tip-name { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 400; line-height: 1.2; letter-spacing: -.01em; color: #1A1A1A; margin-bottom: 8px; }
+    .jm-dot-tip-summary { font-size: 12px; line-height: 1.65; color: #6B6560; }
+    .jm-dot-tip-friction { display: inline-flex; align-items: center; gap: 5px; font-size: 9px; letter-spacing: .12em; text-transform: uppercase; margin-top: 10px; }
+    .jm-dot-tip-friction::before { content: '●'; font-size: 7px; }
+    .jm-dot-tip-friction.medium { color: #C9894E; }
+    .jm-dot-tip-friction.medium::before { color: #C9894E; }
+    .jm-dot-tip-friction.high { color: #e0471b; }
+    .jm-dot-tip-friction.high::before { color: #e0471b; }
+    .jm-dot-tip-friction.critical { color: #d10000; }
+    .jm-dot-tip-friction.critical::before { color: #d10000; }
+    .jm-dot-tip-axis { font-size: 10px; line-height: 1.5; color: #6B6560; margin-top: 4px; }
+    .jm-dot-tip-cta { font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: rgba(26,26,26,.32); margin-top: 12px; border-top: 1px solid rgba(26,26,26,.07); padding-top: 10px; }
+    .jm-curve-svg { width: 100%; height: 86px; display: block; overflow: visible; }
+    .stages { display: grid; grid-template-columns: repeat(var(--stage-cols, 4), minmax(0, 1fr)); border-top: 1px solid rgba(26,26,26,.08); }
+    .stage { position: relative; cursor: pointer; background: #F7F5F2; border-right: 1px solid rgba(26,26,26,.08); border-bottom: 1px solid rgba(26,26,26,.08); overflow: hidden; transition: background .18s; }
+    .stage::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--fc, rgba(26,26,26,.1)); }
+    .stage:nth-child(3n+2) { background: #F2EFEB; }
+    .stage:nth-child(3n) { background: #EDE9E4; }
+    .stage:not(.active):hover { background: rgba(26,26,26,.04); }
+    .stage.active { background: #1A1A1A !important; }
+    .stage-ghost { position: absolute; font-family: 'Cormorant Garamond', serif; font-size: clamp(80px, 9vw, 120px); font-weight: 300; line-height: 1; color: rgba(26,26,26,.048); bottom: -8px; right: 10px; letter-spacing: -.04em; user-select: none; pointer-events: none; transition: color .18s; }
+    .stage.active .stage-ghost { color: rgba(255,255,255,.04); }
+    .stage-inner { min-height: 320px; display: flex; flex-direction: column; }
+    .stage-topband { display: flex; align-items: center; gap: 14px; min-height: 112px; padding: 18px 20px 16px; background: #fff; border-bottom: 1px solid rgba(26,26,26,.08); }
+    .stage-icon-wrap { width: 68px; height: 68px; min-width: 68px; min-height: 68px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .stage-icon { width: 100%; height: 100%; object-fit: contain; }
+    .stage-meta { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    .stage-step { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: rgba(26,26,26,.32); margin-bottom: 18px; transition: color .18s; }
+    .stage.active .stage-step { color: rgba(255,255,255,.28); }
+    .stage-step { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: rgba(26,26,26,.42); margin: 0; }
+    .stage-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(20px, 1.8vw, 25px); font-weight: 400; line-height: 1.08; letter-spacing: -.01em; margin: 0; min-height: 0; color: #1A1A1A; transition: color .18s; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .stage.active .stage-title { color: #fff; }
+    .stage-copy-wrap { padding: 20px 22px 22px; display: flex; flex-direction: column; flex: 1; }
+    .stage-copy { font-size: 12px; line-height: 1.72; color: #6B6560; flex-grow: 1; margin-bottom: 22px; transition: color .18s; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+    .stage.active .stage-copy { color: rgba(255,255,255,.36); }
+    .stage-footer { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-top: auto; }
+    .stage-friction { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .stage-dots { display: flex; gap: 4px; }
+    .stage-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(26,26,26,.1); transition: background .18s; }
+    .stage-dot.on { background: var(--fc, #CC2222); }
+    .stage.active .stage-dot { background: rgba(255,255,255,.12); }
+    .stage.active .stage-dot.on { background: rgba(255,255,255,.55); }
+    .stage-friction-word { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: rgba(26,26,26,.42); transition: color .18s; display: inline-flex; align-items: center; gap: 5px; }
+    .stage-friction-word::before { content: '●'; font-size: 7px; }
+    .stage-friction-word.medium::before { color: #C9894E; }
+    .stage-friction-word.high::before { color: #e0471b; }
+    .stage-friction-word.critical::before { color: #d10000; }
+    .stage.active .stage-friction-word { color: rgba(255,255,255,.28); }
+    .stage-cta { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #6B6560; margin-top: 14px; display: inline-flex; align-items: center; gap: 5px; transition: color .18s; }
+    .stage.active .stage-cta { color: rgba(255,255,255,.26); }
+    .jm-legend { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; padding: 16px 64px; border-top: 1px solid rgba(26,26,26,.08); background: #fff; }
+    .jm-legend-label { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #6B6560; margin-right: 4px; }
+    .jm-legend-item { display: inline-flex; align-items: center; gap: 7px; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #6B6560; }
+    .jm-legend-swatch { width: 8px; height: 8px; border-radius: 50%; }
+    /* Drawer */
+    .jm-overlay { position: fixed; inset: 0; background: rgba(29,26,23,.36); z-index: 498; opacity: 0; pointer-events: none; transition: opacity .28s ease; backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+    .jm-overlay.is-active { opacity: 1; pointer-events: auto; }
+    .jm-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(560px, 92vw); background: #f8f5f1; color: #1d1a17; z-index: 499; display: flex; flex-direction: column; transform: translateX(100%); transition: transform .42s cubic-bezier(.22,.68,0,1.02); box-shadow: -24px 0 80px rgba(0,0,0,.28); }
+    .jm-drawer.is-open { transform: translateX(0); }
+    .jm-drawer-header { position: relative; padding: 40px 38px 24px; border-bottom: 1px solid rgba(26,26,26,.08); background: #fff; }
+    .jm-drawer-close { position: absolute; top: 22px; right: 24px; width: 34px; height: 34px; border-radius: 999px; border: 1px solid rgba(26,26,26,.12); color: rgba(26,26,26,.46); background: none; cursor: pointer; font-size: 15px; }
+    .jm-drawer-close:hover { color: #1d1a17; border-color: rgba(26,26,26,.28); }
+    .jm-drawer-eyebrow { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #6B6560; margin-bottom: 12px; }
+    .jm-drawer-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 4vw, 3rem); line-height: .98; letter-spacing: -.03em; font-weight: 300; margin: 0; }
+    .jm-drawer-nav { display: flex; gap: 8px; margin-top: 18px; }
+    .jm-drawer-nav-btn { display: inline-flex; align-items: center; background: none; border: 1px solid rgba(26,26,26,.12); color: rgba(26,26,26,.52); border-radius: 999px; padding: 7px 14px; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; }
+    .jm-drawer-nav-btn:hover { color: #1d1a17; border-color: rgba(26,26,26,.3); }
+    .jm-drawer-nav-btn:disabled { opacity: .26; cursor: default; pointer-events: none; }
+    .jm-drawer-body { overflow-y: auto; padding: 30px 38px 48px; display: flex; flex-direction: column; gap: 28px; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; touch-action: pan-y; }
+    .jm-hero-visual { background: #fff; padding: 22px; border: 1px solid rgba(26,26,26,.08); }
+    .jm-hero-visual img { width: 100%; max-height: 280px; object-fit: contain; display: block; margin: 0 auto; }
+    .jm-hero-summary { margin-top: 14px; font-size: 13px; line-height: 1.7; color: rgba(29,26,23,.68); }
+    .jm-section-label { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #6B6560; margin-bottom: 12px; }
+    .jm-body-copy { font-size: 14px; line-height: 1.72; color: rgba(29,26,23,.72); }
+    .jm-ai-list { display: flex; flex-direction: column; gap: 10px; }
+    .jm-ai-item { background: #fff; border: 1px solid rgba(26,26,26,.08); padding: 14px 16px; }
+    .jm-ai-item-title { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: rgba(26,26,26,.42); margin-bottom: 8px; }
+    .jm-ai-item-copy { font-size: 13px; line-height: 1.65; color: rgba(29,26,23,.74); }
+    .jm-section-label--ai { display: inline-flex; align-items: center; gap: 6px; background: rgba(201,137,78,0.12); border: 1px solid rgba(201,137,78,0.28); color: #8B5A1A; padding: 5px 12px; border-radius: 999px; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; margin-bottom: 12px; }
+    .jm-section-label--ai .ai-bulb-icon { color: #C9894E; flex-shrink: 0; }
+    .stage-ai-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: #C9894E; margin-top: 6px; }
+    .stage-ai-badge svg { flex-shrink: 0; }
+    .stage.active .stage-ai-badge { color: rgba(201,137,78,.55); }
+    .jm-ideal-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .jm-ideal-pill { display: inline-flex; align-items: center; padding: 4px 9px; border-radius: 999px; background: rgba(26,26,23,.06); border: 1px solid rgba(26,26,23,.08); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: rgba(26,26,23,.54); }
+    .jm-signal-list { display: flex; flex-direction: column; gap: 10px; }
+    .jm-signal-item { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; background: #fff; border-left: 2px solid rgba(26,26,26,.12); font-size: 13px; line-height: 1.62; color: rgba(29,26,23,.64); }
+    .jm-signal-item-num { font-family: 'Cormorant Garamond', serif; font-size: 14px; min-width: 20px; color: #6B6560; flex-shrink: 0; }
+    .jm-quote { font-family: 'Cormorant Garamond', serif; font-size: clamp(18px, 2.3vw, 25px); line-height: 1.5; font-style: italic; font-weight: 300; color: rgba(29,26,23,.82); border-left: 1px solid rgba(26,26,26,.16); padding-left: 18px; }
+    .jm-quote-attr { display: block; margin-top: 12px; font-family: 'DM Sans', sans-serif; font-style: normal; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: rgba(26,26,26,.34); }
+    .jm-detail-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .jm-detail-list li { font-size: 13px; line-height: 1.55; color: rgba(29,26,23,.76); padding-left: 18px; position: relative; }
+    .jm-detail-list li::before { content: '–'; position: absolute; left: 0; color: rgba(26,26,26,.28); }
+    .jm-detail-list--feel { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+    .jm-detail-list--feel li { display: flex; gap: 12px; align-items: flex-start; padding-left: 0; }
+    .jm-detail-list--feel li::before { display: none; }
+    .jm-pain-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; border-radius: 50%; background: rgba(180,48,48,0.11); color: #A83030; font-size: 9px; font-weight: 500; font-family: 'DM Sans', sans-serif; flex-shrink: 0; margin-top: 1px; line-height: 1; }
+    .jm-severity-legend { display: flex; gap: 10px 16px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid rgba(26,26,26,.07); }
+    .jm-severity-legend-label { font-size: 9px; letter-spacing: .16em; text-transform: uppercase; color: #6B6560; margin-right: 2px; }
+    .jm-severity-legend-item { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; color: rgba(26,26,26,.5); }
+    .jm-detail-list--comp li::before { content: '◇'; font-size: 9px; top: 2px; color: rgba(26,26,26,.24); }
+
+    /* ── Atmosphere divider ───────────────────────────── */
+    .atmo-divider { min-height: 300px; height: clamp(300px, 36vw, 480px); overflow: hidden; position: relative; }
+    .atmo-grid { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
+    .atmo-cell { overflow: hidden; }
+    .atmo-cell img { width: 100%; height: 130%; object-fit: cover; object-position: center; display: block; will-change: transform; }
+
+    /* ── Ideal model section ──────────────────────────── */
+    #ideal-section { padding: var(--section-pad-y) var(--page-pad); display: grid; grid-template-columns: 200px minmax(0,1fr) minmax(0,1fr); column-gap: clamp(28px, 5vw, 64px); row-gap: 0; align-items: start; border-bottom: 1px solid rgba(26,26,26,.08); }
+    .ideal-header { }
+    .ideal-intro { font-size: 17px; line-height: 1.85; color: #4A4542; margin-bottom: 36px; }
+    .ideal-intro strong { color: #1A1A1A; font-weight: 400; }
+    .ideal-method-label { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #6B6560; margin-bottom: 10px; }
+    .ideal-method-body { font-size: 14px; line-height: 1.8; color: rgba(26,26,26,.6); }
+    .ideal-method-body strong { color: #1A1A1A; font-weight: 500; }
+    .ideal-foundation-text { grid-column: 2; padding-bottom: 64px; }
+    .ideal-foundation-stats { grid-column: 3; padding-top: 4px; }
+    .ideal-stat { padding: 20px 0; border-top: 1px solid rgba(26,26,26,.1); }
+    .ideal-stat:last-child { border-bottom: 1px solid rgba(26,26,26,.1); }
+    .ideal-stat-num { font-family: 'Cormorant Garamond', serif; font-size: clamp(44px, 5.5vw, 68px); font-weight: 300; line-height: 1; letter-spacing: -.03em; color: #1A1A1A; }
+    .ideal-stat-label { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: #6B6560; margin-top: 6px; line-height: 1.5; }
+    .im-capstone-bar { grid-column: 1 / -1; padding: 64px 0 0; border-top: 1px solid rgba(26,26,26,.1); display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; overflow: visible; position: relative; }
+    .im-capstone-figure { height: clamp(330px, 38vw, 520px); width: auto; display: block; flex-shrink: 0; margin-bottom: -1px; mix-blend-mode: multiply; }
+    .im-capstone-text { flex: 1; padding-bottom: 40px; margin-left: -32px; }
+    .im-capstone-feel { font-family: 'Cormorant Garamond', serif; font-size: clamp(22px, 3vw, 40px); font-weight: 300; line-height: 1; color: rgba(26,26,26,.3); letter-spacing: -.02em; margin-bottom: 4px; }
+    .im-capstone-outcome { font-family: 'Cormorant Garamond', serif; font-size: clamp(72px, 11vw, 152px); font-weight: 300; font-style: italic; line-height: .9; letter-spacing: -.04em; color: #1A1A1A; display: block; margin-bottom: 28px; }
+    .im-capstone-sub { font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: #6B6560; margin-bottom: 8px; }
+    .im-capstone-source { font-family: 'Cormorant Garamond', serif; font-size: clamp(18px, 1.8vw, 24px); font-weight: 300; font-style: italic; color: rgba(26,26,26,.45); letter-spacing: 0; margin-bottom: 28px; display: block; }
+    .im-capstone-source::after { content: ''; display: block; width: 48px; height: 1px; background: rgba(26,26,26,.15); border-radius: 1px; margin-top: 28px; }
+    .im-capstone-def { font-family: 'Cormorant Garamond', serif; font-size: clamp(16px, 1.6vw, 21px); font-weight: 300; font-style: italic; line-height: 1.5; color: rgba(26,26,26,.6); letter-spacing: -.005em; margin-bottom: 6px; }
+    .im-capstone-footnote { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: #6B6560; margin-top: 22px; display: inline-block; }
+
+    .im-tabs { grid-column: 1 / -1; display: flex; gap: 0; border-top: 1px solid rgba(26,26,26,.1); border-bottom: 1px solid rgba(26,26,26,.1); margin-bottom: 0; }
+    .im-tab { background: none; border: none; padding: 20px 40px 20px 0; font-family: 'DM Sans', sans-serif; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #6B6560; cursor: pointer; position: relative; transition: color .2s; }
+    .im-tab::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 40px; height: 1px; background: #1A1A1A; transform: scaleX(0); transform-origin: left; transition: transform .25s ease; }
+    .im-tab.is-active { color: #1A1A1A; }
+    .im-tab.is-active::after { transform: scaleX(1); }
+
+    .im-states { grid-column: 1 / -1; }
+    .im-state { display: none; grid-template-columns: minmax(0, 1fr) 64px minmax(0, 1fr); padding: 56px 0; }
+    .im-state.is-active { display: grid; }
+    .im-col-label { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: #6B6560; margin-bottom: 20px; }
+    .im-col-left { padding-right: 48px; border-right: 1px solid rgba(26,26,26,.1); }
+    .im-state-name { font-family: 'Cormorant Garamond', serif; font-size: clamp(40px, 5vw, 72px); font-weight: 300; line-height: 1; margin-bottom: 24px; }
+    .im-state-copy { font-size: 15px; line-height: 1.8; color: #4A4542; }
+    .im-col-arrow { display: flex; align-items: center; justify-content: center; font-size: 20px; color: rgba(26,26,26,.2); }
+    .im-col-right { padding-left: 48px; }
+    .im-qualities { display: flex; flex-direction: column; gap: 32px; }
+    .im-quality-name { font-size: 13px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: #1A1A1A; margin-bottom: 8px; }
+    .im-quality-copy { font-size: 14px; line-height: 1.8; color: #4A4542; }
+
+    .ideal-artifact-ref { grid-column: 1 / -1; margin-top: 56px; }
+    .ideal-artifact { width: 100%; display: block; border: 1px solid rgba(26,26,26,.08); }
+    .ideal-artifact-caption { padding: 16px 0 0; font-size: 11px; letter-spacing: .04em; text-transform: none; color: #6B6560; }
+
+    /* ── Field strip ─────────────────────────────────── */
+    .field-strip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; }
+    .field-strip-img { overflow: hidden; height: clamp(240px, 26vw, 380px); }
+    .field-strip-img img { width: 100%; height: 130%; object-fit: cover; object-position: center; display: block; will-change: transform; }
+
+    /* ── Personas ─────────────────────────────────────── */
+    #personas { background: #F4F1EE; padding: var(--section-pad-y) var(--page-pad); border-bottom: 1px solid rgba(26,26,26,.08); }
+    .personas-label { font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: #6B6560; margin-bottom: 48px; }
+    .personas-intro-row { display: flex; align-items: flex-start; gap: 64px; margin-bottom: 64px; }
+    .personas-intro-text { font-size: 17px; line-height: 1.85; color: #6B6560; max-width: 520px; flex: 1; margin-bottom: 0; }
+    .personas-intro-text strong { color: #1A1A1A; font-weight: 400; }
+    .persona-key { flex-shrink: 0; width: 480px; align-self: flex-start; margin-left: auto; margin-top: -32px; }
+    .pk-source { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #6B6560; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+    .pk-source::before { content: ''; display: block; flex: 1; height: 1px; background: rgba(26,26,26,.14); }
+    .pk-matrix { display: grid; grid-template-columns: 28px 1fr 1fr; grid-template-rows: 28px 1fr 1fr; gap: 4px; }
+    .pk-corner { }
+    .pk-x-label { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #6B6560; display: flex; align-items: center; justify-content: center; gap: 4px; }
+    .pk-x-label span { opacity: .5; }
+    .pk-y-label { font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: #6B6560; writing-mode: vertical-rl; transform: rotate(180deg); display: flex; align-items: center; justify-content: center; gap: 3px; white-space: nowrap; }
+    .pk-y-label span { opacity: .5; }
+    .pk-q { padding: 20px 20px 24px; border-top: 3px solid transparent; }
+    .pk-yellow { background: rgba(200,160,0,.09); border-top-color: #C8A000; }
+    .pk-teal { background: rgba(42,152,152,.09); border-top-color: #2A9898; }
+    .pk-purple { background: rgba(120,86,176,.09); border-top-color: #7856B0; }
+    .pk-green { background: rgba(136,175,48,.09); border-top-color: #88AF30; }
+    .pk-quote { font-size: 13px; line-height: 1.5; color: #1A1A1A; display: block; font-style: italic; font-weight: 400; }
+    .persona-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      align-items: start;
+      padding-bottom: 80px;
+    }
+    .persona-card {
+      background: #111;
+      border-radius: 20px;
+      height: clamp(480px, 50vw, 620px);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      transition: box-shadow .35s ease;
+    }
+    .persona-card:hover { box-shadow: 0 20px 60px rgba(0,0,0,.38), inset 0 0 0 1.5px rgba(255,255,255,.18); }
+    .persona-card:nth-child(1) { transform: translateY(0px); }
+    .persona-card:nth-child(2) { transform: translateY(56px); }
+    .persona-card:nth-child(3) { transform: translateY(24px); }
+    .persona-card:nth-child(4) { transform: translateY(72px); }
+    .persona-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: url('images/ge_yellow.png');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center top;
+      opacity: 1;
+      transform: scale(1);
+      transition: transform .6s cubic-bezier(.25,.46,.45,.94), opacity .4s ease;
+    }
+    .persona-card:hover::before { transform: scale(1.06); }
+    .persona-card.persona-gold::after,
+    .persona-card.persona-teal::after,
+    .persona-card.persona-purple::after,
+    .persona-card.persona-green::after { background: linear-gradient(to top, rgba(12,11,10,.6) 0%, rgba(12,11,10,.25) 48%, rgba(12,11,10,0) 100%); }
+    .persona-card.persona-teal::before { background-image: url('images/ge teal.png'); }
+    .persona-card.persona-green::before { background-image: url('images/ge green.png'); }
+    .persona-card.persona-purple::before { background-image: url('images/ge purple.png'); }
+    .persona-card::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 72%;
+      background: linear-gradient(to top, rgba(12,11,10,.92) 0%, rgba(12,11,10,.6) 48%, rgba(12,11,10,0) 100%);
+      z-index: 1;
+      border-radius: 0 0 20px 20px;
+    }
+    .persona-info { position: relative; z-index: 2; padding: 28px 28px 32px; }
+    .persona-card-axis { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.42); margin-bottom: 14px; display: block; }
+    .persona-card-self { font-family: 'Cormorant Garamond', serif; font-size: clamp(20px, 2vw, 28px); font-weight: 300; font-style: italic; line-height: 1.25; color: #fff; }
+    .persona-card-name { display: none; }
+    .persona-card { cursor: pointer; }
+    .persona-card-cta { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.38); margin-top: 16px; transition: color .2s; display: flex; align-items: center; gap: 6px; }
+    .persona-card:hover .persona-card-cta { color: rgba(255,255,255,.72); }
+    .p-persona-archetype { font-family: 'Cormorant Garamond', serif; font-size: clamp(18px, 1.8vw, 22px); font-weight: 300; font-style: italic; line-height: 1.45; color: rgba(26,26,26,.52); margin: 0; }
+    .p-barriers-section { background: rgba(168,48,48,.04); border: 1px solid rgba(168,48,48,.12); border-radius: 10px; padding: 16px 18px 18px; }
+    .jm-section-label--barriers { display: inline-flex; align-items: center; gap: 7px; background: rgba(168,48,48,.10); border: 1px solid rgba(168,48,48,.20); color: #9B2C2C; padding: 5px 12px; border-radius: 999px; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; margin-bottom: 14px; }
+    .jm-section-label--barriers::before { content: '✦'; font-size: 7px; }
+    .jm-detail-list--barriers li::before { color: rgba(168,48,48,.45); }
+    .jm-detail-list--barriers li { color: rgba(29,26,23,.82); }
+
+    /* ── Design work ──────────────────────────────────── */
+    #design-work { padding: var(--section-pad-y) var(--page-pad); border-bottom: 1px solid rgba(26,26,26,.08); }
+    .dw-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 48px; }
+    .dw-intro { font-size: 17px; line-height: 1.85; color: #4A4542; max-width: 680px; margin-bottom: 28px; }
+    .dw-intro strong { color: #1A1A1A; font-weight: 400; }
+    .dw-bridge { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px; margin-bottom: 64px; background: rgba(26,26,26,.08); }
+    .dw-bridge-item { background: #FAFAF9; padding: 22px 22px 20px; min-height: 160px; }
+    .dw-bridge-label { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #6B6560; margin-bottom: 12px; }
+    .dw-bridge-copy { font-size: 13px; line-height: 1.72; color: #4A4542; }
+    .dw-artifact { margin-top: 36px; margin-bottom: 18px; }
+    .dw-research { margin-top: 64px; border-top: 1px solid rgba(26,26,26,.08); padding-top: 56px; }
+    .dw-note { margin-bottom: 24px; }
+    .dw-note-kicker { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #6B6560; display: block; margin-bottom: 8px; }
+    .dw-note-heading { font-family: 'Cormorant Garamond', serif; font-size: clamp(17px, 1.8vw, 21px); font-weight: 400; line-height: 1.45; color: #1A1A1A; max-width: 660px; margin-bottom: 10px; letter-spacing: -.01em; }
+    .dw-note-body { font-size: 13px; line-height: 1.78; color: #6B6560; max-width: 640px; }
+    .dw-ai-block { margin-top: 64px; border-top: 1px solid rgba(26,26,26,.08); padding-top: 48px; }
+    .dw-ai-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
+    .dw-research-kicker { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #6B6560; display: block; margin-bottom: 12px; }
+    .dw-research-claim { font-family: 'Cormorant Garamond', serif; font-size: clamp(20px, 2.2vw, 26px); font-weight: 400; line-height: 1.4; color: #1A1A1A; max-width: 640px; margin-bottom: 14px; letter-spacing: -.01em; }
+    .dw-research-body { font-size: 14px; line-height: 1.82; color: #6B6560; max-width: 600px; margin-bottom: 36px; }
+    .dw-story-img { width: 100%; display: block; border: 1px solid rgba(26,26,26,.08); background: #fff; }
+    .dw-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 18px; align-items: stretch; }
+    .dw-cell { display: flex; flex-direction: column; overflow: hidden; background: #fff; }
+    .dw-cell img { width: 100%; height: clamp(349px, 34vw, 469px); object-fit: cover; display: block; border: none; }
+    .dw-cell img.dw-cell-fit { object-fit: contain; object-position: center center; background: #fff; padding: 0; }
+    .dw-cell img.dw-cell-border { border: 1px solid rgba(26,26,26,.08); }
+    .dw-cell-caption { padding: 14px 0; font-size: 11px; letter-spacing: .04em; text-transform: none; color: #6B6560; }
+    .dw-cell-caption-kicker { display: block; margin-bottom: 6px; font-size: 10px; letter-spacing: .12em; color: #1A1A1A; font-weight: 500; }
+    .dw-story-pair { margin-top: 18px; margin-bottom: 36px; }
+    .dw-story-pair .dw-cell {
+      background: #F4F1EE;
+      border: 1px solid rgba(26,26,26,.06);
+      padding: clamp(20px, 4vw, 40px) clamp(20px, 4vw, 48px);
+    }
+    .dw-story-pair .dw-story-img {
+      height: clamp(260px, 24vw, 360px);
+      object-fit: contain;
+      border: none;
+      background: transparent;
+    }
+    .dw-story-pair .dw-cell-caption {
+      margin-top: 16px;
+      padding: 16px 0 0;
+      border-top: 1px solid rgba(26,26,26,.06);
+    }
+
+    /* ── App showcase ─────────────────────────────────── */
+    .app-showcase {
+      position: relative;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.035) 0%, rgba(255,255,255,0) 32%),
+        linear-gradient(180deg, #131417 0%, #0d0f12 100%);
+      padding: clamp(56px, 7vw, 80px) var(--page-pad);
+      border-bottom: 1px solid rgba(26,26,26,.08);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow: hidden;
+    }
+    .app-showcase::before,
+    .app-showcase::after {
+      content: "";
+      position: absolute;
+      inset: auto;
+      pointer-events: none;
+    }
+    .app-showcase::before {
+      width: min(42vw, 520px);
+      height: min(42vw, 520px);
+      top: -18%;
+      right: -8%;
+      border: 1px solid rgba(105, 195, 218, .18);
+      border-radius: 28px;
+      transform: rotate(18deg);
+    }
+    .app-showcase::after {
+      width: min(34vw, 420px);
+      height: min(34vw, 420px);
+      bottom: -20%;
+      left: -10%;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 32px;
+      transform: rotate(18deg);
+    }
+    .app-showcase img {
+      width: 100%;
+      max-width: 960px;
+      display: block;
+      position: relative;
+      z-index: 1;
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: 0 28px 80px rgba(0,0,0,.28);
+      background: #111;
+    }
+    .app-showcase-caption { margin-top: 24px; font-size: 11px; letter-spacing: .04em; text-transform: none; color: rgba(255,255,255,.25); text-align: center; }
+
+    /* ── Screen mosaic ───────────────────────────────── */
+    .screen-mosaic {
+      background: #09090C;
+      overflow: hidden;
+      position: relative;
+      height: clamp(400px, 50vw, 600px);
+      border-bottom: 1px solid rgba(26,26,26,.08);
+    }
+    .mosaic-fade {
+      position: absolute; inset: 0; z-index: 2; pointer-events: none;
+      background:
+        linear-gradient(to right, #09090C 0%, transparent 8%, transparent 92%, #09090C 100%),
+        linear-gradient(to bottom, #09090C 0%, transparent 18%, transparent 55%, #09090C 100%);
+    }
+    .mosaic-track {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      transform: rotate(-8deg);
+      transform-origin: center center;
+      width: 320%;
+      left: 50%;
+      top: 50%;
+      translate: -50% -50%;
+      padding: 140px 0;
+    }
+    .mosaic-row { display: flex; gap: 22px; flex-shrink: 0; }
+    .mosaic-row:nth-child(even) { transform: translateX(-14%); }
+    .mosaic-screen {
+      flex: 0 0 auto;
+      width: clamp(320px, 32vw, 460px);
+      height: clamp(200px, 20vw, 288px);
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.1);
+      box-shadow: 0 8px 40px rgba(0,0,0,.72);
+    }
+    .mosaic-screen img { width: 100%; height: 100%; display: block; object-fit: cover; object-position: top left; }
+    .mosaic-caption {
+      position: absolute; bottom: 24px; width: 100%; text-align: center; z-index: 3;
+      font-size: 11px; letter-spacing: .04em; text-transform: none;
+      color: rgba(255,255,255,.18);
+    }
+
+    /* ── Outcomes ─────────────────────────────────────── */
+    #outcomes { background: #1A1A1A; color: #fff; padding: clamp(84px, 9vw, 120px) var(--page-pad); position: relative; overflow: hidden; }
+    .outcomes-ghost { position: absolute; font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: clamp(180px, 26vw, 380px); color: rgba(255,255,255,.022); top: 50%; right: -40px; transform: translateY(-50%); white-space: nowrap; pointer-events: none; }
+    .outcomes-inner { position: relative; z-index: 1; }
+    .outcomes-label { font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: rgba(255,255,255,.3); margin-bottom: 64px; }
+    .outcomes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(255,255,255,.08); margin-bottom: 64px; }
+    .outcome { background: #1A1A1A; padding: clamp(32px, 5vw, 56px) clamp(24px, 4vw, 48px); }
+    .outcome-num { font-family: 'Cormorant Garamond', serif; font-size: clamp(56px, 6vw, 88px); font-weight: 300; line-height: 1; letter-spacing: -.03em; color: #fff; margin-bottom: 16px; }
+    .outcome-desc { font-size: 14px; line-height: 1.7; color: rgba(255,255,255,.4); max-width: 260px; }
+    .outcomes-cmo { border-top: 1px solid rgba(255,255,255,.08); padding-top: 48px; margin-bottom: 32px; }
+    .outcomes-cmo-quote { font-family: 'Cormorant Garamond', serif; font-size: clamp(20px, 2.2vw, 28px); font-weight: 300; font-style: italic; line-height: 1.5; color: rgba(255,255,255,.7); max-width: 800px; margin-bottom: 20px; }
+    .outcomes-cmo-attr { font-size: 11px; letter-spacing: .04em; text-transform: none; color: rgba(255,255,255,.25); }
+    .outcomes-footnote { font-size: 12px; color: rgba(255,255,255,.2); letter-spacing: .02em; }
+
+    /* ── Insights ──────────────────────────────────────── */
+    #insights { padding: var(--section-pad-y) var(--page-pad); border-bottom: 1px solid rgba(26,26,26,.08); }
+    .insights-header { margin-bottom: 64px; }
+    .insights-h { font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 3.5vw, 48px); font-weight: 300; letter-spacing: -.018em; margin-top: 16px; }
+    .insights-grid { display: flex; flex-direction: column; gap: 0; }
+    .insight { display: grid; grid-template-columns: 60px minmax(220px, 280px) minmax(0, 1fr); gap: clamp(24px, 4vw, 48px); align-items: start; padding: 48px 0; border-bottom: 1px solid rgba(26,26,26,.06); }
+    .insight:last-child { border-bottom: none; }
+    .insight-idx { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: #6B6560; padding-top: 4px; }
+    .insight-label { font-family: 'Cormorant Garamond', serif; font-size: clamp(20px, 2vw, 26px); font-weight: 400; line-height: 1.3; letter-spacing: -.01em; }
+    .insight-body { font-size: 14px; line-height: 1.85; color: #6B6560; padding-top: 4px; }
+    .insight-body p + p { margin-top: 16px; }
+    .insight-data-point { display: inline-flex; align-items: baseline; gap: 8px; margin-top: 20px; margin-right: 8px; padding: 10px 20px; background: #F4F1EE; border-radius: 2px; }
+    .insight-data-num { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; letter-spacing: -.02em; color: #1A1A1A; }
+    .insight-data-label { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: #6B6560; }
+
+    /* ── Methodology ───────────────────────────────────── */
+    #methodology { background: #F4F1EE; padding: clamp(56px, 7vw, 80px) var(--page-pad); border-bottom: 1px solid rgba(26,26,26,.08); }
+    .methods-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+    .method-pill { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #4A4542; border: 1px solid rgba(26,26,26,.18); padding: 8px 20px; border-radius: 100px; }
+
+    /* ── Next work ─────────────────────────────────────── */
+    #next-work { display: grid; grid-template-columns: 1fr 1fr; min-height: 320px; height: clamp(320px, 38vw, 420px); overflow: hidden; position: relative; border-bottom: 1px solid rgba(26,26,26,.08); text-decoration: none; color: inherit; }
+    .next-img-wrap { overflow: hidden; position: relative; }
+    .next-img { width: 100%; height: 130%; object-fit: cover; will-change: transform; transition: transform .6s ease; }
+    #next-work:hover .next-img { transform: scale(1.04); }
+    .next-info { display: flex; flex-direction: column; justify-content: center; padding: clamp(28px, 5vw, 64px); background: #FAFAF9; transition: background .3s; }
+    #next-work:hover .next-info { background: #F4F1EE; }
+    .next-eyebrow { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: #6B6560; margin-bottom: 16px; }
+    .next-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(28px, 3vw, 42px); font-weight: 300; letter-spacing: -.015em; line-height: 1.15; margin-bottom: 20px; }
+    .next-arrow { display: inline-flex; align-items: center; gap: 14px; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; transition: gap .3s; }
+    #next-work:hover .next-arrow { gap: 22px; }
+    .next-arrow::after { content: '→'; font-size: 16px; }
+
+    /* Footer */
+    footer { padding: clamp(32px, 6vw, 60px) var(--page-pad); display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(26,26,26,.08); }
+    .f-mark { font-family: 'Cormorant Garamond', serif; font-size: 14px; letter-spacing: .12em; text-transform: uppercase; }
+    .f-copy { font-size: 12px; color: #6B6560; }
+    .f-links { display: flex; gap: 32px; list-style: none; }
+    .f-links a { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #6B6560; transition: color .2s; }
+    .f-links a:hover { color: #1A1A1A; }
+
+    /* Reveal states */
+    .js-ready .reveal { opacity: 0; transform: translateY(24px); }
+    .js-ready .reveal-left { opacity: 0; transform: translateX(-20px); }
+
+    @media (max-width: 960px) {
+      #ideal-section { grid-template-columns: 1fr; gap: 24px; }
+      .ideal-header,
+      .ideal-foundation-text,
+      .ideal-foundation-stats,
+      .im-capstone-bar,
+      .im-tabs,
+      .im-states,
+      .ideal-artifact-ref { grid-column: 1 / -1; }
+      .ideal-foundation-text { padding-bottom: 0; }
+      .ideal-foundation-stats { padding-top: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+      .ideal-stat { padding: 16px 0; }
+      .ideal-stat:last-child { border-bottom-width: 1px; }
+      .im-capstone-bar { padding: 28px 0 0; gap: 18px; }
+      .im-capstone-figure { height: clamp(220px, 44vw, 360px); width: 100%; max-width: 420px; }
+      .im-capstone-text { margin-left: 0; padding-bottom: 0; }
+      .im-capstone-outcome { font-size: clamp(56px, 12vw, 110px); margin-bottom: 20px; }
+      .im-capstone-sub { letter-spacing: .16em; }
+      .im-tabs { overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+      .im-tabs::-webkit-scrollbar { display: none; }
+      .im-tab { padding: 16px 24px 16px 0; white-space: nowrap; }
+      .im-state { padding: 36px 0; }
+      .im-state-name { font-size: clamp(32px, 7vw, 54px); margin-bottom: 18px; }
+      .im-state-copy, .im-quality-copy { font-size: 14px; }
+      #overview, #challenge, #research-scale { grid-template-columns: 1fr; gap: 28px; }
+      .process-header, .ideal-header, .dw-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .process-steps, .outcomes-grid { grid-template-columns: 1fr; }
+      .persona-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding-bottom: 0; }
+      .persona-card:nth-child(n) { transform: none; height: clamp(360px, 48vw, 480px); }
+      .atmo-grid { grid-template-columns: 1fr 1fr; }
+      .im-capstone-bar { flex-direction: column; align-items: flex-start; gap: 20px; }
+      .im-capstone-text { padding-bottom: 0; margin-left: 0; }
+      .jm-detail { grid-template-columns: 1fr; gap: 32px; }
+      .im-state { grid-template-columns: 1fr; gap: 24px; }
+      .im-col-left, .im-col-right { padding: 0; border: 0; }
+      .im-col-arrow { display: none; }
+      .jm-stages { grid-template-columns: repeat(8, minmax(180px, 1fr)); gap: 2px; }
+      .map-head { flex-direction: column; align-items: flex-start; padding: 24px 32px; gap: 18px; }
+      .map-title { white-space: normal; }
+      .jm-tabs { width: 100%; flex-wrap: wrap; gap: 10px 18px; }
+      .jm-tab { padding-right: 18px; }
+      .jm-tab::after { width: calc(100% - 18px); bottom: -13px; }
+      .jm-persona-pill { margin-left: 0; }
+      .jm-curve-wrap { padding: 14px 32px 14px; }
+      .jm-axis-label { left: 32px; }
+      .personas-intro-row { flex-direction: column; gap: 32px; }
+      .persona-key { width: 100%; }
+      .stages { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .stage-topband { min-height: 104px; padding: 16px 18px 14px; }
+      .stage-icon-wrap { width: 58px; height: 58px; min-width: 58px; min-height: 58px; }
+      .stage-copy-wrap { padding: 18px 18px 20px; }
+      .stage-inner { min-height: 300px; }
+      .stage-title { min-height: 52px; }
+      .jm-legend { padding: 16px 32px; }
+      .jm-drawer { width: min(520px, 100vw); }
+      .jm-drawer-header { padding: 34px 28px 20px; }
+      .jm-drawer-body { padding: 24px 28px 36px; }
+    }
+
+    @media (max-width: 1100px) {
+      .stats-bar, .process-steps, .outcomes-grid { grid-template-columns: repeat(2, 1fr); }
+      #overview, #challenge, #research-scale { grid-template-columns: 1fr; gap: 32px; }
+      .photo-triptych, .context-showcase, #next-work { height: auto; grid-template-columns: 1fr; }
+      .triptych-cell, .context-cell, .next-img-wrap { min-height: 280px; }
+      .insight { grid-template-columns: 40px 1fr; gap: 20px; }
+      .insight-body { grid-column: 2; }
+      .persona-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .dw-bridge { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .dw-ai-grid { grid-template-columns: 1fr; }
+      .dw-pair { grid-template-columns: 1fr; }
+      .dw-cell img { height: auto; }
+      .dw-story-pair .dw-cell { padding: 24px 20px; }
+      .jm-inner { padding-left: 32px; padding-right: 32px; }
+      .jm-detail { grid-template-columns: 1fr; gap: 40px; }
+    }
+
+    @media (max-width: 820px) {
+      nav { position: static; flex-direction: column; align-items: flex-start; gap: 18px; padding: 24px 20px; }
+      .nav-links { flex-wrap: wrap; gap: 16px 20px; }
+      #hero { height: auto; min-height: 70vh; }
+      .stats-bar, .rs-grid, .process-steps, .outcomes-grid { grid-template-columns: 1fr; }
+      .stat, .outcome, .step { padding-left: 24px; padding-right: 24px; }
+      .insight { grid-template-columns: 1fr; }
+      .insight-body { grid-column: auto; }
+      .f-links, .methods-grid { flex-wrap: wrap; }
+      #next-work { grid-template-columns: 1fr; height: auto; }
+      .next-info { padding: 32px 20px; }
+      .dw-bridge { grid-template-columns: 1fr; }
+      .dw-bridge-item { min-height: auto; }
+      footer { flex-direction: column; align-items: flex-start; gap: 16px; padding-top: 32px; padding-bottom: 32px; }
+      .process-img-contain { padding: 24px 20px; }
+      #challenge { grid-template-columns: 1fr; }
+      #ideal-section { padding: 56px 20px; gap: 20px; }
+      .ideal-foundation-stats { grid-template-columns: 1fr; gap: 12px; }
+      .im-capstone-bar { padding: 20px 0 0; }
+      .im-capstone-figure { max-width: 100%; height: auto; }
+      .im-capstone-outcome { font-size: clamp(48px, 16vw, 88px); }
+      .im-tab { font-size: 11px; padding: 14px 18px 14px 0; }
+      .im-state { padding: 28px 0; }
+      .im-state-name { font-size: clamp(30px, 9vw, 46px); }
+      .ideal-intro { font-size: 15px; line-height: 1.75; margin-bottom: 24px; }
+      .ideal-method-body { font-size: 13px; line-height: 1.7; }
+      .ideal-artifact-ref { margin-top: 32px; }
+      .atmo-divider { min-height: 520px; height: 520px; }
+      .persona-grid { grid-template-columns: 1fr; gap: 12px; padding-bottom: 0; }
+      .persona-card:nth-child(n) { transform: none; height: 400px; }
+      .jm-inner { padding-left: 20px; padding-right: 20px; }
+      .jm-stages { grid-template-columns: repeat(8, minmax(180px, 1fr)); gap: 2px; }
+      .jm-arc { grid-template-columns: repeat(8, 1fr); }
+      .map-head { padding: 20px; gap: 16px; }
+      .jm-tabs { display: grid; grid-template-columns: 1fr; gap: 12px; }
+      .jm-tab { padding: 0 0 10px; width: 100%; justify-content: space-between; border-bottom: 1px solid rgba(26,26,26,.08); }
+      .jm-tab::after { left: 0; right: 0; width: 100%; bottom: -1px; }
+      .tab-count { margin-left: 12px; }
+      .jm-curve-wrap { padding: 12px 20px 12px; }
+      .jm-axis-label { left: 20px; font-size: 9px; }
+      .jm-curve-svg { height: 72px; }
+      .stages { grid-template-columns: 1fr; }
+      .stage { border-right: 0; }
+      .stage-topband { min-height: 92px; padding: 14px 16px 12px; gap: 12px; }
+      .stage-icon-wrap { width: 52px; height: 52px; min-width: 52px; min-height: 52px; }
+      .stage-copy-wrap { min-height: auto; padding: 18px 16px 18px; }
+      .stage-inner { min-height: auto; }
+      .stage-title { font-size: clamp(24px, 6vw, 34px); }
+      .stage-title { min-height: 0; }
+      .stage-copy { font-size: 13px; margin-bottom: 18px; }
+      .stage-ghost { font-size: 88px; right: 8px; }
+      .jm-legend { padding: 14px 20px 18px; gap: 10px 14px; }
+      .jm-legend-label, .jm-legend-item { font-size: 9px; }
+      .jm-drawer { width: 100vw; max-width: 100vw; }
+      .jm-drawer-header { padding: 28px 20px 18px; }
+      .jm-drawer-close { top: 16px; right: 16px; }
+      .jm-drawer-title { font-size: clamp(2.2rem, 10vw, 3.4rem); padding-right: 40px; }
+      .jm-drawer-nav { flex-wrap: wrap; }
+      .jm-drawer-nav-btn { flex: 1 1 calc(50% - 4px); justify-content: center; padding: 9px 12px; }
+      .jm-drawer-body { padding: 20px 20px 28px; gap: 22px; }
+      .jm-hero-visual { padding: 16px; }
+      .jm-detail-list li, .jm-body-copy, .jm-signal-item, .jm-ai-item-copy { font-size: 12px; line-height: 1.6; }
+      .jm-quote { font-size: clamp(17px, 5vw, 22px); }
+    }
+
+    @media (hover: none), (pointer: coarse) {
+      html { cursor: auto; }
+      #cursor, #cursor-ring { display: none !important; }
+    }
+
+    /* Focus styles */
+    *:focus { outline: none; }
+    *:focus-visible { outline: 2px solid #CC2222; outline-offset: 3px; border-radius: 2px; }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .js-ready .reveal, .js-ready .reveal-left { opacity: 1 !important; transform: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<nav>
+  <a href="index.html" class="nav-mark">Chris Pennell</a>
+  <ul class="nav-links">
+    <li><a href="index.html#work">Work</a></li>
+    <li><a href="about.html">About</a></li>
+      <li><a href="https://calendly.com/cp86-rice/30min" target="_blank">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ── Hero ─────────────────────────────────────────────── -->
+<section id="hero">
+  <div class="hero-img-wrap">
+    <img class="hero-img" id="heroParallax"
+      src="images/ge-field1.png"
+      alt="MR technologists with patient: GE Healthcare field research">
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-meta">
+      <span class="hero-tag">Healthcare · Field Research</span>
+      <span class="hero-lead">57 interviews · 9 hospitals · 78 scans observed</span>
+    </div>
+    <h1 class="hero-title">
+      GE Healthcare<br>
+      <em>Designing Imaging Software<br>Around Real Clinical Work</em>
+    </h1>
+  </div>
+</section>
+
+<!-- Stats bar -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-num reveal">57</div>
+    <div class="stat-label">Research participants across 6 countries</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num reveal">78</div>
+    <div class="stat-label">Real MR scans observed in clinical settings</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num reveal">9</div>
+    <div class="stat-label">Hospitals across the US, Europe, Asia, and South America</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num reveal">$2.3M</div>
+    <div class="stat-label">Annual lost utilization per idle MR scanner, per GE's own estimate</div>
+  </div>
+</div>
+
+<!-- ── Photo triptych ─────────────────────────────────────── -->
+<div class="photo-triptych">
+  <div class="triptych-cell">
+    <img src="images/ge-field2.png" alt="MR technologist with patient: field research" data-parallax-triptych>
+    <span class="triptych-caption">Patient Prep · USA</span>
+  </div>
+  <div class="triptych-cell">
+    <img src="images/ge-field4.png" alt="Technologist at workstation: Severance Hospital, Seoul" data-parallax-triptych>
+    <span class="triptych-caption">Protocol Management · Korea</span>
+  </div>
+  <div class="triptych-cell">
+    <img src="images/ge-field5.png" alt="GE MRI scanner room: field research site" data-parallax-triptych>
+    <span class="triptych-caption">Image Review · China</span>
+  </div>
+</div>
+
+<!-- ── Overview ──────────────────────────────────────────── -->
+<section id="overview">
+    <div class="overview-problem reveal">
+	      GE Healthcare needed product direction for MR imaging software where avoidable delay meant expensive scanner time sitting idle. We observed 78 real scans and interviewed 57 participants across 9 hospitals. The research gave the team evidence to align around workflow, not preference.
+    </div>
+  <div class="project-details reveal">
+    <div class="detail-group">
+      <div class="detail-label">Client</div>
+      <div class="detail-value">GE Healthcare - next-generation MR imaging acquisition platform</div>
+    </div>
+    <div class="detail-group">
+      <div class="detail-label">Engagement</div>
+      <div class="detail-value">Ethnographic research, workflow mapping, ideal experience definition, and interaction design</div>
+    </div>
+    <div class="detail-group">
+      <div class="detail-label">Scope</div>
+      <div class="detail-value">Contextual inquiry across 9 hospitals, journey mapping, persona framework, ideal experience model, interaction architecture, and design specs for AW Server convergence</div>
+    </div>
+    <div class="detail-group">
+      <div class="detail-label">Timeline</div>
+      <div class="detail-value">2011 – 2014</div>
+    </div>
+    <div class="detail-group">
+      <div class="detail-label">Role</div>
+      <div class="detail-value">UX researcher and product strategist inside a complex enterprise healthcare imaging platform</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Context showcase ───────────────────────────────────── -->
+<div class="context-showcase">
+  <div class="context-cell">
+    <img src="images/ge-field7.png" alt="MR imaging workstation: field research" data-parallax-context>
+    <div class="context-label">
+      The Environment
+      <span class="context-sublabel">Real clinical settings · 6 countries</span>
+    </div>
+  </div>
+  <div class="context-cell">
+    <img src="images/ge-field-3.jpg" alt="MR technologist in scanning room: contextual inquiry" data-parallax-context>
+    <div class="context-label">
+      The Work
+      <span class="context-sublabel">Patient care, software, and throughput - simultaneously</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── Challenge ─────────────────────────────────────────── -->
+<section id="challenge">
+  <div class="section-eyebrow reveal-left">01 The Problem</div>
+    <div class="challenge-body reveal">
+	      <p>The project started in the field because GE Healthcare had a throughput problem, and throughput was a business problem. If a scan room lost minutes to avoidable software work, the scanner lost revenue. GE put the cost at roughly $2.3M in lost utilization per machine each year. We observed technologists across 9 hospitals in 6 countries to see where the workflow actually broke down.</p>
+	      <p>The pattern became clear in the room. Technologists were managing hidden state, inconsistent tools, and a worklist that moved slower than the patient queue. They were trying to care for the patient and keep the exam moving while the console kept forcing them to re-orient themselves.</p>
+      <p>The fieldwork produced more than 80 pain points across 8 workflow stages. Those findings became a 57-page interaction specification for the AW Server convergence program, covering the major surfaces from worklist behavior to series navigation.</p>
+    </div>
+  <div class="challenge-pullquote reveal">
+    "Help me move quickly, keep the important state visible, and don't make the system harder than the scan."
+    <span class="challenge-pullquote-attr">Synthesized from technologist workflow and concept-evaluation themes across all 9 hospitals</span>
+  </div>
+</section>
+
+<!-- ── Research scale strip ───────────────────────────────── -->
+<section id="research-scale">
+  <div class="rs-label reveal-left">Research Foundation</div>
+  <div class="rs-grid">
+    <div class="rs-cell reveal">
+      <span class="rs-num">9</span>
+      <span class="rs-desc">Hospitals and clinical environments observed</span>
+    </div>
+    <div class="rs-cell reveal">
+      <span class="rs-num">57</span>
+      <span class="rs-desc">Technologist interviews and observation sessions</span>
+    </div>
+    <div class="rs-cell reveal">
+      <span class="rs-num">4</span>
+      <span class="rs-desc">Persona quadrants defined from field patterns</span>
+    </div>
+    <div class="rs-cell reveal">
+      <span class="rs-num">8</span>
+      <span class="rs-desc">Journey stages mapped across the acquisition workflow</span>
+    </div>
+    <div class="rs-cell reveal">
+      <span class="rs-num">80+</span>
+      <span class="rs-desc">Distinct pain points synthesized from field observations</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── Process ────────────────────────────────────────────── -->
+<section id="process">
+  <div class="process-header">
+    <h2 class="process-h reveal">From fieldwork to design direction</h2>
+    <span class="section-eyebrow reveal">02 How We Worked</span>
+  </div>
+  <div class="process-steps">
+    <div class="step">
+      <span class="step-num">01</span>
+      <h3 class="step-title">Ethnographic fieldwork</h3>
+      <ul class="step-body">
+        <li>Observed 78 MR scans across 9 hospitals in the US, Europe, Asia, and South America</li>
+        <li>Tracked the technologist workflow, patient experience, and console behavior together, because the UI was only part of the problem</li>
+        <li>Mapped time pressure, patient management, and software friction in the same model</li>
+      </ul>
+      <span class="step-tag">Contextual Inquiry · Observation</span>
+    </div>
+    <div class="step">
+      <span class="step-num">02</span>
+      <h3 class="step-title">Map the current journey</h3>
+      <ul class="step-body">
+        <li>Built a journey map across 8 stages: preparation, patient setup, protocol, scanning, review, post-processing, and handoff</li>
+        <li>Separated workflow friction from interface friction because they needed different fixes</li>
+        <li>Defined 4 persona types from real throughput patterns. A high-volume hospital in China needed different software support than a low-volume academic center in the US</li>
+      </ul>
+      <span class="step-tag">Journey Mapping · Persona Framework</span>
+    </div>
+    <div class="step">
+      <span class="step-num">03</span>
+      <h3 class="step-title">Define the ideal, then design</h3>
+      <ul class="step-body">
+        <li>Before designing screens, built an ideal experience model: what a good shift should feel like, and what the software had to do to make that possible</li>
+        <li>Designed browser, viewer, and series navigator concepts from the research: worklist logic, search, exam state management, toolbar architecture, and layout control</li>
+        <li>Delivered a 57-page interaction spec covering the major AW Server surfaces</li>
+      </ul>
+      <span class="step-tag">Ideal Modeling · Interaction Design · Specifications</span>
+    </div>
+  </div>
+  <img src="images/ge-process-map.pdf.png"
+    alt="Current MR imaging acquisition process map: technologist journey, product journey, and patient journey"
+    class="process-img-contain reveal" style="display:none">
+  <div class="process-img-caption" style="display:none">Current-state acquisition process, technologist, product, and patient journeys mapped across before, during, and after the exam</div>
+
+  <!-- ── Field strip ─────────────────────────────────────────── -->
+  <div class="field-strip">
+    <div class="field-strip-img"><img src="images/ge-vs85.png" alt="MR technologist reviewing scan images at a diagnostic display" data-parallax-field></div>
+    <div class="field-strip-img"><img src="images/ge-field9.png" alt="Research team observing technologist workflow at the MRI machine" data-parallax-field></div>
+    <div class="field-strip-img"><img src="images/ge-korea.jpg" alt="Korean MR technologist at the control console with scan room visible through glass" data-parallax-field></div>
+  </div>
+
+  <!-- ── Personas ───────────────────────────────────────────── -->
+  <section id="personas">
+    <div class="section-eyebrow reveal">03 The Users</div>
+    <div class="personas-intro-row">
+      <p class="personas-intro-text reveal">
+        The research produced four persona types, split by experience level and facility throughput. Those two factors shaped what a technologist needed more than anything else. A veteran at a low-volume academic center did not need the same support as a junior technologist running 8 or more exams per hour.
+      </p>
+      <div class="persona-key reveal">
+        <div class="pk-source">From field research</div>
+        <div class="pk-matrix">
+          <div class="pk-corner"></div>
+          <div class="pk-x-label"><span>←</span> Low throughput</div>
+          <div class="pk-x-label">High throughput <span>→</span></div>
+          <div class="pk-y-label"><span>↑</span> High exp</div>
+          <div class="pk-q pk-yellow">
+            <span class="pk-quote">"The Gold Standard"</span>
+          </div>
+          <div class="pk-q pk-teal">
+            <span class="pk-quote">"Get the Job Done"</span>
+          </div>
+          <div class="pk-y-label">Low exp <span>↓</span></div>
+          <div class="pk-q pk-purple">
+            <span class="pk-quote">"Learning the Ropes"</span>
+          </div>
+          <div class="pk-q pk-green">
+            <span class="pk-quote">"Paying My Dues"</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="persona-grid">
+      <div class="persona-card persona-gold" data-persona="lauren">
+        <div class="persona-info">
+          <span class="persona-card-axis">High Exp · Low Throughput</span>
+          <div class="persona-card-self">"I am The Gold Standard"</div>
+          <div class="persona-card-cta">View profile →</div>
+        </div>
+      </div>
+      <div class="persona-card persona-teal" data-persona="jin">
+        <div class="persona-info">
+          <span class="persona-card-axis">High Exp · High Throughput</span>
+          <div class="persona-card-self">"I Get the Job Done"</div>
+          <div class="persona-card-cta">View profile →</div>
+        </div>
+      </div>
+      <div class="persona-card persona-purple" data-persona="james">
+        <div class="persona-info">
+          <span class="persona-card-axis">Low Exp · Low Throughput</span>
+          <div class="persona-card-self">"I'm Learning the Ropes"</div>
+          <div class="persona-card-cta">View profile →</div>
+        </div>
+      </div>
+      <div class="persona-card persona-green" data-persona="kim">
+        <div class="persona-info">
+          <span class="persona-card-axis">Low Exp · High Throughput</span>
+          <div class="persona-card-self">"Paying My Dues"</div>
+          <div class="persona-card-cta">View profile →</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="jm-overlay" id="p-overlay"></div>
+  <aside class="jm-drawer" id="p-drawer" role="dialog" aria-modal="true" aria-labelledby="p-drawer-title">
+    <div class="jm-drawer-header" id="p-drawer-header">
+      <button class="jm-drawer-close" id="p-drawer-close" aria-label="Close">×</button>
+      <div class="jm-drawer-eyebrow" id="p-drawer-eyebrow"></div>
+      <div class="jm-drawer-title" id="p-drawer-title" tabindex="-1"></div>
+      <div class="jm-drawer-nav">
+        <button class="jm-drawer-nav-btn" id="p-btn-prev">← Prev</button>
+        <button class="jm-drawer-nav-btn" id="p-btn-next">Next →</button>
+      </div>
+    </div>
+    <div class="jm-drawer-body" id="p-drawer-body"></div>
+  </aside>
+
+  <section class="map-shell">
+    <div class="map-head">
+      <div class="map-title">Current Experience Journey</div>
+  <div class="jm-tabs">
+    <button class="jm-tab is-active" data-phase="Before exam">Before exam <span class="tab-count">4</span></button>
+    <button class="jm-tab" data-phase="During exam">During exam <span class="tab-count">5</span></button>
+    <button class="jm-tab" data-phase="After exam">After exam <span class="tab-count">7</span></button>
+  </div>
+  <div class="jm-persona-pill">MR technologist current state</div>
+  </div>
+    <div class="jm-curve-wrap">
+      <span class="jm-axis-label jm-axis-label--pos">High friction</span>
+      <span class="jm-axis-label jm-axis-label--neg">Low friction</span>
+      <div class="jm-dot-tooltip" id="jm-dot-tooltip">
+        <div class="jm-dot-tip-step" id="jm-dot-tip-step"></div>
+        <div class="jm-dot-tip-name" id="jm-dot-tip-name"></div>
+        <div class="jm-dot-tip-summary" id="jm-dot-tip-summary"></div>
+        <div class="jm-dot-tip-friction" id="jm-dot-tip-friction"></div>
+        <div class="jm-dot-tip-axis" id="jm-dot-tip-axis"></div>
+        <div class="jm-dot-tip-cta">Click to view detail →</div>
+      </div>
+      <svg class="jm-curve-svg" id="jm-curve-svg" viewBox="0 0 1000 86" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="jm-curve-fill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#CC2222" stop-opacity=".1"></stop>
+            <stop offset="100%" stop-color="#CC2222" stop-opacity="0"></stop>
+          </linearGradient>
+        </defs>
+        <path id="jm-curve-area" fill="url(#jm-curve-fill)" stroke="none"></path>
+        <path id="jm-curve-line" fill="none" stroke="#CC2222" stroke-width="2" stroke-dasharray="8 5" stroke-linecap="round"></path>
+      </svg>
+      <div id="jm-dot-pins"></div>
+    </div>
+    <div class="stages" id="stages"></div>
+    <div class="jm-legend">
+      <span class="jm-legend-label">Reading key</span>
+      <span class="jm-legend-item">More filled dots = more friction</span>
+      <span class="jm-legend-item"><span class="jm-legend-swatch" style="background:#C9894E"></span>Medium friction</span>
+      <span class="jm-legend-item"><span class="jm-legend-swatch" style="background:#e0471b"></span>High friction</span>
+      <span class="jm-legend-item"><span class="jm-legend-swatch" style="background:#d10000"></span>Critical friction</span>
+      <span class="jm-legend-item" style="color:#C9894E"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 1 7 7c0 2.76-1.6 5.17-4 6.36V17H9v-1.64C6.6 14.17 5 11.76 5 9a7 7 0 0 1 7-7z"/></svg>AI opportunities in detail</span>
+    </div>
+  </section>
+  <div class="jm-overlay" id="jm-overlay"></div>
+  <aside class="jm-drawer" id="jm-drawer" role="dialog" aria-modal="true" aria-labelledby="jm-drawer-title">
+    <div class="jm-drawer-header">
+      <button class="jm-drawer-close" id="jm-drawer-close" aria-label="Close">×</button>
+      <div class="jm-drawer-eyebrow" id="jm-drawer-eyebrow"></div>
+      <div class="jm-drawer-title" id="jm-drawer-title" tabindex="-1"></div>
+      <div class="jm-drawer-nav">
+        <button class="jm-drawer-nav-btn" id="jm-btn-prev">← Prev</button>
+        <button class="jm-drawer-nav-btn" id="jm-btn-next">Next →</button>
+      </div>
+    </div>
+    <div class="jm-drawer-body" id="jm-drawer-body"></div>
+  </aside>
+</section>
+
+<!-- ── Atmospheric divider ────────────────────────────────── -->
+<div class="atmo-divider">
+  <div class="atmo-grid">
+    <div class="atmo-cell">
+      <img src="images/GE Ideal Experience Interview/IMG_1459.JPG" alt="Ideal experience session: participant mapping" data-parallax-atmo>
+    </div>
+    <div class="atmo-cell">
+      <img src="images/GE Ideal Experience Interview/IMG_1565.JPG" alt="Ideal experience session: ideal MR model" data-parallax-atmo>
+    </div>
+    <div class="atmo-cell">
+      <img src="images/GE Ideal Experience Interview/IMG_1689.JPG" alt="Ideal experience session: affinity mapping" data-parallax-atmo>
+    </div>
+    <div class="atmo-cell">
+      <img src="images/GE Ideal Experience Interview/IMG_1263.JPG" alt="Ideal experience session: photo sorting" data-parallax-atmo>
+    </div>
+  </div>
+</div>
+
+<!-- ── Ideal Experience ───────────────────────────────────── -->
+<section id="ideal-section">
+  <div class="ideal-header">
+    <div class="section-eyebrow reveal-left">04 The Ideal Experience Model</div>
+  </div>
+
+  <div class="ideal-foundation-text reveal">
+    <p class="ideal-intro">
+      Before we designed screens, we translated the research into an ideal experience model. The question driving all of it was this. <strong>If the software worked the way technologists needed it to work, what would a good shift feel like? And what would the product have to do to create that feeling?</strong> We used it to test proposed designs against what technologists had actually asked for.
+    </p>
+    <div class="ideal-method-label">How the model was built</div>
+    <p class="ideal-method-body">
+      We grouped the field observations around one question. <strong>What does a successful shift feel like to a technologist?</strong> Four answers kept coming back. <em>Fast, autonomous, supported, reassuring.</em> Each feeling was paired with the product qualities required to produce it. What the user feels on the left. What the software has to be on the right.
+    </p>
+  </div>
+  <div class="ideal-foundation-stats reveal">
+    <div class="ideal-stat">
+      <div class="ideal-stat-num">14</div>
+      <div class="ideal-stat-label">MR technologists interviewed</div>
+    </div>
+    <div class="ideal-stat">
+      <div class="ideal-stat-num">6</div>
+      <div class="ideal-stat-label">Clinical sites observed</div>
+    </div>
+  </div>
+
+  <div class="im-capstone-bar reveal">
+    <img class="im-capstone-figure" src="images/ge girl.png" alt="MR technologist">
+    <div class="im-capstone-text">
+      <div class="im-capstone-sub">Ideal experience model</div>
+      <span class="im-capstone-source">Synthesized from 14 MR technologist interviews</span>
+      <div class="im-capstone-feel">I feel</div>
+      <em class="im-capstone-outcome">Successful</em>
+    </div>
+  </div>
+
+  <div class="im-tabs reveal">
+    <button class="im-tab is-active" data-state="fast">Fast</button>
+    <button class="im-tab" data-state="autonomous">Autonomous</button>
+    <button class="im-tab" data-state="supported">Supported</button>
+    <button class="im-tab" data-state="reassuring">Reassuring</button>
+  </div>
+
+  <div class="im-states">
+    <div class="im-state is-active" data-state="fast">
+      <div class="im-col-left">
+        <div class="im-col-label">I am...</div>
+        <div class="im-state-name">Fast</div>
+        <p class="im-state-copy">Speed here meant removing the work that should not have been there at all. Extra steps, hidden state, interruptions that had nothing to do with the scan.</p>
+      </div>
+      <div class="im-col-arrow">→</div>
+      <div class="im-col-right">
+        <div class="im-col-label">It is...</div>
+        <div class="im-qualities">
+          <div class="im-quality">
+            <div class="im-quality-name">Streamlined</div>
+            <p class="im-quality-copy">Less clutter, fewer steps. A technologist's attention is limited, and the interface should spend it wisely.</p>
+          </div>
+          <div class="im-quality">
+            <div class="im-quality-name">Reliable</div>
+            <p class="im-quality-copy">In a clinical setting, predictability is the minimum. The software had to make its own state obvious so technologists could trust it without stopping to verify.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="im-state" data-state="autonomous">
+      <div class="im-col-left">
+        <div class="im-col-label">I am...</div>
+        <div class="im-state-name">Autonomous</div>
+        <p class="im-state-copy">Experienced technologists trusted their own judgment. The software was getting in the way of that. They needed to adjust protocols, move through familiar cases quickly, and override defaults without a fight.</p>
+      </div>
+      <div class="im-col-arrow">→</div>
+      <div class="im-col-right">
+        <div class="im-col-label">It is...</div>
+        <div class="im-qualities">
+          <div class="im-quality">
+            <div class="im-quality-name">Automated</div>
+            <p class="im-quality-copy">Technologists wanted help with the predictable parts. Pre-populated patient data, sensible protocol defaults, setup that moved fast. Taking the judgment call away from them entirely was a different thing, and it came up clearly in every concept evaluation.</p>
+          </div>
+          <div class="im-quality">
+            <div class="im-quality-name">Personalized</div>
+            <p class="im-quality-copy">Different technologists worked in different throughput contexts and at different skill levels. Personalization meant adapting to the user's working style instead of forcing one rigid model on everyone.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="im-state" data-state="supported">
+      <div class="im-col-left">
+        <div class="im-col-label">I am...</div>
+        <div class="im-state-name">Supported</div>
+        <p class="im-state-copy">The software needed to stop making technologists hunt for state it already tracked, or remember things it could surface. The baseline was reducing unnecessary cognitive load. Adding capability on top of a workflow that was already brittle made things worse.</p>
+      </div>
+      <div class="im-col-arrow">→</div>
+      <div class="im-col-right">
+        <div class="im-col-label">It is...</div>
+        <div class="im-qualities">
+          <div class="im-quality">
+            <div class="im-quality-name">Helpful</div>
+            <p class="im-quality-copy">Helpful meant doing the work that should not fall on the technologist. Show the next patient before they are called. Pre-populate what the scanner already knows. Do not make the worklist a manual task.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="im-state" data-state="reassuring">
+      <div class="im-col-left">
+        <div class="im-col-label">I am...</div>
+        <div class="im-state-name">Reassuring</div>
+        <p class="im-state-copy">Patient confidence is a scan quality issue. The way a technologist prepared a patient before the bore shaped what happened during the scan. The software could support that preparation, or treat it as outside scope.</p>
+      </div>
+      <div class="im-col-arrow">→</div>
+      <div class="im-col-right">
+        <div class="im-col-label">It is...</div>
+        <div class="im-qualities">
+          <div class="im-quality">
+            <div class="im-quality-name">Effortless</div>
+            <p class="im-quality-copy">The predictable actions, done dozens of times per shift, should require minimal effort. Most tasks are routine. An interface that treated them as complex was working against the technologist.</p>
+          </div>
+          <div class="im-quality">
+            <div class="im-quality-name">Comfortable</div>
+            <p class="im-quality-copy">The experience before the bore shapes image quality. When the technologist had time and tools to project calm, scan outcomes improved. Most consoles treated that part of the job as invisible.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ideal-artifact-ref reveal" style="display:none;">
+    <img src="images/ge-ideal-model.jpg"
+      alt="Ideal MR imaging acquisition experience model: Successful, Autonomous, Reassuring, Fast, Supported mapped to system qualities"
+      class="ideal-artifact">
+    <div class="ideal-artifact-caption" style="display:none;">Original deliverable, ideal experience model translated from field research</div>
+  </div>
+</section>
+
+<!-- ── Design Work ─────────────────────────────────────────── -->
+<section id="design-work">
+  <div class="insights-header">
+    <div class="section-eyebrow reveal-left">05 The Interaction Design</div>
+    <h2 class="insights-h reveal">How the research changed the design</h2>
+  </div>
+  <div class="insights-grid">
+
+    <div class="insight">
+      <span class="insight-idx reveal">01</span>
+      <div class="insight-label reveal">The toolbar had grown by accretion. The redesign had to reduce visual competition without slowing expert users down.</div>
+      <div class="insight-body reveal">
+		        <p>Experts had learned to ignore most of the interface. Newer technologists were overwhelmed by it. The redesign started from what we saw in the room: make the workspace easier to read without taking speed away from experienced users.</p>
+        <div class="dw-pair dw-story-pair" style="margin-top:28px;">
+          <div class="dw-cell">
+            <img src="images/ge-ui-viewer_ before.png" class="dw-story-img" alt="AW Server viewer before redesign: dense toolbar, crowded controls, and competing modes">
+            <div class="dw-cell-caption"><span class="dw-cell-caption-kicker">Before redesign</span>Dense controls and competing modes made the workspace hard to read at a glance.</div>
+          </div>
+          <div class="dw-cell">
+            <img src="images/ge after.png" class="dw-story-img" alt="AW Server viewer after redesign: clearer toolbar hierarchy and a more legible workspace">
+            <div class="dw-cell-caption"><span class="dw-cell-caption-kicker">After redesign</span>The same workspace, simplified into a clearer hierarchy that surfaced state faster.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight">
+      <span class="insight-idx reveal">02</span>
+      <div class="insight-label reveal">Before screen design, the research had to establish the product model.</div>
+      <div class="insight-body reveal">
+		        <p>The existing product had grown without a clear organizing model. Fieldwork made the split obvious: Browser was for finding and preparing; Viewer was for acquiring and assessing. Locking that distinction into the architecture gave every later screen decision a stable product logic.</p>
+        <div class="dw-artifact" style="margin-top:28px;">
+          <img src="images/ge information architecture.png" class="process-img-contain" alt="AW Server interaction architecture: page types, content hierarchy, and navigation structure">
+          <div class="process-img-caption">AW Server interaction architecture - product structure before individual screen concepts were designed</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight">
+      <span class="insight-idx reveal">03</span>
+      <div class="insight-label reveal">A small set of tools carried most scan work. Finding the patient before the exam was often harder than running the exam.</div>
+      <div class="insight-body reveal">
+		        <p>Across sites, 80–90% of toolbar use came from a handful of functions. Grouping tools by frequency and context shortened the expert path and made the toolbar more legible for newer technologists. In the browser, slow worklist search repeated across a full day became a throughput problem, so progressive filters kept the query running while the technologist narrowed criteria.</p>
+        <div class="dw-pair" style="margin-top:28px; grid-template-columns: 1fr 1.6fr;">
+          <div class="dw-cell">
+            <img src="images/ge tool group2.png" class="dw-cell-fit" style="object-fit: cover; object-position: 70% center;" alt="Viewer toolbar groups: Mouse Modes, Frequent Tools, Contextual Tools, Exam Tools">
+            <div class="dw-cell-caption">Viewer toolbar: four groups organized by frequency and context of use</div>
+          </div>
+          <div class="dw-cell">
+            <img src="images/ge-browser-global-search.png" class="dw-cell-border" style="object-position: right top;" alt="Browser global search: host selection, progressive filters, and background query behavior">
+            <div class="dw-cell-caption">Browser search: progressive filtering that kept queries running in the background</div>
+          </div>
+        </div>
+        <div class="insight-data-point" style="margin-top:24px;">
+          <span class="insight-data-num">80–90%</span>
+          <span class="insight-data-label">of toolbar use came from a handful of functions</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight">
+      <span class="insight-idx reveal">04</span>
+      <div class="insight-label reveal">Series navigation was a high-friction moment that needed a structural fix, not a cosmetic cleanup.</div>
+      <div class="insight-body reveal">
+		        <p>Moving between series took too many clicks, and the default viewport often showed the first localizer instead of the most recent acquisition. Technologists had to hunt for their place in the exam. The series navigator gave that state a permanent home, with floating and docked modes to support different throughput environments.</p>
+        <div class="dw-artifact" style="margin-top:28px;">
+          <img src="images/ge-series-navigator-viewer.pdf.png" class="process-img-contain" alt="AW Server viewer system grid: series navigator, tool bar access, floating and docked parameter panels in spatial layout">
+          <div class="process-img-caption">Viewer system grid - the spatial framework for the series navigator, toolbars, and parameter panels. Floating and dockable behavior preserved flexibility across throughput contexts.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="dw-ai-block reveal">
+    <div class="jm-section-label--ai"><svg class="ai-bulb-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 1 7 7c0 2.76-1.6 5.17-4 6.36V17H9v-1.64C6.6 14.17 5 11.76 5 9a7 7 0 0 1 7-7z"/></svg>AI opportunities</div>
+    <div class="dw-ai-grid">
+      <div class="jm-ai-item">
+        <div class="jm-ai-item-title">Adaptive image review</div>
+        <div class="jm-ai-item-copy">The viewer was designed to surface state clearly. An AI layer could flag probable motion artifacts, coverage gaps, or quality exceptions as they appear, giving technologists a chance to fix issues before the patient leaves the table.</div>
+      </div>
+      <div class="jm-ai-item">
+        <div class="jm-ai-item-title">Predictive series setup</div>
+        <div class="jm-ai-item-copy">The series navigator exists because prescription copying is the dominant workflow. A prediction layer could pre-fill likely parameter adjustments from anatomy, prior acquisitions, and site patterns, so the fastest setup path is also safer.</div>
+      </div>
+      <div class="jm-ai-item">
+        <div class="jm-ai-item-title">Intelligent worklist triage</div>
+        <div class="jm-ai-item-copy">Browser search was designed to run queries in the background. AI ranking by urgency, equipment state, or exam context could take prioritization work out of the technologist's head.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Product showcase ───────────────────────────────────── -->
+<div class="app-showcase">
+  <img src="images/ge-hero.png" alt="AW Server 7: browser and viewer concepts across laptop and tablet">
+  <div class="app-showcase-caption">AW Server 7 - browser and viewer concepts designed from the research</div>
+</div>
+
+<!-- ── Screen mosaic ──────────────────────────────────────── -->
+<div class="screen-mosaic">
+  <div class="mosaic-fade"></div>
+  <div class="mosaic-track">
+    <div class="mosaic-row">
+      <div class="mosaic-screen"><img src="images/ge-vs7-viewer-overview.pdf.png" alt="AW Server 7 viewer overview"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-navigator-overview.pdf.png" alt="Navigator overview"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-key-image-navigator.pdf.png" alt="Key image navigator"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-referenced-exams.pdf.png" alt="Referenced exams"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-saved-state-series.pdf.png" alt="Saved state series"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-load-merge.pdf.png" alt="Load and merge"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-viewer-overview.pdf.png" alt="AW Server 7 viewer overview"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-navigator-overview.pdf.png" alt="Navigator overview"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-key-image-navigator.pdf.png" alt="Key image navigator"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-referenced-exams.pdf.png" alt="Referenced exams"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-saved-state-series.pdf.png" alt="Saved state series"></div>
+    </div>
+    <div class="mosaic-row">
+      <div class="mosaic-screen"><img src="images/ge-vs7-load-merge.pdf.png" alt="Load and merge"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-viewer-overview.pdf.png" alt="AW Server 7 viewer overview"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-saved-state-series.pdf.png" alt="Saved state series"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-navigator-overview.pdf.png" alt="Navigator overview"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-referenced-exams.pdf.png" alt="Referenced exams"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-key-image-navigator.pdf.png" alt="Key image navigator"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-load-merge.pdf.png" alt="Load and merge"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-viewer-overview.pdf.png" alt="AW Server 7 viewer overview"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-saved-state-series.pdf.png" alt="Saved state series"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-navigator-overview.pdf.png" alt="Navigator overview"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-key-image-navigator.pdf.png" alt="Key image navigator"></div>
+    </div>
+    <div class="mosaic-row">
+      <div class="mosaic-screen"><img src="images/ge-vs7-referenced-exams.pdf.png" alt="Referenced exams"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-key-image-navigator.pdf.png" alt="Key image navigator"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-viewer-overview.pdf.png" alt="AW Server 7 viewer overview"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-load-merge.pdf.png" alt="Load and merge"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-navigator-overview.pdf.png" alt="Navigator overview"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-saved-state-series.pdf.png" alt="Saved state series"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-referenced-exams.pdf.png" alt="Referenced exams"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-key-image-navigator.pdf.png" alt="Key image navigator"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-viewer-overview.pdf.png" alt="AW Server 7 viewer overview"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-load-merge.pdf.png" alt="Load and merge"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-navigator-overview.pdf.png" alt="Navigator overview"></div>
+    </div>
+    <div class="mosaic-row">
+      <div class="mosaic-screen"><img src="images/ge-vs7-saved-state-series.pdf.png" alt="Saved state series"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-load-merge.pdf.png" alt="Load and merge"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-referenced-exams.pdf.png" alt="Referenced exams"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-navigator-overview.pdf.png" alt="Navigator overview"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-viewer-overview.pdf.png" alt="AW Server 7 viewer overview"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-key-image-navigator.pdf.png" alt="Key image navigator"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-saved-state-series.pdf.png" alt="Saved state series"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-load-merge.pdf.png" alt="Load and merge"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-referenced-exams.pdf.png" alt="Referenced exams"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-navigator-overview.pdf.png" alt="Navigator overview"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-viewer-overview.pdf.png" alt="AW Server 7 viewer overview"></div>
+    </div>
+    <div class="mosaic-row">
+      <div class="mosaic-screen"><img src="images/ge-vs7-key-image-navigator.pdf.png" alt="Key image navigator"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-viewer-overview.pdf.png" alt="AW Server 7 viewer overview"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-load-merge.pdf.png" alt="Load and merge"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-saved-state-series.pdf.png" alt="Saved state series"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-key-image-navigator.pdf.png" alt="Key image navigator"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-referenced-exams.pdf.png" alt="Referenced exams"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-navigator-overview.pdf.png" alt="Navigator overview"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-viewer-overview.pdf.png" alt="AW Server 7 viewer overview"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-load-merge.pdf.png" alt="Load and merge"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-saved-state-series.pdf.png" alt="Saved state series"></div>
+      <div class="mosaic-screen"><img src="images/ge-vs7-key-image-navigator.pdf.png" alt="Key image navigator"></div>
+    </div>
+  </div>
+  <p class="mosaic-caption">AW Server 7 &middot; Interaction concepts &middot; GE Healthcare</p>
+</div>
+
+<!-- ── Outcomes ───────────────────────────────────────────── -->
+<section id="outcomes">
+  <div class="outcomes-ghost">Direction</div>
+  <div class="outcomes-inner">
+    <div class="outcomes-label">06 What the Work Enabled</div>
+    <div class="outcomes-grid">
+      <div class="outcome">
+        <div class="outcome-num">4</div>
+        <div class="outcome-desc">Ideal experience states grounded in field observation and specific enough to evaluate product decisions: Fast, Autonomous, Supported, Reassuring.</div>
+      </div>
+      <div class="outcome">
+        <div class="outcome-num">57 pp</div>
+        <div class="outcome-desc">Interaction specification covering browser behavior, search, exam states, series navigation, toolbar logic, annotation, layout management, and viewer architecture.</div>
+      </div>
+      <div class="outcome">
+        <div class="outcome-num">AW&nbsp;7</div>
+        <div class="outcome-desc">Browser/viewer architecture, series navigation, and toolbar hierarchy delivered as the design foundation for AW Server 7.</div>
+      </div>
+    </div>
+    <div class="outcomes-cmo">
+      <div class="outcomes-cmo-quote">"Chris effectively draws out users' psychological drivers, operational objectives, and functional requirements. With excellent communication skills he tells leadership what they need to hear, not what they want to hear."</div>
+      <div class="outcomes-cmo-attr">Kevin Hughes - Chief Information Officer, GE Healthcare</div>
+    </div>
+	    <div class="outcomes-footnote">The journey map, ideal model, persona framework, interaction architecture, and 57-page spec gave the AW Server convergence team a direction they could build from. The engagement ran from field observation through interaction design, covering the full span from research to deliverable.</div>
+  </div>
+</section>
+
+<!-- ── Insights ───────────────────────────────────────────── -->
+<section id="insights">
+  <div class="insights-header">
+    <div class="section-eyebrow reveal">07 Key Research Findings</div>
+    <h2 class="insights-h reveal">What the fieldwork clarified</h2>
+  </div>
+  <div class="insights-grid">
+
+    <div class="insight">
+      <span class="insight-idx reveal">01</span>
+	      <div class="insight-label reveal">The highest-leverage friction appeared before the scan started.</div>
+      <div class="insight-body reveal">
+	        <p>The pattern held across all six countries. Too much time burned on setup: finding the right patient, locating prior exams, adapting protocols, and entering data the scanner should already have known. In high-throughput sites, that overhead was the difference between a smooth day and a backlog that compounded all afternoon.</p>
+		        <p>Browser behavior, worklist logic, search, and pre-populated data became the front door to the exam. Every minute saved in setup was a minute the scanner could actually run.</p>
+        <div class="insight-data-point">
+          <span class="insight-data-num">78</span>
+          <span class="insight-data-label">scans observed across all 9 hospitals</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight">
+      <span class="insight-idx reveal">02</span>
+	      <div class="insight-label reveal">Automation was welcome when it preserved clinical control.</div>
+      <div class="insight-body reveal">
+		        <p>Technologists wanted pre-populated patient data, smart protocol defaults, and faster setup for routine cases. When concepts removed too much manual involvement, experienced technologists pushed back. They wanted help with predictable work, not removal from judgment calls.</p>
+		        <p>The design rule was simple: automate the predictable parts and keep technologists in control of decisions that required expertise.</p>
+        <div class="insight-data-point">
+          <span class="insight-data-num">4</span>
+          <span class="insight-data-label">persona types, each with distinct automation needs</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight">
+      <span class="insight-idx reveal">03</span>
+	      <div class="insight-label reveal">Patient reassurance was a scan-quality issue, not a hospitality detail.</div>
+      <div class="insight-body reveal">
+	        <p>The technologists who got the best images spent time making patients feel safe before the bore. A calm patient holds still. A still patient produces a cleaner image. A cleaner image reduces rescans and protects the schedule.</p>
+		        <p>That changed how the team treated patient-facing features. Welcome information, education screens, and positioning guidance affected image quality and throughput, not just patient comfort.</p>
+        <div class="insight-data-point">
+          <span class="insight-data-num">9</span>
+          <span class="insight-data-label">hospitals across 3 throughput models</span>
+        </div>
+        <div class="insight-data-point">
+          <span class="insight-data-num">6</span>
+          <span class="insight-data-label">countries, each with different patient norms</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── Methodology ────────────────────────────────────────── -->
+<section id="methodology">
+  <div class="section-eyebrow reveal">08 Methods Used</div>
+  <div class="methods-grid">
+    <span class="method-pill">Contextual inquiry</span>
+    <span class="method-pill">Observation in clinical settings</span>
+    <span class="method-pill">One-on-one interviews</span>
+    <span class="method-pill">Workshop synthesis</span>
+    <span class="method-pill">Pattern coding</span>
+    <span class="method-pill">Persona modeling</span>
+    <span class="method-pill">Use-case definition</span>
+    <span class="method-pill">Ideal experience modeling</span>
+    <span class="method-pill">Concept storyboards</span>
+    <span class="method-pill">Desirability evaluation</span>
+    <span class="method-pill">Interaction architecture</span>
+    <span class="method-pill">Browser concept design</span>
+    <span class="method-pill">Viewer concept design</span>
+    <span class="method-pill">Series navigator design</span>
+    <span class="method-pill">Workflow scenarios</span>
+    <span class="method-pill">Design specifications</span>
+  </div>
+</section>
+
+<!-- ── Next Work ──────────────────────────────────────────── -->
+<a href="connect2trials.html" id="next-work">
+  <div class="next-img-wrap">
+    <img class="next-img"
+      src="images/c2t.png"
+      alt="Connect2Trials patient matching platform">
+  </div>
+  <div class="next-info">
+    <div class="next-eyebrow">Next Case Study</div>
+    <h3 class="next-title">Connect2Trials<br>Patient Matching</h3>
+    <span class="next-arrow">View case study</span>
+  </div>
+</a>
+
+<!-- Footer -->
+<footer>
+  <a href="index.html" class="f-mark">Chris Pennell</a>
+  <span class="f-copy">&copy; 2026 Chris Pennell</span>
+  <ul class="f-links">
+    <li><a href="index.html#work">Work</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="https://calendly.com/cp86-rice/30min" target="_blank">Contact</a></li>
+  </ul>
+</footer>
+
+<script>
+  const supportsCustomCursor = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (supportsCustomCursor) {
+    document.documentElement.classList.add('has-custom-cursor');
+  }
+
+  document.body.classList.add('js-ready');
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Smooth scroll
+  let lenis;
+  if (!prefersReducedMotion) {
+    try {
+      lenis = new Lenis({ lerp: 0.08, smoothWheel: true });
+      lenis.on('scroll', ScrollTrigger.update);
+      gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+      gsap.ticker.lagSmoothing(0);
+    } catch(e) {
+      console.warn('Lenis init failed, using native scroll', e);
+    }
+  }
+
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let rx = 0, ry = 0, cx = 0, cy = 0;
+  document.addEventListener('mousemove', e => {
+    cx = e.clientX; cy = e.clientY;
+    gsap.set(cursor, { x: cx, y: cy });
+  });
+  (function loop() {
+    rx += (cx - rx) * 0.1;
+    ry += (cy - ry) * 0.1;
+    gsap.set(ring, { x: rx, y: ry });
+    requestAnimationFrame(loop);
+  })();
+
+  if (!prefersReducedMotion) {
+    // Screen mosaic parallax
+    gsap.to('.mosaic-track', {
+      y: '-12%',
+      ease: 'none',
+      scrollTrigger: { trigger: '.screen-mosaic', start: 'top bottom', end: 'bottom top', scrub: true }
+    });
+
+    // Hero parallax
+    gsap.to('#heroParallax', {
+      yPercent: -15,
+      ease: 'none',
+      scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true }
+    });
+
+    gsap.from('.hero-title', { y: 40, opacity: 0, duration: 1.1, ease: 'power3.out', delay: 0.2 });
+  }
+  gsap.from('.hero-meta', { y: 20, opacity: 0, duration: 0.8, ease: 'power3.out', delay: 0.05 });
+
+  // Scroll reveals
+  gsap.utils.toArray('.reveal').forEach(el => {
+    gsap.to(el, {
+      opacity: 1, y: 0, duration: 0.8, ease: 'power2.out',
+      scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' }
+    });
+  });
+
+  gsap.utils.toArray('.reveal-left').forEach(el => {
+    gsap.to(el, {
+      opacity: 1, x: 0, duration: 0.7, ease: 'power2.out',
+      scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' }
+    });
+  });
+
+  // Process steps stagger
+  gsap.set('.step', { opacity: 0, y: 30 });
+  gsap.utils.toArray('.step').forEach((step, i) => {
+    gsap.to(step, {
+      opacity: 1, y: 0, duration: 0.7, delay: i * 0.12, ease: 'power2.out',
+      scrollTrigger: { trigger: '#process', start: 'top 75%', toggleActions: 'play none none none' }
+    });
+  });
+
+  // Journey map
+  const STAGES = [
+    { id: "s01", num: "01", phase: "Before exam", name: "Patient arrival & prep", image: "/Users/toefood/Desktop/GE14_detail_images_pages_12_27/GE14_page_12_detail.png", summary: "Patient changes, removes metal, answers eligibility questions, and gets oriented before scanning begins.", friction: 2, frictionWord: "Low", whatTheyDo: ["Ensure patient changes clothes and removes all metal from their person", "Ask screening questions to confirm eligibility for the MR scan", "Insert IV contrast line if contrast will be used during the exam", "Coordinate sedation with an aesthetician if the patient requires it", "Explain the scanning process and answer the patient's final questions", "Determine if the patient wants verbal guidance throughout the scan"], howTheyFeel: [{text:"Patients without escorts don't know where to go or where to wait on arrival",severity:2},{text:"Patients often wait a long time and feel ignored during prep",severity:3},{text:"Technologists believe uninformed patients tend to be fearful and less cooperative during the scan",severity:3},{text:"Most patients don't know their own eligibility before reaching the MR room; disqualifying them late wastes everyone's time",severity:4}], competitors: null, what: "A heavily human step that depends on reassurance, safety checks, and information gathering before the scanner becomes useful.", why: "Important context still lives in conversation, paper, or memory. The software is not yet reducing the technologist's cognitive load.", signals: ["Prep work starts before the scanner can help", "Safety eligibility and contrast prep require accuracy", "Trust-building with the patient matters early"], quote: "\"The workflow starts with calming and checking the patient before anything else can move.\"", quoteBy: "Report synthesis from page 12", aiOpportunities: [{ title: "Prep personalization", copy: "A patient who understands the procedure tends to hold still. Plain-language pre-scan explanations could be tailored to the anatomy being scanned and the patient's history, reducing the time the technologist spends on verbal preparation and reducing motion from patient anxiety.", links: ["Reassuring", "Helpful"] }] },
+    { id: "s02", num: "02", phase: "Before exam", name: "Position patient", image: "/Users/toefood/Desktop/GE14_detail_images_pages_12_27/GE14_page_13_detail.png", summary: "The technologist escorts the patient into the room, positions them, and settles them on the table for scanning.", friction: 3, frictionWord: "Medium", whatTheyDo: ["Escort patient into the MR room while maintaining reassuring conversation", "Help patients onto the table; in high-throughput environments, use steps rather than raising the table to save time", "Use sheets, pillows, and foam padding for longer scans where patient comfort matters", "Apply straps or tape as needed to hold the patient in position during scanning", "In high-throughput environments, omit the squeeze ball to reduce interruptions", "In low-throughput environments, give the patient a squeeze ball and let them test it", "Position the appropriate coils over the target anatomy", "Apply gating for breath-hold exams in lower-throughput settings", "Reference iROC information as needed without direct interaction", "Insert the fully positioned patient into the bore"], howTheyFeel: [{text:"GE's detachable table is appreciated when handling mobility-challenged patients",severity:1},{text:"The GE table's up/down pedals are considered easy to use when raising the table",severity:1},{text:"GE headphones are seen as difficult: bulky cords interfere with head coils",severity:3},{text:"The GE table is seen as especially difficult for patients to get on and off of",severity:4},{text:"GE's music and intercom system is considered poor quality; patients struggle to hear the technologist",severity:3},{text:"GE coils are seen as poorly fitted for different patient body sizes: too tight and intimidating for some patients",severity:3},{text:"GE coils are considered too heavy and prone to falling off the table",severity:3}], competitors: ["Philips table pedals are also appreciated for their ease of use", "Siemens table is similarly seen as difficult for patients to get on and off of"], what: "This stage blends physical handling, comfort management, and expectation-setting under throughput pressure.", why: "Technologists use workarounds like steps instead of adjusting the table because the ideal motion takes too long in practice.", signals: ["Comfort setup competes with speed", "High-throughput habits override ideal procedure", "Patient anxiety is managed verbally in the moment"], quote: "\"The setup has to be fast, but if the patient is not settled, that cost comes back later.\"", quoteBy: "Report synthesis from page 13", aiOpportunities: [{ title: "Positioning guidance", copy: "GE coils are documented as difficult to size across different patients. A model that suggests coil placement and padding configuration from anatomy type and patient profile would reduce the trial-and-error repositioning that adds time and affects patient comfort.", links: ["Helpful", "Streamlined"] }] },
+    { id: "s03", num: "03", phase: "Before exam", name: "Set up new patient scan", image: "/Users/toefood/Desktop/GE14_detail_images_pages_12_27/GE14_page_14_detail.png", summary: "Patient information, notes, prescriptions, and prior exam context are entered or referenced before the exam starts.", friction: 4, frictionWord: "High", whatTheyDo: ["Find and select the patient in the scanner software", "Reference EMR on a separate monitor or paper records to verify accuracy, especially radiologist prescriptions and prior exam images", "Enter scan type, notes, and required patient medical information such as weight", "Select the appropriate coil from the software", "Browse the protocol library and select options matching the radiologist's prescription", "Add or remove series from the selected protocol as needed"], howTheyFeel: [{text:"Technologists dislike the time spent manually re-entering information that already exists in the EMR",severity:4},{text:"Inaccurate or incomplete patient information creates significant frustration because it slows the setup process down",severity:4}], competitors: null, what: "The technologist has to reconcile records across the GE system, EMR, and sometimes paper documentation just to start correctly.", why: "Key information is split across sources, so the user must manually cross-check for confidence instead of trusting one coherent view.", signals: ["EMR and scanner workflow are disconnected", "Manual transcription adds risk", "Accuracy depends on external references"], quote: "\"Starting the exam means hunting across systems before entering the same details again.\"", quoteBy: "Report synthesis from page 14", aiOpportunities: [{ title: "Pre-populated setup from EMR", copy: "The exam cannot start until the technologist reconciles patient data across the scanner, EMR, and sometimes paper records by hand. A worklist reader that pulls HL7/FHIR data into the scanner with verified demographics, contrast contraindications, and the radiologist's protocol prescription (flagging any conflict before setup is confirmed) removes the manual cross-checking that drives both delays and errors. This is a patient safety intervention as much as a throughput one.", links: ["Reliable", "Helpful", "Streamlined"] }] },
+    { id: "s04", num: "04", phase: "Before exam", name: "Begin exam", image: "/Users/toefood/Desktop/GE14_detail_images_pages_12_27/GE14_page_15_detail.png", summary: "The localizer is run, slices are set, and the technologist begins moving into active scan execution.", friction: 3, frictionWord: "Medium", whatTheyDo: ["Run the localizer to initiate the exam", "Use the localizer output to set scan slices for the planned anatomy coverage", "Add or remove series from the exam based on the patient's pathology"], howTheyFeel: [], competitors: null, what: "This is the transition from setup into scan logic, where a wrong early decision can ripple forward into rework.", why: "Localizer output drives the next actions, so the user is committing to a path before the exam has yet proven itself.", signals: ["Initial geometry decisions shape the rest of the exam", "Series are added or removed based on pathology", "Small setup errors can compound quickly"], quote: "\"Once the exam is moving, the next decisions depend on the quality of the setup you just made.\"", quoteBy: "Report synthesis from page 15", aiOpportunities: [{ title: "Localizer scoring", copy: "Every prescription decision downstream depends on getting the localizer geometry right. A coverage score against the intended anatomy prescription before the first series runs gives the technologist a correction window before a positioning error has compounded into a rescan.", links: ["Reliable", "Fast"] }] },
+    { id: "s05", num: "05", phase: "During exam", name: "Wait & multitask", image: "/Users/toefood/Desktop/GE14_detail_images_pages_12_27/GE14_page_16_detail.png", summary: "While the scan runs, technologists prepare contrast, cue patients, or get ahead on later work instead of staying idle.", friction: 2, frictionWord: "Low", whatTheyDo: ["Prepare a contrast injection for the current or subsequent exams", "Give breathing instruction or monitor auto-instructions", "Check on patients in other rooms", "Use the Viewer to review previous exam images", "Edit or print film for another patient", "Set up the next exam", "Monitor remaining scan time on the software or iROC", "Keep the schedule visible on a secondary monitor for next-patient notifications", "Adjust console speaker volume to track scanner audio as a progress cue"], howTheyFeel: [{text:"After all series are prescribed, technologists feel the software becomes less important; there is not much to interact with",severity:2},{text:"Technologists appreciate seeing completed series turn grey as a clear visual completion signal",severity:1},{text:"Scanner noise is valued as a non-visual progress signal: used for timing cues like when to inject contrast",severity:1},{text:"The most important on-screen information during an active scan is the remaining scan time",severity:2}], competitors: ["Technologists prefer Philips' graphic progress bar with countdown clock; it visually differentiates scan time from image rendering time"], what: "The user treats scan time as reclaimed operational time and uses it to absorb surrounding workload.", why: "The scanner creates gaps, but those gaps are not truly restful; they get filled with adjacent duties to keep throughput moving.", signals: ["Scanning time becomes multitasking time", "Users optimize around boredom and schedule pressure", "Attention splits across current and future tasks"], quote: "\"Even when the scanner is busy, the technologist is not off the clock.\"", quoteBy: "Report synthesis from page 16", aiOpportunities: [{ title: "Scan time as scheduling intelligence", copy: "Technologists use scan gaps to prepare the next patient. A more accurate scan completion estimate, shown alongside the next patient's setup dependencies, turns passive awareness into active preparation, tightening the gap between exams without requiring the technologist to carry the schedule in their head.", links: ["Helpful", "Automated"] }] },
+    { id: "s06", num: "06", phase: "During exam", name: "Pause exam", image: "/Users/toefood/Desktop/GE14_detail_images_pages_12_27/GE14_page_17_detail.png", summary: "The scan is paused when movement, distress, breathing difficulty, or workflow conditions interrupt the planned sequence.", friction: 4, frictionWord: "High", whatTheyDo: ["Stop scanning when patient distress is heard or movement is detected", "Identify blurry images caused by movement and rerun the affected series", "Assist when a patient has difficulty following breathing instructions or cannot complete a breath hold", "Pause to allow the patient to use the restroom", "Inject contrast between series (triggered by the software's contrast pop-up dialog)", "Reposition or adjust coils or the table between scans using software in the control room", "Add, adjust, or modify a series or protocol before resuming"], howTheyFeel: [{text:"Contrast delays are a significant source of frustration; waiting for a nurse or managing a patient reaction extends the exam considerably",severity:4}], competitors: ["Technologists appreciate that Philips, Siemens, and Toshiba allow inserting a pause into the auto-scan sequence; GE does not offer this"], what: "Pausing is where patient reality collides with protocol logic. The technologist must diagnose what failed and decide whether to recover or reset.", why: "Interruptions force the user to hold both patient state and software state in memory while trying to keep the exam viable.", signals: ["Patient movement or distress interrupts flow", "Breathing compliance can force reruns", "Recovery work depends on clear state awareness"], quote: "\"When a scan pauses, the real job is figuring out whether you can recover or whether the exam just got longer.\"", quoteBy: "Report synthesis from page 17", aiOpportunities: [{ title: "Contrast timing intelligence", copy: "Contrast delays are the most disruptive source of unplanned pauses because prep depends on someone being available at exactly the right moment. A protocol-aware alert that signals the prep window in advance converts an unplanned interruption into a planned handoff. Across a full scanning day, the recovered time adds up.", links: ["Streamlined", "Reliable"] }] },
+    { id: "s07", num: "07", phase: "During exam", name: "Resume exam", image: "/Users/toefood/Desktop/GE14_detail_images_pages_12_27/GE14_page_18_detail.png", summary: "If the patient can continue, the technologist resumes scanning and tries to recover momentum.", friction: 3, frictionWord: "Medium", whatTheyDo: ["Resume the scan after pause conditions are resolved and the patient is ready to continue"], howTheyFeel: [], competitors: ["Technologists believe Philips and Siemens have stricter SAR limitations that force waiting before scanning can resume; GE is seen as more permissive here"], what: "Resume is a recovery step, not a clean restart. The user wants confidence that waiting, SAR limits, or hidden constraints will not create another stop.", why: "This moment exposes whether the scanner helps the technologist continue smoothly or makes recovery feel tentative.", signals: ["Recovery confidence matters more than raw control", "System limits can create forced waiting", "Technologists compare this moment across vendors"], quote: "\"Resuming should feel like getting back on track, not wondering what will block you next.\"", quoteBy: "Report synthesis from page 18", aiOpportunities: [{ title: "SAR constraint visibility", copy: "When SAR limits force waiting, the technologist has no visibility into the duration or reason. A clear SAR display that surfaces current accumulation and the earliest safe resume window turns a forced delay into something that can be communicated to the patient and planned around.", links: ["Reliable", "Helpful"] }] },
+    { id: "s08", num: "08", phase: "During exam", name: "Review images", image: "/Users/toefood/Desktop/GE14_detail_images_pages_12_27/GE14_page_19_detail.png", summary: "Images are checked during and after scans to confirm diagnostic quality and decide whether anything needs to be redone.", friction: 5, frictionWord: "Critical", whatTheyDo: ["Use auto-view and the Viewer to inspect image quality during scanning, after each completed scan, and at the end of the exam", "Consult radiologists to check image quality when required by the facility's protocol"], howTheyFeel: [{text:"Technologists believe GE produces better image quality than competitors",severity:1},{text:"Auto-view is appreciated for being repositionable on the screen",severity:1},{text:"Technologists don't always need auto-view visible continuously",severity:2},{text:"Browsing through images in the Viewer requires too many clicks",severity:3},{text:"Auto-view is seen as not holding enough images at once to be maximally useful",severity:3},{text:"Many technologists are frustrated by needing radiologist sign-off on images; it slows the exam, feels like a lack of trust, and radiologists are often difficult to locate quickly",severity:5}], competitors: ["Siemens auto-view can be resized larger or smaller, which helps technologists make contrast injection decisions from image size alone"], what: "This is the quality gate where expertise matters most. The technologist has to judge image adequacy quickly while the exam is still live.", why: "If review is slow, unclear, or tool-heavy, quality decisions slip, rescans increase, and throughput breaks down.", signals: ["Diagnostic confidence depends on fast review", "Radiologist consultation can add another loop", "This is the most consequential in-flight decision point"], quote: "\"Image review is where experience shows up and where friction costs the most.\"", quoteBy: "Report synthesis from page 19", aiOpportunities: [{ title: "Real-time diagnostic adequacy scoring", copy: "Reviewing series while the patient is still in the bore means making diagnostic adequacy judgments under maximum cognitive load, with no objective measure to check against. Quality scoring during acquisition, not after, covering coverage completeness, motion severity, and SNR by series would let technologists catch inadequate images before the patient moves rather than after the exam ends. Fewer rescans. Fewer delayed radiologist reads from images that nearly qualified.", links: ["Reliable", "Helpful", "Fast"] }] },
+    { id: "s09", num: "09", phase: "During exam", name: "Prescribe upcoming series", image: "/Users/toefood/Desktop/GE14_detail_images_pages_12_27/GE14_page_20_detail.png", summary: "The technologist edits, copies, pastes, and tweaks parameters to set up the next series based on the images already captured.", friction: 4, frictionWord: "High", whatTheyDo: ["Use the localizer for the first series; use completed images as the reference for each subsequent series", "In high-throughput environments, only adjust small parameters like slice number or thickness", "Copy and paste Rx from prior series to set up the next one", "Edit parameters graphically (FOV, slice arrangement, SAT pulses, shim) or alphanumerically (FOV, phase, NEX, TR, slice numbers, spacing, thickness)", "Use 'select series' and 'copy Rx' buttons as primary workflow tools", "Save changes when finished editing"], howTheyFeel: [{text:"The viewport defaulting to the first localizer instead of the newest one is frustrating",severity:3},{text:"The graphic Rx toolbar sits on top of the sagittal view and requires constant repositioning",severity:3},{text:"Technologists cannot visually see FOV changes in real time",severity:4},{text:"The 'select series' and 'copy Rx' buttons are small and difficult to find quickly",severity:3},{text:"Parameter dependencies are hard to identify: changing one value and not knowing what else it affects is a source of error",severity:4},{text:"Finding elements in GE's auto-coil selection is difficult",severity:3},{text:"GE's graphic Rx always shows slice lines that obstruct the view of anatomy",severity:3}], competitors: ["Philips and Siemens show active and inactive coils in the viewport for better situational awareness", "Siemens and Philips advise technologists when parameter changes create conflicts with other settings", "Philips visually shows optimal parameter ranges, making it easier to evaluate at a glance", "Philips' graphic Rx shows only a box outline; it does not obstruct anatomy with slice lines"], what: "The workflow relies on modifying prior work rather than starting fresh, which is efficient for experts but fragile when the interface makes state hard to parse.", why: "Graphical and alphanumeric edits mix together, and the cost of a small missed parameter can be another series or another delay.", signals: ["Users reuse and adjust prior setup constantly", "Parameter editing demands precision", "High-throughput sites favor only small safe changes"], quote: "\"A lot of speed here comes from copying what worked and changing just enough.\"", quoteBy: "Report synthesis from page 20", aiOpportunities: [{ title: "Parameter dependency awareness", copy: "When a technologist edits FOV, slice count, or NEX, other parameters shift in ways that are not always visible until image review. A live dependency view (showing what else changes when one value is edited) catches the compounding parameter errors that currently surface only as another series or another delayed read.", links: ["Reliable", "Streamlined"] }] },
+    { id: "s10", num: "10", phase: "After exam", name: "Remove patient", image: "/Users/toefood/Desktop/GE14_detail_images_pages_12_27/GE14_page_21_detail.png", summary: "The patient is brought out of the bore, helped off the table, and disconnected from the accessories used during the exam.", friction: 3, frictionWord: "Medium", whatTheyDo: ["In high-throughput environments, use steps to help patients off the table (raising and lowering the table takes too long)", "Use GE's detachable table feature to assist removal of mobility-challenged patients", "Remove all accessories: coils, pillows, sheets, headphones or earplugs, and squeeze ball"], howTheyFeel: [{text:"Having to walk into the scan room just to use the table controls to move the patient out of the bore is seen as a time waste",severity:3},{text:"The GE table is seen as especially difficult for patients to get on and off of",severity:4},{text:"GE coils don't fit different patient body sizes well: too tight and intimidating",severity:3},{text:"GE coils are too heavy and fall off the table easily",severity:3}], competitors: ["Philips table pedals are also appreciated for ease of use during patient removal", "Siemens and Philips coils are perceived as easier to handle: smaller and lighter", "Siemens coils are seen as very durable under heavy daily use", "Siemens table is also seen as difficult for patients to get on and off of"], what: "The exam may be over in software, but the physical unwind is still labor, especially with mobility constraints and room reset pressure.", why: "The user is transitioning from clinical care back into operational turnover without a clean break between the two.", signals: ["Accessory removal adds physical cleanup work", "Mobility needs change the pace of turnover", "Throughput pressure returns immediately"], quote: "\"The software is done, but the room and the patient are not.\"", quoteBy: "Report synthesis from page 21", aiOpportunities: [{ title: "Turnover forecasting", copy: "Coil and table management are physical problems, not software ones. The AI contribution is earlier: a more accurate exam duration estimate at setup time so the next patient's positioning can begin in parallel, recovering turnover time without adding to what the technologist has to track.", links: ["Fast", "Helpful"] }] },
+    { id: "s11", num: "11", phase: "After exam", name: "Patient leaves", image: "/Users/toefood/Desktop/GE14_detail_images_pages_12_27/GE14_page_22_detail.png", summary: "The patient exits the scan room with varying levels of escort, guidance, or support depending on the facility and condition.", friction: 2, frictionWord: "Low", whatTheyDo: ["Escort or direct the patient where to go after the scan", "Assist with wheelchair, gurney, or family-supported exit depending on the patient's condition", "Allow some patients to exit independently with no specific direction or assistance"], howTheyFeel: [], competitors: null, what: "This is a handoff moment between the scanning workflow and the broader care environment.", why: "Variation across facilities means the process is often improvised rather than tightly orchestrated.", signals: ["Exit behavior varies widely by site", "Support needs range from independent to assisted", "Direction and closure are inconsistent"], quote: "\"The patient exit is simple only if the environment around it is already organized.\"", quoteBy: "Report synthesis from page 22", aiOpportunities: [{ title: "Care transition handoff", copy: "Patient exit varies widely across facilities. Before the exam closes, A routing check can confirm follow-up routing, discharge instructions, and contrast monitoring requirements have been sent to the right downstream recipients, removing a coordination gap the technologist currently has to track on their own.", links: ["Reliable", "Helpful"] }] },
+    { id: "s12", num: "12", phase: "After exam", name: "Clean equipment", image: "/Users/toefood/Desktop/GE14_detail_images_pages_12_27/GE14_page_23_detail.png", summary: "Disposable items are removed, accessories are cleaned or replaced, and the room is reset for the next patient.", friction: 3, frictionWord: "Medium", whatTheyDo: ["Dispose of gloves, paper sheets, and other single-use items", "Remove remaining sheets and pillows from the table", "Clean or replace earplugs and headphones", "Return coils and gating to their appropriate storage locations", "Set up fresh items for the next exam: sheets, gloves, pillows, earplugs or headphones"], howTheyFeel: [{text:"In high-throughput environments, sanitation practices and extra accessories like gloves, sheets, and earplugs are often skipped to maintain patient flow",severity:4}], competitors: null, what: "Resetting the room is operational hygiene work that directly affects readiness for the next exam.", why: "Cleanup is repetitive and necessary, but it sits outside the glamorous parts of the workflow and still consumes real throughput time.", signals: ["Room reset is essential but invisible work", "Accessory storage and replacement matter", "Small delays here roll into the next appointment"], quote: "\"Turnover speed includes everything that makes the room usable again.\"", quoteBy: "Report synthesis from page 23", aiOpportunities: [{ title: "Reset protocol generation", copy: "In high-throughput settings, cleanup steps are compressed under schedule pressure. A turnover checklist generated from the completed exam (coils used, accessories deployed, contamination class) reduces the cognitive overhead of deciding what is needed and ensures nothing gets skipped.", links: ["Helpful", "Streamlined"] }] },
+    { id: "s13", num: "13", phase: "After exam", name: "End exam", image: "/Users/toefood/Desktop/GE14_detail_images_pages_12_27/GE14_page_24_detail.png", summary: "The technologist actively marks the scan complete in the software and may end early in high-throughput contexts.", friction: 2, frictionWord: "Low", whatTheyDo: ["Actively end the scan in the software", "In high-throughput environments, may end the exam early if enough diagnostic images have been acquired"], howTheyFeel: [], competitors: null, what: "This is an explicit administrative close, often treated as a formality once enough images for diagnosis exist.", why: "The real tension is the judgment call before the button: deciding whether the exam has produced enough diagnostic value to stop.", signals: ["Completion is both a software action and a judgment call", "High-throughput sites sometimes end early", "Stopping too soon shifts risk downstream"], quote: "\"Ending the exam is easy. Being sure you should end it is the real decision.\"", quoteBy: "Report synthesis from page 24", aiOpportunities: [{ title: "Early termination confidence", copy: "The decision to end an exam early when sufficient diagnostic images exist is a judgment call most systems do not support. A series coverage score gives the technologist a confidence signal for early termination, especially useful for less experienced technologists who default to running the full protocol even when it is not needed.", links: ["Helpful", "Autonomous"] }] },
+    { id: "s14", num: "14", phase: "After exam", name: "Post-process images", image: "/Users/toefood/Desktop/GE14_detail_images_pages_12_27/GE14_page_25_detail.png", summary: "Images are arranged, cropped, leveled, centered, and structured to make them ready for diagnostic review.", friction: 4, frictionWord: "High", whatTheyDo: ["Cut out non-diagnostic portions of images (e.g., bowels, irrelevant anatomy)", "Window and level the image to optimize diagnostic contrast", "Center the image for clear presentation", "Review overall image quality before forwarding for radiologist review"], howTheyFeel: [], competitors: null, what: "Post-processing converts raw acquisition output into something a radiologist can consume efficiently and confidently.", why: "This is meticulous, quality-sensitive work where structure and presentation matter as much as the underlying scan.", signals: ["Image prep is still hands-on work", "Presentation affects downstream review speed", "Technologists do cleanup that better tooling could support"], quote: "\"Getting the image is not the same thing as getting it ready for diagnosis.\"", quoteBy: "Report synthesis from page 25", aiOpportunities: [{ title: "Anatomy-aware post-processing", copy: "Post-processing is systematic, protocol-specific work the technologist repeats identically across hundreds of exams. Anatomy-aware presets for windowing, cropping, and centering, drawn from the scanned anatomy and protocol and presented for one-click confirmation, recover this time without removing oversight. The downstream effect is standardized presentation that reduces radiologist read time and the likelihood of findings being missed in a poorly formatted series.", links: ["Automated", "Helpful"] }] },
+    { id: "s15", num: "15", phase: "After exam", name: "Send images", image: "/Users/toefood/Desktop/GE14_detail_images_pages_12_27/GE14_page_26_detail.png", summary: "Images are routed to PACS, disc, film, or other outputs depending on physician and facility requirements.", friction: 3, frictionWord: "Medium", whatTheyDo: ["Route images based on referring physician or diagnosing radiologist output requirements", "Send to PACS manually or via autosend", "Burn images to CD or DVD", "Print to film", "Prepare the film bag or envelope for physical media", "Physically carry media to the intended recipient when required", "In low-throughput environments, manually send images to avoid accidental routing or sending unnecessary images"], howTheyFeel: [], competitors: null, what: "This step pushes the work out of the scanner environment and into the larger diagnostic ecosystem.", why: "Multiple possible destinations and formats mean the user still owns logistics after the imaging work is done.", signals: ["Output requirements differ by audience", "Physical media still adds preparation work", "Routing is part of care delivery, not a simple file transfer"], quote: "\"Finishing the exam still leaves the question of where the images need to go and in what form.\"", quoteBy: "Report synthesis from page 26", aiOpportunities: [{ title: "Pre-transmission routing validation", copy: "Routing logic is deterministic: specific studies go to specific destinations in specific formats. Validation against the referring physician's requirements before transmission catches misrouting errors before the study arrives in the wrong place or format, rather than after.", links: ["Reliable", "Streamlined"] }] },
+    { id: "s16", num: "16", phase: "After exam", name: "Verify image arrival", image: "/Users/toefood/Desktop/GE14_detail_images_pages_12_27/GE14_page_27_detail.png", summary: "The technologist double-checks that images reached the right destinations and were not lost in transfer.", friction: 5, frictionWord: "Critical", whatTheyDo: ["Double-check that PACS transfers completed successfully, for both manual and autosend", "Verify images are confirmed received at all intended destinations"], howTheyFeel: [{text:"When patients carry images to their referring physician themselves, the diagnosis is delayed with no direct confirmation of successful delivery",severity:4}], competitors: null, what: "The final step is pure trust verification. Users do manual checking because the cost of a failed transfer is discovered too late.", why: "The transfer flow does not appear to offer reliable enough confirmation for users to stop worrying once they send the images.", signals: ["Users verify because failure is expensive", "Routing confidence is not guaranteed by default", "Breakdowns here create invisible downstream delays"], quote: "\"The job is not done until I know the images landed where they should.\"", quoteBy: "Report synthesis from page 27", aiOpportunities: [{ title: "Structural delivery assurance", copy: "Every technologist has developed a personal PACS verification ritual because PACS delivery cannot be trusted to confirm itself. This workflow should require zero deliberate attention. A delivery check that queries receipt confirmation, cross-checks patient ID and study completeness against the routing manifest, and surfaces only failures eliminates the ritual entirely. For operations leadership, this is an infrastructure reliability problem. For operations leadership, eliminating the manual verification ritual entirely is the outcome worth building toward.", links: ["Reliable", "Supported", "Fast"] }] }
+  ];
+
+  const stagesEl = document.getElementById("stages");
+  const drawer = document.getElementById("jm-drawer");
+  const overlay = document.getElementById("jm-overlay");
+  const drawerClose = document.getElementById("jm-drawer-close");
+  const drawerEyebrow = document.getElementById("jm-drawer-eyebrow");
+  const drawerTitle = document.getElementById("jm-drawer-title");
+  const drawerBody = document.getElementById("jm-drawer-body");
+  const btnPrev = document.getElementById("jm-btn-prev");
+  const btnNext = document.getElementById("jm-btn-next");
+  const curveLine = document.getElementById("jm-curve-line");
+  const curveArea = document.getElementById("jm-curve-area");
+  const curveDots = document.getElementById("jm-curve-dots");
+  let activeId = null;
+  let activePhase = "Before exam";
+  let lockedScrollY = 0;
+
+  document.querySelectorAll(".jm-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      activePhase = tab.dataset.phase;
+      activeId = null;
+      document.querySelectorAll(".jm-tab").forEach(t => t.classList.remove("is-active"));
+      tab.classList.add("is-active");
+      closeDrawer();
+      renderStages();
+    });
+  });
+
+  function frictionColor(n) {
+    if (n >= 5) return "#d10000";
+    if (n >= 4) return "#e0471b";
+    if (n >= 3) return "#C9894E";
+    return "rgba(26,26,26,0.14)";
+  }
+
+  function getAiOpportunities(stage) {
+    return stage.aiOpportunities || [];
+  }
+
+  function drawCurve(visible) {
+    if (!visible.length) return;
+    const vw = 1000;
+    const vh = 86;
+    const pad = visible.length === 1 ? vw / 2 : vw / visible.length / 2;
+    const toY = friction => {
+      const normalized = (friction - 1) / 4;
+      return 66 - normalized * 42;
+    };
+    const points = visible.map((stage, i) => ({
+      x: visible.length === 1 ? vw / 2 : pad + (i / (visible.length - 1)) * (vw - pad * 2),
+      y: toY(stage.friction)
+    }));
+
+    let linePath = `M ${points[0].x} ${points[0].y}`;
+    for (let i = 1; i < points.length; i++) {
+      const cpx = (points[i - 1].x + points[i].x) / 2;
+      linePath += ` C ${cpx} ${points[i - 1].y}, ${cpx} ${points[i].y}, ${points[i].x} ${points[i].y}`;
+    }
+
+    curveLine.setAttribute("d", linePath);
+    curveArea.setAttribute("d", `${linePath} L ${points[points.length - 1].x} ${vh} L ${points[0].x} ${vh} Z`);
+
+    const dotTooltip = document.getElementById("jm-dot-tooltip");
+    const tipStep = document.getElementById("jm-dot-tip-step");
+    const tipName = document.getElementById("jm-dot-tip-name");
+    const tipSummary = document.getElementById("jm-dot-tip-summary");
+    const tipFriction = document.getElementById("jm-dot-tip-friction");
+    const tipAxis = document.getElementById("jm-dot-tip-axis");
+    const pinsEl = document.getElementById("jm-dot-pins");
+    pinsEl.innerHTML = "";
+
+    const svgEl = document.getElementById("jm-curve-svg");
+
+    function positionTooltip(xPx) {
+      const wrapW = pinsEl.getBoundingClientRect().width;
+      const tooltipW = 240;
+      const halfW = tooltipW / 2;
+      let left = xPx;
+      if (left - halfW < 8) left = halfW + 8;
+      if (left + halfW > wrapW - 8) left = wrapW - halfW - 8;
+      dotTooltip.style.left = left + "px";
+    }
+
+    points.forEach((point, i) => {
+      const stage = visible[i];
+      const isActive = stage.id === activeId;
+      const frictionClass = stage.friction >= 5 ? "critical" : stage.friction >= 4 ? "high" : "medium";
+
+      const pin = document.createElement("div");
+      pin.className = "jm-dot-pin" + (isActive ? " is-active" : "");
+
+      // Position using live bounding rects so we're in HTML space, not SVG space
+      const svgRect = svgEl.getBoundingClientRect();
+      const wrapRect = pinsEl.getBoundingClientRect();
+      const xPx = (svgRect.left - wrapRect.left) + (point.x / 1000) * svgRect.width;
+      const yPx = (svgRect.top - wrapRect.top) + (point.y / vh) * svgRect.height;
+      pin.style.left = xPx + "px";
+      pin.style.top = yPx + "px";
+
+      pin.addEventListener("mouseenter", () => {
+        tipStep.textContent = `Step ${stage.num}`;
+        tipName.textContent = stage.name;
+        tipSummary.textContent = stage.what;
+        tipFriction.textContent = `Friction ${stage.friction}/5 - ${stage.frictionWord}`;
+        tipFriction.className = `jm-dot-tip-friction ${frictionClass}`;
+        tipAxis.textContent = `Higher on the chart means higher friction. Lower means lower friction.`;
+        positionTooltip(xPx);
+        dotTooltip.classList.add("is-visible");
+      });
+
+      pin.addEventListener("mouseleave", () => {
+        dotTooltip.classList.remove("is-visible");
+      });
+
+      pin.addEventListener("click", () => openDrawer(stage.id));
+
+      pinsEl.appendChild(pin);
+    });
+  }
+
+  function renderStages() {
+    const visible = STAGES.filter(s => s.phase === activePhase);
+    const cols = activePhase === "During exam" ? 5 : 4;
+    stagesEl.style.setProperty("--stage-cols", cols);
+    stagesEl.innerHTML = visible.map(stage => `
+      <article class="stage ${stage.id === activeId ? "active" : ""}" data-id="${stage.id}" style="--fc: ${frictionColor(stage.friction)}">
+        <div class="stage-ghost">${stage.num}</div>
+        <div class="stage-inner">
+          <div class="stage-topband">
+            <div class="stage-icon-wrap">
+              <img class="stage-icon" src="${stage.image}" alt="${stage.name} icon">
+            </div>
+            <div class="stage-meta">
+              <div class="stage-step">Step ${stage.num}</div>
+              <h3 class="stage-title">${stage.name}</h3>
+            </div>
+          </div>
+          <div class="stage-copy-wrap">
+            <p class="stage-copy">${stage.summary}</p>
+            <div class="stage-footer">
+              <div class="stage-friction">
+                <span class="stage-friction-word ${stage.friction >= 5 ? "critical" : stage.friction >= 4 ? "high" : "medium"}">Friction: ${stage.frictionWord}</span>
+                <div class="stage-dots" aria-hidden="true">
+                  ${Array.from({ length: 5 }).map((_, i) => `<span class="stage-dot ${i < stage.friction ? "on" : ""}"></span>`).join("")}
+                </div>
+              </div>
+              ${getAiOpportunities(stage).length ? `<div class="stage-ai-badge" title="AI opportunities"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="AI opportunities"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 1 7 7c0 2.76-1.6 5.17-4 6.36V17H9v-1.64C6.6 14.17 5 11.76 5 9a7 7 0 0 1 7-7z"/></svg></div>` : ""}
+              <div class="stage-cta">View detail →</div>
+            </div>
+          </div>
+        </div>
+      </article>
+    `).join("");
+    stagesEl.querySelectorAll(".stage").forEach(card => {
+      card.addEventListener("click", () => openDrawer(card.dataset.id));
+    });
+    drawCurve(visible);
+  }
+
+  let lastFocusedElement = null;
+
+  function trapFocus(e) {
+    if (e.key !== 'Tab') return;
+    const focusable = [...drawer.querySelectorAll('button:not([disabled]), [tabindex]:not([tabindex="-1"]), a[href]')];
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey) {
+      if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+    } else {
+      if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  }
+
+  function openDrawer(id) {
+    const stage = STAGES.find(item => item.id === id);
+    const phaseStages = STAGES.filter(s => s.phase === activePhase);
+    const idx = phaseStages.findIndex(item => item.id === id);
+    if (!stage || idx === -1) return;
+    const aiOpportunities = getAiOpportunities(stage);
+    const wasClosed = activeId === null;
+    activeId = id;
+    renderStages();
+    drawerEyebrow.textContent = `${stage.phase} / Step ${stage.num}`;
+    drawerTitle.textContent = stage.name;
+    btnPrev.disabled = idx === 0;
+    btnNext.disabled = idx === phaseStages.length - 1;
+    drawerBody.innerHTML = `
+      <section>
+        <div class="jm-hero-visual">
+          <img src="${stage.image}" alt="${stage.name} detail icon">
+          <div class="jm-hero-summary">${stage.summary}</div>
+        </div>
+      </section>
+      ${stage.whatTheyDo && stage.whatTheyDo.length ? `<section><div class="jm-section-label">What they do</div><ul class="jm-detail-list">${stage.whatTheyDo.map(item => `<li>${item}</li>`).join("")}</ul></section>` : ""}
+      ${stage.howTheyFeel && stage.howTheyFeel.length ? `<section><div class="jm-section-label">How they feel</div><div class="jm-severity-legend"><span class="jm-severity-legend-label">Severity</span>${[1,2,3,4,5].map((n,i)=>`<span class="jm-severity-legend-item"><span class="jm-pain-badge">${n}</span>${['Very Low','Low','Medium','High','Critical'][i]}</span>`).join("")}</div><ul class="jm-detail-list jm-detail-list--feel">${stage.howTheyFeel.map(item => `<li><span class="jm-pain-badge">${item.severity}</span><span>${item.text}</span></li>`).join("")}</ul></section>` : ""}
+      ${stage.competitors && stage.competitors.length ? `<section><div class="jm-section-label">Competitive landscape</div><ul class="jm-detail-list jm-detail-list--comp">${stage.competitors.map(item => `<li>${item}</li>`).join("")}</ul></section>` : ""}
+      <section>
+        <div class="jm-section-label">Strategic read</div>
+        <div class="jm-body-copy">${stage.what}</div>
+        <div class="jm-body-copy" style="margin-top:10px">${stage.why}</div>
+      </section>
+      ${aiOpportunities.length ? `
+      <section>
+        <div class="jm-section-label jm-section-label--ai"><svg class="ai-bulb-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 1 7 7c0 2.76-1.6 5.17-4 6.36V17H9v-1.64C6.6 14.17 5 11.76 5 9a7 7 0 0 1 7-7z"/></svg>AI opportunities</div>
+        <div class="jm-ai-list">
+          ${aiOpportunities.map(item => `
+            <div class="jm-ai-item">
+              <div class="jm-ai-item-title">${item.title}</div>
+              <div class="jm-ai-item-copy">${item.copy}</div>
+              <div class="jm-ideal-links">
+                ${item.links.map(link => `<span class="jm-ideal-pill">${link}</span>`).join("")}
+              </div>
+            </div>
+          `).join("")}
+        </div>
+      </section>` : ""}
+      <section>
+        <div class="jm-section-label">Experience signals</div>
+        <div class="jm-signal-list">
+          ${stage.signals.map((item, i) => `<div class="jm-signal-item"><span class="jm-signal-item-num">${String(i + 1).padStart(2, "0")}</span><span>${item}</span></div>`).join("")}
+        </div>
+      </section>
+      <section>
+        <div class="jm-section-label">Voice of user</div>
+        <blockquote class="jm-quote">
+          "${stage.quote.replace(/^"|"$/g, "")}"
+          <cite class="jm-quote-attr">${stage.quoteBy}</cite>
+        </blockquote>
+      </section>
+    `;
+    drawer.classList.add("is-open");
+    overlay.classList.add("is-active");
+    if (wasClosed) {
+      lastFocusedElement = document.activeElement;
+      lockedScrollY = window.scrollY;
+      document.documentElement.classList.add("jm-drawer-open");
+      document.body.classList.add("jm-drawer-open");
+      document.body.style.top = `-${lockedScrollY}px`;
+      document.addEventListener('keydown', trapFocus);
+    }
+    drawerTitle.focus();
+  }
+
+  function closeDrawer() {
+    const wasOpen = drawer.classList.contains("is-open");
+    activeId = null;
+    renderStages();
+    if (!wasOpen) return;
+    drawer.classList.remove("is-open");
+    overlay.classList.remove("is-active");
+    document.documentElement.classList.remove("jm-drawer-open");
+    document.body.classList.remove("jm-drawer-open");
+    document.body.style.top = "";
+    window.scrollTo(0, lockedScrollY);
+    document.removeEventListener('keydown', trapFocus);
+    if (lastFocusedElement) { lastFocusedElement.focus(); lastFocusedElement = null; }
+  }
+
+  drawerClose.addEventListener("click", closeDrawer);
+  overlay.addEventListener("click", closeDrawer);
+  btnPrev.addEventListener("click", () => {
+    const phaseStages = STAGES.filter(s => s.phase === activePhase);
+    const idx = phaseStages.findIndex(item => item.id === activeId);
+    if (idx > 0) openDrawer(phaseStages[idx - 1].id);
+  });
+  btnNext.addEventListener("click", () => {
+    const phaseStages = STAGES.filter(s => s.phase === activePhase);
+    const idx = phaseStages.findIndex(item => item.id === activeId);
+    if (idx < phaseStages.length - 1) openDrawer(phaseStages[idx + 1].id);
+  });
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+      closeDrawer();
+      return;
+    }
+    if (activeId === null) return;
+    const phaseStages = STAGES.filter(s => s.phase === activePhase);
+    const idx = phaseStages.findIndex(item => item.id === activeId);
+    if (event.key === "ArrowLeft" && idx > 0) openDrawer(phaseStages[idx - 1].id);
+    if (event.key === "ArrowRight" && idx < phaseStages.length - 1) openDrawer(phaseStages[idx + 1].id);
+  });
+
+  window.addEventListener("wheel", event => {
+    if (activeId === null) return;
+    event.preventDefault();
+    drawerBody.scrollTop += event.deltaY;
+  }, { passive: false });
+
+  renderStages();
+
+  // Ideal model tabs
+  const imTabs = document.querySelectorAll('.im-tab');
+  const imStates = document.querySelectorAll('.im-state');
+  imTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const key = tab.dataset.state;
+      imTabs.forEach(t => t.classList.remove('is-active'));
+      imStates.forEach(s => s.classList.remove('is-active'));
+      tab.classList.add('is-active');
+      document.querySelector(`.im-state[data-state="${key}"]`).classList.add('is-active');
+    });
+  });
+
+  // Outcomes
+  gsap.utils.toArray('.outcome-num').forEach(el => {
+    gsap.from(el, {
+      opacity: 0, y: 20, duration: 0.8, ease: 'power3.out',
+      scrollTrigger: { trigger: '#outcomes', start: 'top 70%', toggleActions: 'play none none none' }
+    });
+  });
+
+  if (!prefersReducedMotion) {
+    // Triptych parallax
+    gsap.utils.toArray('[data-parallax-triptych]').forEach(img => {
+      gsap.to(img, {
+        yPercent: -10, ease: 'none',
+        scrollTrigger: {
+          trigger: img.closest('.triptych-cell'),
+          start: 'top bottom', end: 'bottom top', scrub: true
+        }
+      });
+    });
+
+    // Context showcase parallax
+    document.querySelectorAll('[data-parallax-context]').forEach(img => {
+      gsap.fromTo(img, { y: '-10%' }, {
+        y: '10%', ease: 'none',
+        scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: true }
+      });
+    });
+
+    // Atmo divider parallax
+    gsap.utils.toArray('[data-parallax-atmo]').forEach(img => {
+      gsap.fromTo(img, { yPercent: -8 }, {
+        yPercent: 8, ease: 'none',
+        scrollTrigger: { trigger: img.closest('.atmo-cell'), start: 'top bottom', end: 'bottom top', scrub: true }
+      });
+    });
+
+    // Field strip parallax
+    gsap.utils.toArray('[data-parallax-field]').forEach(img => {
+      gsap.fromTo(img, { yPercent: -8 }, {
+        yPercent: 8, ease: 'none',
+        scrollTrigger: { trigger: img.closest('.field-strip-img'), start: 'top bottom', end: 'bottom top', scrub: true }
+      });
+    });
+
+    // Next work parallax
+    gsap.to('.next-img', {
+      yPercent: -10, ease: 'none',
+      scrollTrigger: { trigger: '#next-work', start: 'top bottom', end: 'bottom top', scrub: true }
+    });
+  }
+
+  // Research scale numbers
+  gsap.utils.toArray('.rs-num').forEach(el => {
+    gsap.from(el, {
+      opacity: 0, y: 20, duration: 0.7, ease: 'power2.out',
+      scrollTrigger: { trigger: '#research-scale', start: 'top 75%', toggleActions: 'play none none none' }
+    });
+  });
+
+  // ── Persona Drawer ────────────────────────────────────────────
+  const PERSONAS = [
+    {
+      id: "lauren",
+      name: "Lauren",
+      archetype: "The Gold Standard",
+      axis: "High Experience · Low Throughput",
+      color: "#C8A000",
+      whatTheyDo: [
+        "Assesses the patient and confirms the radiologist's recommendations based on their specific pathology",
+        "Adds protocols based on what she knows the radiologist will want, even when they haven't asked, because she knows it will help diagnosis",
+        "Frequently edits complex parameters to get the best image quality while staying conscious of patient bore time",
+        "When paired with a Low-Experience Technologist, runs the scanner and asks them to handle patient interactions",
+        "Steps in when she sees an opportunity for a teaching moment"
+      ],
+      motivations: "Attentive to patients before, during, and after the scan; takes whatever time is necessary to get them relaxed. She knows a calm, comfortable patient can hold still longer, which allows her to get the best images possible. Always balances image quality with the time the patient has to spend inside the bore. Stays on schedule, but will do what she has to in order to get the best possible image.",
+      barriers: [
+        "When the radiologist hovers while she's working, it feels like they don't trust her abilities",
+        "The radiologist slows her down by not letting her decide which protocols to use, what parameters to change, or how to best scan the patient"
+      ],
+      designImplications: [
+        "Software should make editing complex parameters easy, not limit her with defaults or hidden functions",
+        "Frequently-used functions like selecting series and copying Rx should be accessible in fewer clicks",
+        "Needs the ability to experiment with parameter combinations based on each patient's specific needs"
+      ]
+    },
+    {
+      id: "jin",
+      name: "Jin",
+      archetype: "Get the Job Done",
+      axis: "High Experience · High Throughput",
+      color: "#2A9898",
+      whatTheyDo: [
+        "Running the software is his primary responsibility; oversees Low-Experience Technologists who prep and position patients",
+        "Doesn't check in with patients or use squeeze-balls; his exams are fast enough that patients generally do well",
+        "Has the knowledge to edit parameters but seldom does; only changes a few things to save time",
+        "Sometimes ends an exam early when he can tell he's already gotten all the images needed",
+        "Won't make an exam longer just to get a better quality picture"
+      ],
+      motivations: "His excellent performance contributes to the hospital's ability to live up to its reputation. Takes care of patients by scanning as quickly as possible so they don't have to spend too much time inside the bore. Balances time and image quality; can't waste time on unnecessary images or rescanning. Believes everyone on the team knows their role and performs it so everything runs smoothly.",
+      barriers: [
+        "An improperly prepared patient (metal on them or incorrect information) slows the whole process down",
+        "No time for patients who can't hold still; will cancel their appointment and move on",
+        "Has extensive knowledge from years of scanning every situation imaginable, but never gets to use it or fine-tune his craft"
+      ],
+      designImplications: [
+        "More tasks automated: one-touch command for \"normal\" patients with pre-populated patient data",
+        "Ability to remove a patient from the bore with a button on the scan console",
+        "Software should support multi-tasking: setting up the next patient while another is still in the bore"
+      ]
+    },
+    {
+      id: "james",
+      name: "James",
+      archetype: "Learning the Ropes",
+      axis: "Low Experience · Low Throughput",
+      color: "#7856B0",
+      whatTheyDo: [
+        "Staffed with a more experienced technologist to learn on the job; the experienced tech runs the scanner, but they sometimes switch so James can run it under close supervision",
+        "Primary patient caretaker, responsible for all patient interactions including escorting, prepping, and positioning",
+        "Changes basic parameters like TR and FOV; relies on high-experience technologists or radiologists for protocol selection and complex parameter modifications"
+      ],
+      motivations: "Patient comfort is his biggest concern; uses every tool at his disposal to care for them, explains the MR process so patients know what to expect, makes sure they are comfortably positioned on the table, and talks to them throughout so they know someone cares. Wants to learn how to get higher image quality while completing scans faster.",
+      barriers: [
+        "Needs the experience from running scans but can't afford to produce bad images",
+        "Needs to know that a radiologist or High-Experience Technologist is available to answer questions during the exam"
+      ],
+      designImplications: [
+        "Needs to easily identify which coils are needed and clearly understand how to use them",
+        "All equipment (including the table and coils) should be easy to maneuver and manage",
+        "Software should help him learn to edit more complex parameters by surfacing what other settings are affected or need to change",
+        "Should have the ability to easily undo changes in the software",
+        "Routine tasks like entering patient information should be automated without making him feel disengaged"
+      ]
+    },
+    {
+      id: "kim",
+      name: "Kim",
+      archetype: "Paying My Dues",
+      axis: "Low Experience · High Throughput",
+      color: "#88AF30",
+      whatTheyDo: [
+        "Takes care of all patient interactions so the High-Experience Technologist is free to run the scan console",
+        "Gets patients prepped and on the table as quickly and precisely as possible",
+        "Injects contrast by hand, allows patients to wear street clothes, and allows the next patient to help move the previous one off the table to maintain efficiency",
+        "Runs the MR console when the High-Experience Technologist takes a break"
+      ],
+      motivations: "Goal is to get patients in and out as fast as possible so the console technologist can maintain pace. Wants to learn to run the MR software and edit parameters to eventually become a High-Experience Technologist.",
+      barriers: [
+        "Patient interactions can't become a bottleneck in the process",
+        "Changing bulky and heavy equipment (coils and gating) between every patient is time-consuming and straining; if it requires any additional time or effort, she won't use it"
+      ],
+      designImplications: [
+        "Needs to easily identify which coils are needed and clearly understand how to use them",
+        "All equipment including the table and coils should be easy to maneuver and manage",
+        "Tips, preset options, and automation of tasks to help be fast without making mistakes",
+        "Needs to see where the previous technologist left off and what still needs to be done with a scan",
+        "Patient comfort features are welcome only if they don't slow down the process"
+      ]
+    }
+  ];
+
+  const pDrawer = document.getElementById("p-drawer");
+  const pOverlay = document.getElementById("p-overlay");
+  const pDrawerClose = document.getElementById("p-drawer-close");
+  const pDrawerEyebrow = document.getElementById("p-drawer-eyebrow");
+  const pDrawerTitle = document.getElementById("p-drawer-title");
+  const pDrawerHeader = document.getElementById("p-drawer-header");
+  const pDrawerBody = document.getElementById("p-drawer-body");
+  const pBtnPrev = document.getElementById("p-btn-prev");
+  const pBtnNext = document.getElementById("p-btn-next");
+  let activePersonaId = null;
+  let lockedPersonaScrollY = 0;
+  let lastFocusedPersonaEl = null;
+
+  function trapPersonaFocus(e) {
+    if (e.key !== 'Tab') return;
+    const focusable = [...pDrawer.querySelectorAll('button:not([disabled]), [tabindex]:not([tabindex="-1"]), a[href]')];
+    if (!focusable.length) return;
+    const first = focusable[0], last = focusable[focusable.length - 1];
+    if (e.shiftKey) { if (document.activeElement === first) { e.preventDefault(); last.focus(); } }
+    else { if (document.activeElement === last) { e.preventDefault(); first.focus(); } }
+  }
+
+  function openPersonaDrawer(id) {
+    const persona = PERSONAS.find(p => p.id === id);
+    const idx = PERSONAS.findIndex(p => p.id === id);
+    if (!persona) return;
+    const wasClosed = activePersonaId === null;
+    activePersonaId = id;
+    pDrawerEyebrow.textContent = persona.axis;
+    pDrawerTitle.textContent = persona.name;
+    pDrawer.style.borderTop = `3px solid ${persona.color}`;
+    pBtnPrev.disabled = idx === 0;
+    pBtnNext.disabled = idx === PERSONAS.length - 1;
+    pDrawerBody.innerHTML = `
+      <section>
+        <p class="p-persona-archetype">"${persona.archetype}"</p>
+      </section>
+      <section>
+        <div class="jm-section-label">What they do</div>
+        <ul class="jm-detail-list">${persona.whatTheyDo.map(item => `<li>${item}</li>`).join("")}</ul>
+      </section>
+      <section>
+        <div class="jm-section-label">Motivations &amp; goals</div>
+        <div class="jm-body-copy">${persona.motivations}</div>
+      </section>
+      <section class="p-barriers-section">
+        <div class="jm-section-label jm-section-label--barriers">Barriers</div>
+        <ul class="jm-detail-list jm-detail-list--barriers">${persona.barriers.map(item => `<li>${item}</li>`).join("")}</ul>
+      </section>
+      <section>
+        <div class="jm-section-label">Design implications</div>
+        <ul class="jm-detail-list">${persona.designImplications.map(item => `<li>${item}</li>`).join("")}</ul>
+      </section>
+    `;
+    pDrawer.classList.add("is-open");
+    pOverlay.classList.add("is-active");
+    if (wasClosed) {
+      lastFocusedPersonaEl = document.activeElement;
+      lockedPersonaScrollY = window.scrollY;
+      document.documentElement.classList.add("jm-drawer-open");
+      document.body.classList.add("jm-drawer-open");
+      document.body.style.top = `-${lockedPersonaScrollY}px`;
+      document.addEventListener('keydown', trapPersonaFocus);
+    }
+    pDrawerBody.scrollTop = 0;
+    pDrawerTitle.focus();
+  }
+
+  function closePersonaDrawer() {
+    const wasOpen = pDrawer.classList.contains("is-open");
+    activePersonaId = null;
+    if (!wasOpen) return;
+    pDrawer.classList.remove("is-open");
+    pOverlay.classList.remove("is-active");
+    pDrawer.style.borderTop = "";
+    document.documentElement.classList.remove("jm-drawer-open");
+    document.body.classList.remove("jm-drawer-open");
+    document.body.style.top = "";
+    window.scrollTo(0, lockedPersonaScrollY);
+    document.removeEventListener('keydown', trapPersonaFocus);
+    if (lastFocusedPersonaEl) { lastFocusedPersonaEl.focus(); lastFocusedPersonaEl = null; }
+  }
+
+  pDrawerClose.addEventListener("click", closePersonaDrawer);
+  pOverlay.addEventListener("click", closePersonaDrawer);
+  pBtnPrev.addEventListener("click", () => {
+    const idx = PERSONAS.findIndex(p => p.id === activePersonaId);
+    if (idx > 0) openPersonaDrawer(PERSONAS[idx - 1].id);
+  });
+  pBtnNext.addEventListener("click", () => {
+    const idx = PERSONAS.findIndex(p => p.id === activePersonaId);
+    if (idx < PERSONAS.length - 1) openPersonaDrawer(PERSONAS[idx + 1].id);
+  });
+
+  document.querySelectorAll(".persona-card[data-persona]").forEach(card => {
+    card.addEventListener("click", () => openPersonaDrawer(card.dataset.persona));
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && activePersonaId !== null) { closePersonaDrawer(); return; }
+    if (activePersonaId === null) return;
+    const idx = PERSONAS.findIndex(p => p.id === activePersonaId);
+    if (event.key === "ArrowLeft" && idx > 0) openPersonaDrawer(PERSONAS[idx - 1].id);
+    if (event.key === "ArrowRight" && idx < PERSONAS.length - 1) openPersonaDrawer(PERSONAS[idx + 1].id);
+  });
+
+  window.addEventListener("wheel", event => {
+    if (activePersonaId === null || !pDrawer.classList.contains("is-open")) return;
+    event.preventDefault();
+    pDrawerBody.scrollTop += event.deltaY;
+  }, { passive: false });
+</script>
+</body>
+</html>
