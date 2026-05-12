@@ -5,6 +5,7 @@
   <meta name="description" content="How Chris Pennell studied MR technologist workflows at GE Healthcare and turned 57 interviews across 9 hospitals into a product specification for AW Server.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GE Healthcare, Chris Pennell</title>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
@@ -733,7 +734,17 @@
 
     /* Focus styles */
     *:focus { outline: none; }
-    *:focus-visible { outline: 2px solid #CC2222; outline-offset: 3px; border-radius: 2px; }
+    :where(a, button, [tabindex]:not([tabindex="-1"])):focus-visible {
+      outline: 2px solid rgba(26,26,26,.38);
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+    .jm-drawer :where(a, button, [tabindex]:not([tabindex="-1"])):focus-visible {
+      outline-color: rgba(255,255,255,.42);
+    }
+    .jm-drawer-title:focus {
+      outline: none;
+    }
 
     /* Reduced motion */
     @media (prefers-reduced-motion: reduce) {
@@ -1437,7 +1448,7 @@
     </div>
     <div class="outcomes-cmo">
       <div class="outcomes-cmo-quote">"Chris effectively draws out users' psychological drivers, operational objectives, and functional requirements. With excellent communication skills he tells leadership what they need to hear, not what they want to hear."</div>
-      <div class="outcomes-cmo-attr">Kevin Hughes - Chief Information Officer, GE Healthcare</div>
+      <div class="outcomes-cmo-attr">Sergey Korabelnikov - Chief Information Officer, GE Healthcare</div>
     </div>
 	    <div class="outcomes-footnote">The journey map, ideal model, persona framework, interaction architecture, and 57-page spec gave the AW Server convergence team a direction they could build from. The engagement ran from field observation through interaction design, covering the full span from research to deliverable.</div>
   </div>
